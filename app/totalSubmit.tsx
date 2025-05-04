@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { Picker } from '@react-native-picker/picker';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-} from "react-native";
-import { useRouter } from "expo-router";
-import { useFormStore } from "../storage/useFormStore";
 import { useActionSheet } from "@expo/react-native-action-sheet";
-import { Ionicons, MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Picker } from '@react-native-picker/picker';
+import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker"; // For date picker
+import { useFormStore } from "../storage/useFormStore";
 
 const statusStyles = {
   Approved: { backgroundColor: '#C8E6C9', textColor: '#2E7D32' },
@@ -151,9 +151,9 @@ const TotalSubmit = () => {
           <Text style={styles.filterLabel}>Gender</Text>
           <Picker selectedValue={gender} onValueChange={setGender}>
             <Picker.Item label="ALL" value="ALL" />
-            <Picker.Item label="MALE" value="MALE" />
-            <Picker.Item label="FEMALE" value="FEMALE" />
-            <Picker.Item label="TRANSGENDER" value="TRANSGENDER" />
+            <Picker.Item label="MALE" value="Male" />
+            <Picker.Item label="FEMALE" value="Female" />
+            <Picker.Item label="TRANSGENDER" value="Transgender" />
           </Picker>
 
           <TouchableOpacity onPress={() => setStartDatePickerVisible(true)} style={styles.dateButton}>

@@ -1,9 +1,9 @@
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ScrollView,Alert } from "react-native";
-import { useRouter } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from '@react-navigation/native';
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 
 export default function Profile() {
@@ -54,11 +54,7 @@ export default function Profile() {
       {/* Header */}
       <View style={styles.header}>
       <TouchableOpacity onPress={() => {
-  if (navigation.canGoBack()) {
-    router.back();
-  } else {
-    router.replace('/dashboard'); // or whatever fallback screen you prefer
-  }
+    router.push('/dashboard'); // or whatever fallback screen you prefer
 }}>
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
