@@ -1,7 +1,7 @@
-import { useRouter,useLocalSearchParams } from "expo-router";
-import { useState,useEffect } from "react";
-import { View, Text, TextInput, ScrollView, StyleSheet } from "react-native";
-import { Checkbox, Button, IconButton,RadioButton  } from "react-native-paper";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { ScrollView, StyleSheet, Text, TextInput } from "react-native";
+import { Button, Checkbox, IconButton, RadioButton } from "react-native-paper";
 import { useFormStore } from "../../storage/useFormStore";
 
 export default function LandOwnership() {
@@ -140,7 +140,7 @@ export default function LandOwnership() {
     <ScrollView contentContainerStyle={styles.container}>
       <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
 
-      <Text style={styles.title}>Land Form</Text>
+      <Text style={styles.title}>Plantation Form</Text>
       <Text style={styles.subtitle}>Land Ownership & Livestock</Text>
 
       <Text style={styles.question}>23. Land Ownership:</Text>

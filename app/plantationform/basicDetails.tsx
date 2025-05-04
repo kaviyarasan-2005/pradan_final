@@ -126,7 +126,7 @@ export default function BasicDetails() {
     <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
   )}
 
-      <Text style={styles.title}>Land Form</Text>
+      <Text style={styles.title}>Plantation Form</Text>
       <Text style={styles.subtitle}>Basic Details</Text>
       <Text style={styles.question}>Date:</Text>
       <TextInput
