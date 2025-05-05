@@ -10,6 +10,7 @@ export default function LandDevelopment() {
    const { data, submittedForms, setData } = useFormStore();
   const [form, setForm] = useState(
     data.landDevelopment || {
+      date:"",
       sfNumber: "",
       soilTypeCombined: [],
       landBenefit: "",
@@ -29,6 +30,10 @@ export default function LandDevelopment() {
     }
   );
           useEffect(() => {
+            const today = new Date();
+            const formattedDate = ("0" + today.getDate()).slice(-2) + '/' + ("0" + (today.getMonth() + 1)).slice(-2) + '/' + today.getFullYear();
+            
+              updateField("date", formattedDate);
             if (id && fromPreview === "true") {
               // Load the form by ID and update current working data
               const selected = submittedForms.find((form) => form.id === id);
@@ -147,27 +152,12 @@ export default function LandDevelopment() {
         keyboardType="numeric"
       />
 
-      <Text style={styles.question}>34. Field Inspection done by:</Text>
-      {renderCheckboxGroup("inspectionBy", ["Associate", "Professional"], true)}
-
-      <Text style={styles.question}>35. Site Approved by:</Text>
-      {renderCheckboxGroup("approvedBy", ["Coordinator", "Team Leader"], true)}
-
       <Text style={styles.question}>36. Date of Inspection:</Text>
-      <TextInput
-        value={form.dateInspectionText}
-        onChangeText={(text) => updateField("dateInspectionText", text)}
-        style={styles.input}
-        placeholder="DD/MM/YYYY"
-      />
-
-      <Text style={styles.question}>37. Date of Approval:</Text>
-      <TextInput
-        value={form.dateApprovalText}
-        onChangeText={(text) => updateField("dateApprovalText", text)}
-        style={styles.input}
-        placeholder="DD/MM/YYYY"
-      />
+           <TextInput
+       value={form.date}
+       style={styles.input}
+       editable={false}
+     />
 <Text style={styles.question}>38. Type of work proposed:</Text>
 {renderCheckboxGroup("workType", [
   "Prosopis removal",

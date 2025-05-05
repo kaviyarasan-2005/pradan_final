@@ -1,13 +1,13 @@
-import { useRouter,useLocalSearchParams } from "expo-router";
-import { useState,useEffect } from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
 import {
-  Text,
-  TextInput,
   Button,
   Checkbox,
   Divider,
   IconButton,
+  Text,
+  TextInput,
 } from "react-native-paper";
 import { useFormStore } from "../../storage/useFormStore";
 
@@ -18,6 +18,7 @@ export default function LandDevelopment() {
 
   const [form, setForm] = useState(
     data.landDevelopment || {
+      date:"",
       sfNumber: "",
       soilType: [],
       landBenefit: "",
@@ -68,6 +69,10 @@ export default function LandDevelopment() {
           // Set every key in the form data
           Object.entries(selected).forEach(([key, value]) => {
             setData(key as keyof typeof data, value);
+            const today = new Date();
+            const formattedDate = ("0" + today.getDate()).slice(-2) + '/' + ("0" + (today.getMonth() + 1)).slice(-2) + '/' + today.getFullYear();
+            
+              updateField("date", formattedDate);
           });
         }
       }
@@ -154,43 +159,13 @@ export default function LandDevelopment() {
         mode="outlined"
       />
 
-      <Text style={styles.question}>34. Field Inspection done by</Text>
-      {["Associate", "Professional"].map((role) => (
-        <Checkbox.Item
-          key={role}
-          label={role}
-          status={form.inspectionBy === role ? "checked" : "unchecked"}
-          onPress={() => updateField("inspectionBy", role)}
-        />
-      ))}
-
-      <Text style={styles.question}>35. Site Approved by</Text>
-      {["Coordinator", "Team Leader"].map((role) => (
-        <Checkbox.Item
-          key={role}
-          label={role}
-          status={form.approvedBy === role ? "checked" : "unchecked"}
-          onPress={() => updateField("approvedBy", role)}
-        />
-      ))}
-
       <Text style={styles.question}>36. Date of Inspection</Text>
-      <TextInput
-        value={form.dateInspectionText}
-        onChangeText={(text) => updateField("dateInspectionText", text)}
+            <TextInput
+        value={form.date}
         style={styles.input}
-        placeholder="DD/MM/YYYY"
-        mode="outlined"
+        editable={false}
       />
 
-      <Text style={styles.question}>37. Date of Approval</Text>
-      <TextInput
-        value={form.dateApprovalText}
-        onChangeText={(text) => updateField("dateApprovalText", text)}
-        style={styles.input}
-        placeholder="DD/MM/YYYY"
-        mode="outlined"
-      />
 
      <Text style={styles.question}>38. Type of Plantation proposed:</Text>
      {renderCheckboxGroup("workType", [

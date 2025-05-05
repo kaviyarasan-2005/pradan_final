@@ -18,7 +18,6 @@ export default function BasicDetails() {
 
   const [form, setForm] = useState(
     data.basicDetails || {
-      date:"",
       name: "",
       age: "",
       mobile: "",
@@ -63,10 +62,6 @@ export default function BasicDetails() {
         });
       }
     }
-    const today = new Date();
-    const formattedDate = ("0" + today.getDate()).slice(-2) + '/' + ("0" + (today.getMonth() + 1)).slice(-2) + '/' + today.getFullYear();
-    
-      updateField("date", formattedDate);
   }, [id]);
   const updateField = (field: string, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -146,12 +141,7 @@ export default function BasicDetails() {
 
       <Text style={styles.title}>Land Form</Text>
       <Text style={styles.subtitle}>Basic Details</Text>
-      <Text style={styles.question}>Date:</Text>
-      <TextInput
-  value={form.date}
-  style={styles.input}
-  editable={false}
-/>
+      
 
 
       {/* Inputs */}
