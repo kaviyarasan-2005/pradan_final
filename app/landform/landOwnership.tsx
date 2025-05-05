@@ -57,7 +57,6 @@ export default function LandOwnership() {
 
   const updateField = (field: string, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
-    console.log(form.livestockCombined+" - "+form.irrigatedLandCombined+" - "+form.cropSeason);
   };
   
   const updateNestedField = (parent: string, field: string, value: any) => {
@@ -104,6 +103,7 @@ export default function LandOwnership() {
     ));
 
   const handleNext = () => {
+    console.log(form.livestockCombined+" - "+form.irrigatedLandCombined+" - "+form.cropSeasonCombined);
     setData("landOwnership", form);
     if (fromPreview && returnTo) {
      
