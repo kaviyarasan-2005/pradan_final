@@ -7,7 +7,6 @@ import { useFormStore } from "../../storage/useFormStore";
 
 export default function BasicDetails() {
   const router = useRouter();
-  // tpe specified 
   const { id, fromPreview, returnTo, returnsubmit, fromsubmit } = useLocalSearchParams<{
     id?: string;
     fromPreview?: string;
@@ -36,11 +35,9 @@ export default function BasicDetails() {
       adults: "",
       children: "",
       occupation: { agriculture: "", business: "", other: "" },
-      occupationCombined:"",
       specialCategory: false,
       specialCategoryNumber: "",
       caste: "",
-      hhcombined:"",
       houseOwnership: "",
       houseType: "",
       drinkingWater: [],
@@ -49,6 +46,11 @@ export default function BasicDetails() {
       toiletAvailability: "",
       toiletCondition: "",
       education: "",
+      hhcombined:"",
+      occupationCombined:"",
+      drinkingWaterCombined:[],
+      potabilityCombined:[],
+      domesticWaterCombined:[],
     }
   );
   
@@ -71,12 +73,22 @@ export default function BasicDetails() {
   };
 
   const toggleCheckbox = (field: string, value: string) => {
-    setForm((prev) => ({
-      ...prev,
-      [field]: prev[field].includes(value)
-        ? prev[field].filter((item: string) => item !== value)
-        : [...prev[field], value],
-    }));
+    setForm((prev) => {
+      const currentValue = typeof prev[field] === "string" ? prev[field] : "";
+      const current = currentValue.split(",").filter(Boolean); // removes empty strings
+  
+      let updated;
+      if (current.includes(value)) {
+        updated = current.filter((item) => item !== value);
+      } else {
+        updated = [...current, value];
+      }
+  
+      return {
+        ...prev,
+        [field]: updated.join(","),
+      };
+    });
   };
 
   // in which id the basics updated while from submitted text
@@ -97,11 +109,14 @@ export default function BasicDetails() {
   };
 
   const renderCheckboxGroup = (
+    
     field: string,
     options: string[],
     isSingle: boolean = false
   ) =>
+    
     options.map((item) => (
+      
       <Checkbox.Item
         key={item}
         label={item}
@@ -114,11 +129,14 @@ export default function BasicDetails() {
             ? "checked"
             : "unchecked"
         }
+        
         onPress={() =>
+          
           isSingle ? updateField(field, item) : toggleCheckbox(field, item)
         }
       />
     ));
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -512,13 +530,13 @@ export default function BasicDetails() {
 </RadioButton.Group>
 
       <Text style={styles.question}>19. Drinking Water Source:</Text>
-      {renderCheckboxGroup("drinkingWater", ["Ponds", "Well & Borewells", "Trucks"])}
+      {renderCheckboxGroup("drinkingWaterCombined", ["Ponds", "Well & Borewells", "Trucks"])}
 
       <Text style={styles.question}>20. Potability:</Text>
-      {renderCheckboxGroup("potability", ["Ponds", "Tanks", "Well & Borewells"])}
+      {renderCheckboxGroup("potabilityCombined", ["Ponds", "Tanks", "Well & Borewells"])}
 
       <Text style={styles.question}>21. Domestic Water Source:</Text>
-      {renderCheckboxGroup("domesticWater", ["Ponds", "Tanks", "Well & Borewells"])}
+      {renderCheckboxGroup("domesticWaterCombined", ["Ponds", "Tanks", "Well & Borewells"])}
 
       <Text style={styles.question}>22. Toilet Availability:</Text>
 <RadioButton.Group

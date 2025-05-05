@@ -4,83 +4,46 @@ import { ScrollView, StyleSheet, Text, TextInput } from "react-native";
 import { Button, Checkbox, IconButton } from "react-native-paper";
 import { useFormStore } from "../../storage/useFormStore";
 
-export default function LandOwnership() {
+export default function BasicDetails() {
   const router = useRouter();
   const { data, setData } = useFormStore();
 
   const [form, setForm] = useState(
-    data.landOwnership || {
-      landOwnershipType: "",
-      hasWell: "",
-      areaIrrigated: "221",
-      irrigatedLand: {
-        rainfed: "12",
-        tankfed: "13",
-        wellIrrigated: "12",
-      },
-      pattaNumber: "21/12",
-      totalArea: "121",
-      
-      taluk:"wfwef",
-      firka:"wefwrf",
-      revenueVillage: "vwrgvrgv",
-      irrigatedLandCombined:"",
-      cropSeasonCombined: "",
-      livestockCombined:"",
-      livestock: {
-        goat:"12",
-        sheep:"11",
-        milchAnimals:"1",
-        draught_animals:"1",
-        poultry:"1",
-        others:"1",
-      },
+    data.basicDetails || {
+      name: "name",
+      age: "23",
+      mobile: "2934720443709",
+      district: "cvosoasd",
+      hamlet: "wofqwro",
+      panchayat: "areorgae",
+      block: "orgeiryoe",
+      idCardType: "wir",
+      idCardNumber: "4y5450485fh",
+      gender: "fhdfi",
+      fatherSpouse: "idjfhiiu",
+      householdType: "vufhff",
+      adults: "0",
+      children: "0",
+      occupation: [],
+      specialCategory: false,
+      specialCategoryNumber: "2",
+      caste: "",
+      houseOwnership: "",
+      houseType: "",
+      toiletAvailability: "",
+      toiletCondition: "",
+      education: "",
+     
     }
   );
 
   const updateField = (field: string, value: any) => {
-    // Filter out non-numeric characters from the value
+   
     setForm((prev) => ({ ...prev, [field]: value }));
+    
   };
-  const handleLivestockChange = (field, value) => {
-    let filteredText = value.replace(/[^0-9]/g, '');
-  
-    const updatedLivestock = {
-      ...form.livestock,
-      [field]: filteredText,
-    };
-     // Default any empty fields to 0 for the combined string
-     const goat = updatedLivestock.goat || '0';
-     const sheep = updatedLivestock.sheep || '0';
-     const milchAnimals = updatedLivestock.milchAnimals || '0';
-     const draught_animals = updatedLivestock.draught_animals || '0';
-     const poultry = updatedLivestock.poultry || '0';
-     const others = updatedLivestock.others || '0';
-   
-     const livestockCombinedField = `${goat},${sheep},${milchAnimals},${draught_animals},${poultry},${others}`;
-    updateField("livestockCombined", livestockCombinedField);
-     setForm((prev) => ({
-       ...prev,
-       livestock: {
-         ...updatedLivestock,
-         livestockCombinedField: livestockCombinedField,
-       },
-     }));
-     
-   };
-   
-  const updateNestedField = (parent: string, field: string, value: any) => {
-   
-    setForm((prev) => ({
-      ...prev,
-      [parent]: {
-        ...prev[parent],
-        [field]: value,
-      },
-    }));
-  };
-
-  const toggleCheckbox = (field: string, value: string) => {
+  //console.log(form.hhcombined);
+   const toggleCheckbox = (field: string, value: string) => {
     setForm((prev) => {
       const currentValue = typeof prev[field] === "string" ? prev[field] : "";
       const current = currentValue.split(",").filter(Boolean); // removes empty strings
@@ -98,14 +61,21 @@ export default function LandOwnership() {
       };
     });
   };
-  
-  
+
+  const handleNext = () => {
+    setData("basicDetails", form);
+    router.push("./landOwnership");
+  };
+
   const renderCheckboxGroup = (
+    
     field: string,
     options: string[],
     isSingle: boolean = false
   ) =>
+    
     options.map((item) => (
+      
       <Checkbox.Item
         key={item}
         label={item}
@@ -118,170 +88,268 @@ export default function LandOwnership() {
             ? "checked"
             : "unchecked"
         }
+        
         onPress={() =>
+          
           isSingle ? updateField(field, item) : toggleCheckbox(field, item)
         }
       />
     ));
-
-  
-    
-  const handleNext = () => {
-    setData("landOwnership", form);
-    router.push("./landDevelopment");
-  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
 
       <Text style={styles.title}>Land Form</Text>
-      <Text style={styles.subtitle}>Land Ownership & Livestock</Text>
+      <Text style={styles.subtitle}>Basic Details</Text>
 
-      <Text style={styles.question}>23. Land Ownership:</Text>
-      {renderCheckboxGroup("landOwnershipType", ["Owner Cultivator", "Lease Holder"], true)}
+      {/* Inputs */}
+      <Text style={styles.question}>1. Name of Farmer:</Text>
+      <TextInput
+        value={form.name}
 
-      <Text style={styles.question}>24. Well for Irrigation:</Text>
-      {renderCheckboxGroup("hasWell", ["Yes", "No"], true)}
+        onChangeText={(text) => updateField("name", text)}
+        style={styles.input}
+      />
+     <Text style={styles.question}>1-2. Age:</Text>
+      <TextInput
+        value={form.age}
+        onChangeText={(text) => updateField("age", text)}
+        style={styles.input}
+        keyboardType="numeric"
+      />
+      <Text style={styles.question}>2. Mobile Number:</Text>
+      <TextInput
+        value={form.mobile}
+        onChangeText={(text) => updateField("mobile", text)}
+        style={styles.input}
+        keyboardType="numeric"
+      />
+      <Text style={styles.question}>2-3. District:</Text>
+      <TextInput
+        value={form.district}
+        onChangeText={(text) => updateField("district", text)}
+        style={styles.input}
+      />
+       <Text style={styles.question}>3. Block:</Text>
+      <TextInput
+        value={form.block}
+        onChangeText={(text) => updateField("block", text)}
+        style={styles.input}
+      />
+      <Text style={styles.question}>4. Panchayat:</Text>
+      <TextInput
+        value={form.panchayat}
+        onChangeText={(text) => updateField("panchayat", text)}
+        style={styles.input}
+      />
+      <Text style={styles.question}>5. Hamlet:</Text>
+      <TextInput
+        value={form.hamlet}
+        onChangeText={(text) => updateField("hamlet", text)}
+        style={styles.input}
+      />
+      <Text style={styles.question}>6. Identity Card:</Text>
+      {renderCheckboxGroup("idCardType", ["Aadhar", "EPIC", "Driving License"], true)}
 
-      {form.hasWell === "Yes" && (
-        <>
-          <Text style={styles.question}>Area Irrigated (ha):</Text>
-          <TextInput
-            value={form.areaIrrigated}
-            onChangeText={(text) => updateField("areaIrrigated", text)}
-            style={styles.input}
-            keyboardType="numeric"
-          />
-        </>
+      <Text style={styles.question}>7. ID Card Number:</Text>
+      <TextInput
+        value={form.idCardNumber}
+        onChangeText={(text) => updateField("idCardNumber", text)}
+        style={styles.input}
+      />
+
+      <Text style={styles.question}>8. Gender:</Text>
+      {renderCheckboxGroup("gender", ["Male", "Female", "Transgender"], true)}
+
+      <Text style={styles.question}>9. Father / Spouse Name:</Text>
+      <TextInput
+        value={form.fatherSpouse}
+        onChangeText={(text) => updateField("fatherSpouse", text)}
+        style={styles.input}
+      />
+
+      <Text style={styles.question}>10. Type of Household:</Text>
+      {renderCheckboxGroup("householdType", ["Nuclear", "Joint"], true)}
+
+      <Text style={styles.question}>11. Household Members:</Text>
+      <TextInput
+        value={form.adults}
+        onChangeText={(text) => {
+          
+          let filteredText = text;
+          const updatedAdults = filteredText;    
+          const hhcombined = `${form.adults},${form.children}`;
+          updateField("hhcombined", hhcombined);  
+          updateField("adults", updatedAdults);
+        }}
+        style={styles.input}
+        
+        placeholder="Adults"
+        keyboardType="numeric"
+      />
+      <TextInput
+        value={form.children}
+        onChangeText={(text) => {
+          let filteredText = text;
+          // Update both fields and store them in a single variable
+          const updatedChildren = filteredText;
+          // Combine both values and update a single field
+          const hhcombined = `${form.adults},${updatedChildren}`;
+          updateField("hhcombined", hhcombined); // Save combined value in a single field
+          updateField("children", updatedChildren); // Optionally, keep children separate
+        }}
+        style={styles.input}
+        placeholder="Children"
+        keyboardType="numeric"
+      />
+
+<Text style={styles.question}>14. Occupation of Household Members (No. of persons):</Text>
+
+<TextInput
+  value={form.occupation.agriculture}
+  onChangeText={(text) => {
+    let filteredText = text;
+    if (parseInt(filteredText) > 50) filteredText = '50';
+
+    const updatedAgriculture = filteredText;
+    const updatedBusiness = form.occupation.business;
+    const updatedOther = form.occupation.other;
+
+    const occupationCombinedField = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
+    updateField("occupationCombined", occupationCombinedField); 
+    setForm((prev) => ({
+      ...prev,
+      occupation: {
+        ...prev.occupation,
+        agriculture: updatedAgriculture,
+        occupationCombined: occupationCombinedField,
+      },
+    }));
+  }}
+  style={[
+    styles.input,
+    form.occupation.agriculture !== '' && parseInt(form.occupation.agriculture) > 50 && {
+      borderColor: 'red',
+      borderWidth: 1,
+    },
+  ]}
+  placeholder="Agriculture"
+  keyboardType="numeric"
+/>
+<TextInput
+  value={form.occupation.business}
+  onChangeText={(text) => {
+    let filteredText = text;
+    if (parseInt(filteredText) > 50) filteredText = '50';
+
+    const updatedBusiness = filteredText;
+    const updatedAgriculture = form.occupation.agriculture;
+    const updatedOther = form.occupation.other;
+
+    const occupationCombinedField = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
+    updateField("occupationCombined", occupationCombinedField); 
+    setForm((prev) => ({
+      ...prev,
+      occupation: {
+        ...prev.occupation,
+        business: updatedBusiness,
+        occupationCombined: occupationCombinedField,
+      },
+    }));
+  }}
+  style={[
+    styles.input,
+    form.occupation.business !== '' && parseInt(form.occupation.business) > 50 && {
+      borderColor: 'red',
+      borderWidth: 1,
+    },
+  ]}
+  placeholder="Business"
+  keyboardType="numeric"
+/>
+{form.occupation.business !== '' && parseInt(form.occupation.business) > 50 && (
+  <Text style={{ color: 'red', fontSize: 12 }}>Cannot exceed 50</Text>
+)}
+
+<TextInput
+  value={form.occupation.other}
+  onChangeText={(text) => {
+    let filteredText = text;
+    if (parseInt(filteredText) > 50) filteredText = '50';
+    
+    const updatedBusiness = form.occupation.business;
+    const updatedAgriculture = form.occupation.agriculture;
+    const updatedOther = filteredText;
+
+    const occupationCombinedField = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
+    updateField("occupationCombined", occupationCombinedField); 
+    setForm((prev) => ({
+      ...prev,
+      occupation: {
+        ...prev.occupation,
+        other: updatedOther,
+        occupationCombined: occupationCombinedField,
+      },
+    }));
+  }}
+  style={[
+    styles.input,
+    form.occupation.other !== '' && parseInt(form.occupation.other) > 50 && {
+      borderColor: 'red',
+      borderWidth: 1,
+    },
+  ]}
+  placeholder="Other"
+  keyboardType="numeric"
+/>
+{form.occupation.other !== '' && parseInt(form.occupation.other) > 50 && (
+  <Text style={{ color: 'red', fontSize: 12 }}>Cannot exceed 50</Text>
+)}
+
+      <Text style={styles.question}>13. Special Category:</Text>
+      <Checkbox.Item
+        label="Disabled"
+        status={form.specialCategory ? "checked" : "unchecked"}
+        onPress={() => updateField("specialCategory", !form.specialCategory)}
+      />
+      {form.specialCategory && (
+        <TextInput
+          value={form.specialCategoryNumber}
+          onChangeText={(text) => updateField("specialCategoryNumber", text)}
+          style={styles.input}
+          placeholder="Number of Disabled Persons"
+          keyboardType="numeric"
+        />
       )}
 
-      <Text style={styles.question}>25. Irrigated Lands (ha):</Text>
-      <Text>Rainfed:</Text>
-      <TextInput
-        value={form.irrigatedLand.rainfed}
-        onChangeText={(text) => {
-          const rainfed = form.irrigatedLand.rainfed || "0";
-          updateNestedField("irrigatedLand", "rainfed", text)}}
-        style={styles.input}
-        keyboardType="numeric"
-      />
-      <Text>Tankfed:</Text>
-      <TextInput
-        value={form.irrigatedLand.tankfed}
-        onChangeText={(text) => {
-          const tankfed = form.irrigatedLand.tankfed || "0";
-          updateNestedField("irrigatedLand", "tankfed", text)}}
-        style={styles.input}
-        keyboardType="numeric"
-      />
-      <Text>Well Irrigated:</Text>
-      <TextInput
-        value={form.irrigatedLand.wellIrrigated}
-        onChangeText={(text) => {
-          const well = form.irrigatedLand.wellIrrigated || "0";
-          const irrigatedLandcombined = `${form.irrigatedLand.rainfed},${form.irrigatedLand.tankfed},${well}`;
-          
-          updateField("irrigatedLandCombined", irrigatedLandcombined);
-          updateNestedField("irrigatedLand", "wellIrrigated", text)
-         
-        }}
-            
-        style={styles.input}
-        keyboardType="numeric"
-      />
+      <Text style={styles.question}>14. Caste:</Text>
+      {renderCheckboxGroup("caste", ["OC", "OBC", "SC", "ST"], true)}
 
-      <Text style={styles.question}>26. Patta Number:</Text>
-      <TextInput
-        value={form.pattaNumber}
-        onChangeText={(text) => updateField("pattaNumber", text)}
-        style={styles.input}
-      />
+      <Text style={styles.question}>15. House Ownership:</Text>
+      {renderCheckboxGroup("houseOwnership", ["Rented", "Owned"], true)}
 
-      <Text style={styles.question}>27. Total Area (ha):</Text>
-      <TextInput
-        value={form.totalArea}
-        onChangeText={(text) => updateField("totalArea", text)}
-        style={styles.input}
-        keyboardType="numeric"
-      />
-      <Text style={styles.question}>27-28. Taluk:</Text>
-      <TextInput
-        value={form.taluk}
-        onChangeText={(text) => updateField("taluk", text)}
-        style={styles.input}
-      />
-<Text style={styles.question}>27-28. Firka:</Text>
-      <TextInput
-        value={form.firka}
-        onChangeText={(text) => updateField("firka", text)}
-        style={styles.input}
-      />
+      <Text style={styles.question}>16. Type of House:</Text>
+      {renderCheckboxGroup("houseType", ["Pucca", "Kutcha"], true)}
+ 
+      <Text style={styles.question}>17. Drinking Water Source:</Text>
+      {renderCheckboxGroup("drinkingWaterCombined", ["Ponds", "Well & Borewells", "Trucks"])}
 
-      <Text style={styles.question}>28. Revenue Village:</Text>
-      <TextInput
-        value={form.revenueVillage}
-        onChangeText={(text) => updateField("revenueVillage", text)}
-        style={styles.input}
-      />
+      <Text style={styles.question}>18. Potability:</Text>
+      {renderCheckboxGroup("potabilityCombined", ["Ponds", "Tanks", "Well & Borewells"])}
 
-      <Text style={styles.question}>29. Crop Season:</Text>
-      {renderCheckboxGroup("cropSeasonCombined", ["Kharif", "Rabi", "Other"])}
-      <Text style={styles.question}>30. Livestock at Home:</Text>
+      <Text style={styles.question}>19. Domestic Water Source:</Text>
+      {renderCheckboxGroup("domesticWaterCombined", ["Ponds", "Tanks", "Well & Borewells"])}
 
-<TextInput
-  placeholder="Goat"
-  value={form.livestock.goat}
-  onChangeText={(text) => handleLivestockChange("goat", text)}
-  onBlur={() => handleLivestockChange("goat", form.livestock.goat || "0")}
-  keyboardType="numeric"
-  style={styles.input}
-/>
+      <Text style={styles.question}>20. Toilet Availability:</Text>
+      {renderCheckboxGroup("toiletAvailability", ["Yes", "No"], true)}
 
-<TextInput
-  placeholder="Sheep"
-  value={form.livestock.sheep}
-  onChangeText={(text) => handleLivestockChange("sheep", text)}
-  onBlur={() => handleLivestockChange("sheep", form.livestock.sheep || "0")}
-  keyboardType="numeric"
-  style={styles.input}
-/>
+      <Text style={styles.question}>21. Toilet Condition:</Text>
+      {renderCheckboxGroup("toiletCondition", ["Working", "Not Working"], true)}
 
-<TextInput
-  placeholder="Milch animals"
-  value={form.livestock.milchAnimals}
-  onChangeText={(text) => handleLivestockChange("milchAnimals", text)}
-  onBlur={() => handleLivestockChange("milchAnimals", form.livestock.milchAnimals || "0")}
-  keyboardType="numeric"
-  style={styles.input}
-/>
+      <Text style={styles.question}>22. Education of Householder:</Text>
+      {renderCheckboxGroup("education", ["Illiterate", "Primary", "Secondary", "University"], true)}
 
-<TextInput
-  placeholder="Draught Animals"
-  value={form.livestock.draught_animals}
-  onChangeText={(text) => handleLivestockChange("draught_animals", text)}
-  onBlur={() => handleLivestockChange("draught_animals", form.livestock.draught_animals || "0")}
-  keyboardType="numeric"
-  style={styles.input}
-/>
-
-<TextInput
-  placeholder="Poultry"
-  value={form.livestock.poultry}
-  onChangeText={(text) => handleLivestockChange("poultry", text)}
-  onBlur={() => handleLivestockChange("poultry", form.livestock.poultry || "0")}
-  keyboardType="numeric"
-  style={styles.input}
-/>
-
-<TextInput
-  placeholder="Others"
-  value={form.livestock.others}
-  onChangeText={(text) => handleLivestockChange("others", text)}
-  onBlur={() => handleLivestockChange("others", form.livestock.others || "0")}
-  keyboardType="numeric"
-  style={styles.input}
-/>
       <Button mode="contained" onPress={handleNext} style={styles.button}>
         Next
       </Button>
@@ -290,10 +358,26 @@ export default function LandOwnership() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, paddingBottom: 40 },
-  title: { fontSize: 24, fontWeight: "bold", textAlign: "center" },
-  subtitle: { fontSize: 18, fontWeight: "600", textAlign: "center", marginBottom: 20 },
-  question: { fontWeight: "bold", marginTop: 10, marginBottom: 5 },
+  container: {
+    padding: 20,
+    paddingBottom: 40,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  subtitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  question: {
+    fontWeight: "bold",
+    marginTop: 10,
+    marginBottom: 5,
+  },
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
@@ -301,5 +385,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 5,
   },
-  button: { marginTop: 20 },
+  button: {
+    marginTop: 30,
+  },
 });

@@ -1,7 +1,7 @@
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import { useRouter, useLocalSearchParams } from "expo-router";
-import { ScrollView, StyleSheet, Alert, View,Image } from "react-native";
-import { Card, Text, Button, Divider, IconButton } from "react-native-paper";
+import { Alert, Image, ScrollView, StyleSheet, View } from "react-native";
+import { Button, Card, Divider, IconButton, Text } from "react-native-paper";
 import { useFormStore } from "../../storage/useFormStore";
 
 export default function Preview() {
@@ -189,9 +189,9 @@ const canEdit = () => {
         { label: "14. Caste", value: selectedForm.basicDetails?.caste },
         { label: "15. House Ownership", value: selectedForm.basicDetails?.houseOwnership },
         { label: "16. Type of House", value: selectedForm.basicDetails?.houseType },
-        { label: "17. Drinking Water Source", value: selectedForm.basicDetails?.drinkingWater },
-        { label: "18. Potability", value: selectedForm.basicDetails?.potability },
-        { label: "19. Domestic Water Source", value: selectedForm.basicDetails?.domesticWater },
+        { label: "17. Drinking Water Source", value: selectedForm.basicDetails?.drinkingWaterCombined },
+        { label: "18. Potability", value: selectedForm.basicDetails?.potabilityCombined },
+        { label: "19. Domestic Water Source", value: selectedForm.basicDetails?.domesticWaterCombined },
         { label: "20. Toilet Availability", value: selectedForm.basicDetails?.toiletAvailability },
         { label: "21. Toilet Condition", value: selectedForm.basicDetails?.toiletCondition },
         { label: "22. Education of Householder", value: selectedForm.basicDetails?.education },
@@ -221,7 +221,7 @@ const canEdit = () => {
         { label: "31. S.F. No.", value: selectedForm.landDevelopment?.sfNumber },
         { label: "31.a) Latitude", value: selectedForm.landDevelopment?.latitude },
         { label: "      Longitude", value: selectedForm.landDevelopment?.longitude },
-        { label: "32. Soil Type", value: selectedForm.landDevelopment?.soilType },
+        { label: "32. Soil Type", value: selectedForm.landDevelopment?.soilTypeCombined },
         { label: "33. Land to benefit (ha)", value: selectedForm.landDevelopment?.landBenefit },
         { label: "34. Field Inspection done by", value: selectedForm.landDevelopment?.inspectionBy },
         { label: "35. Site Approved by", value: selectedForm.landDevelopment?.approvedBy },

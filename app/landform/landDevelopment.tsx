@@ -1,7 +1,7 @@
-import { useRouter,useLocalSearchParams } from "expo-router";
-import { useState,useEffect } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Text, TextInput, Checkbox, Button, IconButton } from "react-native-paper";
+import { Button, Checkbox, IconButton, Text, TextInput } from "react-native-paper";
 import { useFormStore } from "../../storage/useFormStore";
 
 export default function LandDevelopment() {
@@ -11,7 +11,7 @@ export default function LandDevelopment() {
   const [form, setForm] = useState(
     data.landDevelopment || {
       sfNumber: "",
-      soilType: [],
+      soilTypeCombined: [],
       landBenefit: "",
       inspectionBy: "",
       approvedBy: "",
@@ -46,20 +46,33 @@ export default function LandDevelopment() {
   };
 
   const toggleCheckbox = (field: string, value: string) => {
-    setForm((prev) => ({
-      ...prev,
-      [field]: prev[field].includes(value)
-        ? prev[field].filter((item: string) => item !== value)
-        : [...prev[field], value],
-    }));
+    setForm((prev) => {
+      const currentValue = typeof prev[field] === "string" ? prev[field] : "";
+      const current = currentValue.split(",").filter(Boolean); // removes empty strings
+  
+      let updated;
+      if (current.includes(value)) {
+        updated = current.filter((item) => item !== value);
+      } else {
+        updated = [...current, value];
+      }
+  
+      return {
+        ...prev,
+        [field]: updated.join(","),
+      };
+    });
   };
 
   const renderCheckboxGroup = (
+    
     field: string,
     options: string[],
     isSingle: boolean = false
   ) =>
+    
     options.map((item) => (
+      
       <Checkbox.Item
         key={item}
         label={item}
@@ -72,12 +85,13 @@ export default function LandDevelopment() {
             ? "checked"
             : "unchecked"
         }
+        
         onPress={() =>
+          
           isSingle ? updateField(field, item) : toggleCheckbox(field, item)
         }
       />
     ));
-
     const handleNext = () => {
       setData("landDevelopment", form);
       setTimeout(() => {
@@ -123,7 +137,7 @@ export default function LandDevelopment() {
       </View>
 
       <Text style={styles.question}>32. Soil Type:</Text>
-      {renderCheckboxGroup("soilType", ["Red Soil", "Black Cotton", "Sandy Loam", "Laterite"])}
+      {renderCheckboxGroup("soilTypeCombined", ["Red Soil", "Black Cotton", "Sandy Loam", "Laterite"])}
 
       <Text style={styles.question}>33. Land to benefit (ha):</Text>
       <TextInput

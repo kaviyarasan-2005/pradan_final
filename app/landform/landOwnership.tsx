@@ -228,30 +228,43 @@ export default function LandOwnership() {
         style={styles.input}
       />
 
-<Text style={styles.question}>29. Crop Season:</Text>
-<RadioButton.Group
-  onValueChange={(value) => updateField("cropSeason", value)}
-  value={form.cropSeason}
->
-  <RadioButton.Item label="Kharif" value="Kharif" />
-  <RadioButton.Item label="Rabi" value="Rabi" />
-  <RadioButton.Item label="Other" value="Other" />
-</RadioButton.Group>
+<Text style={styles.question}>29. Crop Season (Choose all that apply):</Text>
+{["Kharif", "Rabi", "Other"].map((season) => (
+  <Checkbox.Item
+    key={season}
+    label={season}
+    status={form.cropSeason?.includes(season) ? "checked" : "unchecked"}
+    onPress={() => {
+      const newSelection = form.cropSeason?.includes(season)
+        ? form.cropSeason.filter((s: string) => s !== season)
+        : [...(form.cropSeason || []), season];
+      updateField("cropSeason", newSelection);
+      updateField("cropSeasonCombined", newSelection.join(", "));
+    }}
+  />
+))}
 
-{form.cropSeason === "Other" && (
+{form.cropSeason?.includes("Other") && (
   <TextInput
     placeholder="Enter Crop Season"
     value={form.cropSeasonOther}
-    onChangeText={(text) => updateField("cropSeasonOther", text)}
+    onChangeText={(text) => {
+      updateField("cropSeasonOther", text);
+      const updated = [...form.cropSeason.filter((s: string) => s !== "Other"), text];
+      updateField("cropSeasonCombined", updated.join(", "));
+    }}
     style={styles.input}
   />
 )}
+
+
  <Text style={styles.question}>30. Livestock at Home:</Text>
 
 <TextInput
   placeholder="Goat"
   value={form.livestock.goat}
   onChangeText={(text) => {updateNestedField("livestock","goat",text)
+    
     const goat = form.livestock.goat ||"0";
     const livestockCombinedField = `${goat},${form.livestock.sheep},${form.livestock.milchAnimals},${form.livestock.draught_animals},${form.livestock.poultry},${form.livestock.others}`;
     updateField("livestockCombined",livestockCombinedField);
