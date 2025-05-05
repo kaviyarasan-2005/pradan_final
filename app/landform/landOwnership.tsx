@@ -35,7 +35,9 @@ export default function LandOwnership() {
         poultry:"",
         others:"",
       },
-      livestockCombinedField:"",
+      irrigatedLandCombined:"",
+      cropSeasonCombined: "",
+      livestockCombined:"",
     }
   );
       useEffect(() => {
