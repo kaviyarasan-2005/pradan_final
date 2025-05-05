@@ -70,8 +70,7 @@ export default function BasicDetails() {
     setForm((prev) => ({
       ...prev,
       [parent]: {
-        ...prev[parent],
-        [field]: value,
+        ...prev[parent],[field]: value,
       },
     }));
   };
@@ -356,23 +355,12 @@ export default function BasicDetails() {
 <TextInput
   value={form.occupation.agriculture}
   onChangeText={(text) => {
-    let filteredText = text.replace(/[^0-9]/g, '');
-    if (parseInt(filteredText) > 50) filteredText = '50';
-    updateNestedField("occpation","agriculture",text);
-    const updatedAgriculture = filteredText;
+    updateNestedField("occupation","agriculture",text);
+    const updatedAgriculture = text;
     const updatedBusiness = form.occupation.business;
     const updatedOther = form.occupation.other;
-
     const occupationCombined = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
     updateField("occupationCombined" , occupationCombined);
-    setForm((prev) => ({
-      ...prev,
-      occupation: {
-        ...prev.occupation,
-        agriculture: updatedAgriculture,
-        occupationCombined: occupationCombined,
-      },
-    }));
   }}
   style={[
     styles.input,
@@ -384,30 +372,17 @@ export default function BasicDetails() {
   placeholder="Agriculture"
   keyboardType="numeric"
 />
-{form.occupation.agriculture !== '' && parseInt(form.occupation.agriculture) > 50 && (
-  <Text style={{ color: 'red', fontSize: 12 }}>Cannot exceed 50</Text>
-)}
 
 <TextInput
   value={form.occupation.business}
   onChangeText={(text) => {
-    let filteredText = text.replace(/[^0-9]/g, '');
-    if (parseInt(filteredText) > 50) filteredText = '50';
-    updateNestedField("occpation","business",text);
-    const updatedBusiness = filteredText;
+    updateNestedField("occupation","business",text);
+    const updatedBusiness = text;
     const updatedAgriculture = form.occupation.agriculture;
     const updatedOther = form.occupation.other;
 
     const occupationCombined = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
     updateField("occupationCombined" , occupationCombined);
-    setForm((prev) => ({
-      ...prev,
-      occupation: {
-        ...prev.occupation,
-        business: updatedBusiness,
-        occupationCombinedField: occupationCombined,
-      },
-    }));
   }}
   style={[
     styles.input,
@@ -419,31 +394,17 @@ export default function BasicDetails() {
   placeholder="Business"
   keyboardType="numeric"
 />
-{form.occupation.business !== '' && parseInt(form.occupation.business) > 50 && (
-  <Text style={{ color: 'red', fontSize: 12 }}>Cannot exceed 50</Text>
-)}
 
 <TextInput
   value={form.occupation.other}
   onChangeText={(text) => {
-    let filteredText = text.replace(/[^0-9]/g, '');
-    if (parseInt(filteredText) > 50) filteredText = '50';
-    updateNestedField("occpation","other",text);
-    const updatedOther = filteredText;
+    updateNestedField("occupation","other",text);
+    const updatedOther = text;
     const updatedAgriculture = form.occupation.agriculture;
     const updatedBusiness = form.occupation.business;
 
     const occupationCombined = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
     updateField("occupationCombined" , occupationCombined);
-
-    setForm((prev) => ({
-      ...prev,
-      occupation: {
-        ...prev.occupation,
-        other: updatedOther,
-        occupationCombinedField: occupationCombined,
-      },
-    }));
   }}
   style={[
     styles.input,
@@ -455,9 +416,6 @@ export default function BasicDetails() {
   placeholder="Other"
   keyboardType="numeric"
 />
-{form.occupation.other !== '' && parseInt(form.occupation.other) > 50 && (
-  <Text style={{ color: 'red', fontSize: 12 }}>Cannot exceed 50</Text>
-)}
 
 
 
