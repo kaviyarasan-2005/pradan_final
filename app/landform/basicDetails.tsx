@@ -66,7 +66,15 @@ export default function BasicDetails() {
   const updateField = (field: string, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
-
+  const updateNestedField = (parent: string, field: string, value: any) => {
+    setForm((prev) => ({
+      ...prev,
+      [parent]: {
+        ...prev[parent],
+        [field]: value,
+      },
+    }));
+  };
   const toggleCheckbox = (field: string, value: string) => {
     setForm((prev) => {
       const currentValue = typeof prev[field] === "string" ? prev[field] : "";
@@ -350,7 +358,7 @@ export default function BasicDetails() {
   onChangeText={(text) => {
     let filteredText = text.replace(/[^0-9]/g, '');
     if (parseInt(filteredText) > 50) filteredText = '50';
-
+    updateNestedField("occpation","agriculture",text);
     const updatedAgriculture = filteredText;
     const updatedBusiness = form.occupation.business;
     const updatedOther = form.occupation.other;
@@ -385,7 +393,7 @@ export default function BasicDetails() {
   onChangeText={(text) => {
     let filteredText = text.replace(/[^0-9]/g, '');
     if (parseInt(filteredText) > 50) filteredText = '50';
-
+    updateNestedField("occpation","business",text);
     const updatedBusiness = filteredText;
     const updatedAgriculture = form.occupation.agriculture;
     const updatedOther = form.occupation.other;
@@ -420,7 +428,7 @@ export default function BasicDetails() {
   onChangeText={(text) => {
     let filteredText = text.replace(/[^0-9]/g, '');
     if (parseInt(filteredText) > 50) filteredText = '50';
-
+    updateNestedField("occpation","other",text);
     const updatedOther = filteredText;
     const updatedAgriculture = form.occupation.agriculture;
     const updatedBusiness = form.occupation.business;
