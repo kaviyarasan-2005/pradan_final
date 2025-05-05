@@ -56,7 +56,7 @@ const TotalSubmit = () => {
       return new Date(year, month - 1, day); // Create a Date object with year, month (0-indexed), and day
     };
   
-    const itemDate = formatDate(item.basicDetails.date); // Convert the item's date to Date object
+    const itemDate = formatDate(item.landDevelopment.date); // Convert the item's date to Date object
     const matchesStart = !startDate || itemDate >= new Date(startDate);
     const matchesEnd = !endDate || itemDate <= new Date(endDate);
   
