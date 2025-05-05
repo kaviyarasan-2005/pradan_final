@@ -52,30 +52,7 @@ export default function LandOwnership() {
         }
       }, [id]);
 
-      const handleLivestockChange = (field, value) => {
-        const updatedLivestock = {
-          ...form.livestock,
-          [field]: value,
-        };
-      
-        // Default any empty fields to 0 for the combined string
-        const goat = updatedLivestock.goat || '0';
-        const sheep = updatedLivestock.sheep || '0';
-        const milchAnimals = updatedLivestock.milchAnimals || '0';
-        const draught_animals = updatedLivestock.draught_animals || '0';
-        const poultry = updatedLivestock.poultry || '0';
-        const others = updatedLivestock.others || '0';
-      
-        const livestockCombinedField = `${goat},${sheep},${milchAnimals},${draught_animals},${poultry},${others}`;
-      
-        setForm((prev) => ({
-          ...prev,
-          livestock: {
-            ...updatedLivestock,
-            livestockCombined: livestockCombinedField,
-          },
-        }));
-      };
+    
       
 
   const updateField = (field: string, value: any) => {
@@ -274,17 +251,25 @@ export default function LandOwnership() {
 <TextInput
   placeholder="Goat"
   value={form.livestock.goat}
-  onChangeText={(text) => handleLivestockChange("goat", text)}
-  onBlur={() => handleLivestockChange("goat", form.livestock.goat || "0")}
-  keyboardType="numeric"
+  onChangeText={(text) => {updateNestedField("livestock","goat",text)
+    const goat = form.livestock.goat ||"0";
+    const livestockCombinedField = `${goat},${form.livestock.sheep},${form.livestock.milchAnimals},${form.livestock.draught_animals},${form.livestock.poultry},${form.livestock.others}`;
+    updateField("livestockCombined",livestockCombinedField);
+
+  }}
+  keyboardType="numeric" 
   style={styles.input}
 />
 
 <TextInput
   placeholder="Sheep"
   value={form.livestock.sheep}
-  onChangeText={(text) => handleLivestockChange("sheep", text)}
-  onBlur={() => handleLivestockChange("sheep", form.livestock.sheep || "0")}
+  onChangeText={(text) => {updateNestedField("livestock","sheep",text)
+    const sheep = form.livestock.sheep ||"0";
+    const livestockCombinedField = `${form.livestock.goat},${sheep},${form.livestock.milchAnimals},${form.livestock.draught_animals},${form.livestock.poultry},${form.livestock.others}`;
+    updateField("livestockCombined",livestockCombinedField);
+
+  }}
   keyboardType="numeric"
   style={styles.input}
 />
@@ -292,8 +277,12 @@ export default function LandOwnership() {
 <TextInput
   placeholder="Milch animals"
   value={form.livestock.milchAnimals}
-  onChangeText={(text) => handleLivestockChange("milchAnimals", text)}
-  onBlur={() => handleLivestockChange("milchAnimals", form.livestock.milchAnimals || "0")}
+  onChangeText={(text) => {updateNestedField("livestock","milchAnimals",text)
+    const milchAnimals = form.livestock.milchAnimals ||"0";
+    const livestockCombinedField = `${form.livestock.goat},${form.livestock.sheep},${milchAnimals},${form.livestock.draught_animals},${form.livestock.poultry},${form.livestock.others}`;
+    updateField("livestockCombined",livestockCombinedField);
+
+  }}
   keyboardType="numeric"
   style={styles.input}
 />
@@ -301,8 +290,11 @@ export default function LandOwnership() {
 <TextInput
   placeholder="Draught Animals"
   value={form.livestock.draught_animals}
-  onChangeText={(text) => handleLivestockChange("draught_animals", text)}
-  onBlur={() => handleLivestockChange("draught_animals", form.livestock.draught_animals || "0")}
+  onChangeText={(text) => {updateNestedField("livestock","draught_animals",text)
+    const draught_animals= form.livestock.draught_animals ||"0";
+    const livestockCombinedField = `${form.livestock.goat},${form.livestock.sheep},${form.livestock.milchAnimals},${draught_animals},${form.livestock.poultry},${form.livestock.others}`;
+    updateField("livestockCombined",livestockCombinedField);
+  }}
   keyboardType="numeric"
   style={styles.input}
 />
@@ -310,8 +302,11 @@ export default function LandOwnership() {
 <TextInput
   placeholder="Poultry"
   value={form.livestock.poultry}
-  onChangeText={(text) => handleLivestockChange("poultry", text)}
-  onBlur={() => handleLivestockChange("poultry", form.livestock.poultry || "0")}
+  onChangeText={(text) => {updateNestedField("livestock","poultry",text)
+    const poultry= form.livestock.poultry ||"0";
+    const livestockCombinedField = `${form.livestock.goat},${form.livestock.sheep},${form.livestock.milchAnimals},${form.livestock.draught_animals},${poultry},${form.livestock.others}`;
+    updateField("livestockCombined",livestockCombinedField);
+  }}
   keyboardType="numeric"
   style={styles.input}
 />
@@ -319,8 +314,11 @@ export default function LandOwnership() {
 <TextInput
   placeholder="Others"
   value={form.livestock.others}
-  onChangeText={(text) => handleLivestockChange("others", text)}
-  onBlur={() => handleLivestockChange("others", form.livestock.others || "0")}
+  onChangeText={(text) => {updateNestedField("livestock","others",text)
+    const others= form.livestock.others ||"0";
+    const livestockCombinedField = `${form.livestock.goat},${form.livestock.sheep},${form.livestock.milchAnimals},${form.livestock.draught_animals},${form.livestock.poultry},${others}`;
+    updateField("livestockCombined",livestockCombinedField);
+  }}
   keyboardType="numeric"
   style={styles.input}
 />
