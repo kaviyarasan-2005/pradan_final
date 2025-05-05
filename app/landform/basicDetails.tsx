@@ -372,7 +372,6 @@ export default function BasicDetails() {
   placeholder="Agriculture"
   keyboardType="numeric"
 />
-
 <TextInput
   value={form.occupation.business}
   onChangeText={(text) => {
@@ -416,17 +415,12 @@ export default function BasicDetails() {
   placeholder="Other"
   keyboardType="numeric"
 />
-
-
-
 <Text style={styles.question}>15. Special Category:</Text>
-
 <Checkbox.Item
   label="Disabled"
   status={form.specialCategory ? "checked" : "unchecked"}
   onPress={() => updateField("specialCategory", !form.specialCategory)}
 />
-
 {form.specialCategory && (
   <>
     <TextInput
@@ -511,7 +505,6 @@ export default function BasicDetails() {
   <RadioButton.Item label="Yes" value="yes" />
   <RadioButton.Item label="No" value="no" />
 </RadioButton.Group>
-
       <Text style={styles.question}>24. Education of Householder:</Text>
 <RadioButton.Group
   onValueChange={(value) => updateField("education", value)}
