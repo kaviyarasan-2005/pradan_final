@@ -179,7 +179,8 @@ export default function LandOwnership() {
       <Text>Rainfed:</Text>
       <TextInput
         value={form.irrigatedLand.rainfed}
-        onChangeText={(text) => updateNestedField("irrigatedLand", "rainfed", text)}
+        onChangeText={(text) =>{ 
+          updateNestedField("irrigatedLand", "rainfed", text)}}
         style={styles.input}
         keyboardType="numeric"
       />

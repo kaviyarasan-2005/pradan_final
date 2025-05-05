@@ -1,7 +1,7 @@
-import { Route,useRouter,useLocalSearchParams } from "expo-router";
-import { useState,useEffect } from "react";
-import {  Text, TextInput, ScrollView, StyleSheet } from "react-native";
-import { Checkbox, Button, IconButton,RadioButton} from "react-native-paper";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { ScrollView, StyleSheet, Text, TextInput } from "react-native";
+import { Button, Checkbox, IconButton, RadioButton } from "react-native-paper";
 
 import { useFormStore } from "../../storage/useFormStore";
 
@@ -36,11 +36,11 @@ export default function BasicDetails() {
       adults: "",
       children: "",
       occupation: { agriculture: "", business: "", other: "" },
-      occupationCombinedField: "",
+      occupationCombined:"",
       specialCategory: false,
       specialCategoryNumber: "",
       caste: "",
-      hhcombinedfiled:"",
+      hhcombined:"",
       houseOwnership: "",
       houseType: "",
       drinkingWater: [],
@@ -305,8 +305,8 @@ export default function BasicDetails() {
     const updatedChildren = form.children; // or get children value here
     
     // Combine both values and update a single field
-    const hhcombinedfiled = `${updatedAdults},${updatedChildren}`;
-    updateField("hhcombinedfiled", hhcombinedfiled); // Save combined value in a single field
+    const hhcombined = `${updatedAdults},${updatedChildren}`;
+    updateField("hhcombined", hhcombined); // Save combined value in a single field
     updateField("adults", updatedAdults); // Optionally, keep adults separate
   }}
   style={styles.input}
@@ -325,8 +325,8 @@ export default function BasicDetails() {
     const updatedAdults = form.adults; // or get adults value here
     
     // Combine both values and update a single field
-    const hhcombinedfiled = `${updatedAdults},${updatedChildren}`;
-    updateField("hhcombinedfiled", hhcombinedfiled); // Save combined value in a single field
+    const hhcombined = `${updatedAdults},${updatedChildren}`;
+    updateField("hhcombined", hhcombined); // Save combined value in a single field
     updateField("children", updatedChildren); // Optionally, keep children separate
   }}
   style={styles.input}
@@ -347,14 +347,14 @@ export default function BasicDetails() {
     const updatedBusiness = form.occupation.business;
     const updatedOther = form.occupation.other;
 
-    const occupationCombinedField = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
-
+    const occupationCombined = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
+    updateField("occupationCombined" , occupationCombined);
     setForm((prev) => ({
       ...prev,
       occupation: {
         ...prev.occupation,
         agriculture: updatedAgriculture,
-        occupationCombinedField: occupationCombinedField,
+        occupationCombined: occupationCombined,
       },
     }));
   }}
@@ -382,14 +382,14 @@ export default function BasicDetails() {
     const updatedAgriculture = form.occupation.agriculture;
     const updatedOther = form.occupation.other;
 
-    const occupationCombinedField = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
-
+    const occupationCombined = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
+    updateField("occupationCombined" , occupationCombined);
     setForm((prev) => ({
       ...prev,
       occupation: {
         ...prev.occupation,
         business: updatedBusiness,
-        occupationCombinedField: occupationCombinedField,
+        occupationCombinedField: occupationCombined,
       },
     }));
   }}
@@ -417,14 +417,15 @@ export default function BasicDetails() {
     const updatedAgriculture = form.occupation.agriculture;
     const updatedBusiness = form.occupation.business;
 
-    const occupationCombinedField = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
+    const occupationCombined = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
+    updateField("occupationCombined" , occupationCombined);
 
     setForm((prev) => ({
       ...prev,
       occupation: {
         ...prev.occupation,
         other: updatedOther,
-        occupationCombinedField: occupationCombinedField,
+        occupationCombinedField: occupationCombined,
       },
     }));
   }}
