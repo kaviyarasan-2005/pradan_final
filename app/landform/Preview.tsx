@@ -167,7 +167,7 @@ const canEdit = () => {
 
       {renderSection("Basic Details", [
         
-        {label : "Date",value: selectedForm.basicDetails?.date},
+        {label : "Date",value: selectedForm.landDevelopment?.date},
         {label : "ID",value: id},
         { label: "1. Name of Farmer", value: selectedForm.basicDetails?.name },
         { label: "1-2. Age", value: selectedForm.basicDetails?.age },
@@ -183,7 +183,7 @@ const canEdit = () => {
         { label: "10. Type of Household", value: selectedForm.basicDetails?.householdType },
         { label: "11. Household Members - Adults", value: selectedForm.basicDetails?.adults },
         { label: "    Household Members - Children", value: selectedForm.basicDetails?.children },
-        { label: "12. Occupation of Household Members", value: selectedForm.basicDetails?.occupation },
+        { label: "12. Occupation of Household Members", value: selectedForm.basicDetails?.occupation},
         { label: "13. Special Category", value: selectedForm.basicDetails?.specialCategory ? "Yes" : "No" },
         { label: "    Special Category Number", value: selectedForm.basicDetails?.specialCategoryNumber },
         { label: "14. Caste", value: selectedForm.basicDetails?.caste },
@@ -223,10 +223,7 @@ const canEdit = () => {
         { label: "      Longitude", value: selectedForm.landDevelopment?.longitude },
         { label: "32. Soil Type", value: selectedForm.landDevelopment?.soilTypeCombined },
         { label: "33. Land to benefit (ha)", value: selectedForm.landDevelopment?.landBenefit },
-        { label: "34. Field Inspection done by", value: selectedForm.landDevelopment?.inspectionBy },
-        { label: "35. Site Approved by", value: selectedForm.landDevelopment?.approvedBy },
-        { label: "36. Date of Inspection", value: selectedForm.landDevelopment?.dateInspectionText },
-        { label: "37. Date of Approval", value: selectedForm.landDevelopment?.dateApprovalText },
+        { label: "36. Date of Inspection", value: selectedForm.landDevelopment?.date},
         { label: "38. Type of work proposed", value: selectedForm.landDevelopment?.workType },
         { label: "    Details about work types", value: selectedForm.landDevelopment?.workTypeText },
         { label: "39. Area benefited (ha)", value: selectedForm.landDevelopment?.proposalArea },
