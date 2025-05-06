@@ -1,29 +1,25 @@
-import { useState } from "react";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-  Image,
-  SafeAreaView,
-  Pressable,
   Animated,
   FlatList,
+  Image,
+  Modal,
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { useRouter } from "expo-router";
 import PagerView from 'react-native-pager-view';
-import React from "react";
-import { MaterialIcons } from "@expo/vector-icons";
-import { Button } from "react-native-paper";
 const DashboardScreen: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState('Today');
   const slideAnim = useState(new Animated.Value(0))[0];
   const [pageIndex, setPageIndex] = useState(0);
   
-
-
   const pageTexts = [
     'Dashboard(Pre)',
     'Dashboard(Post)'
@@ -105,16 +101,16 @@ const renderCard2 = ({ item }: any) => {
     const handleCardPress = () => {
       switch (item.id) {
         case '1':
-          router.push('/totalSubmit');
+          router.push('/postfd/tatalsubmit');
           break;
         case '2':
-          router.push('/pending');
+          router.push('/postfd/pending');
           break;
         case '3':
-          router.push('/rejected');
+          router.push('/postfd/remarks');
           break;
         case '4':
-          router.push('/approved');
+          router.push('/postfd/approved');
           break;
         default:
           break;
