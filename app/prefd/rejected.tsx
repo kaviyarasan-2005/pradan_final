@@ -84,9 +84,10 @@ const Rejected = () => {
 
   const filteredForms = submittedForms.filter((item) => {
     const isRejected = item.formStatus === "Rejected";
+    const isprefd = item.fundStatus == "prefund";
     const matchesType = selectedFilter === "ALL" || item.formType === selectedFilter;
     const matchesSearch = item.basicDetails?.name?.toLowerCase().includes(searchText.toLowerCase());
-    return isRejected && matchesType && matchesSearch;
+    return isprefd&&isRejected && matchesType && matchesSearch;
   });
 
   return (

@@ -85,9 +85,10 @@ const Pending = () => {
 
   const filteredForms = submittedForms.filter((item) => {
     const isPending = item.formStatus === "Pending";
+    const isprefd = item.fundStatus == "prefund";
     const matchesType = selectedFilter === "ALL" || item.formType === selectedFilter;
     const matchesSearch = item.basicDetails?.name?.toLowerCase().includes(searchText.toLowerCase());
-    return isPending && matchesType && matchesSearch;
+    return isprefd && isPending && matchesType && matchesSearch;
   });
 
   return (

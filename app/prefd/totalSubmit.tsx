@@ -44,6 +44,7 @@ const TotalSubmit = () => {
 
   const filteredForms = submittedForms.filter((item) => {
     const matchesType = formType === "ALL" || item.formType === formType;
+    const isprefd = item.fundStatus == "prefund";
     const matchesName = item.basicDetails?.name?.toLowerCase().includes(searchText.toLowerCase());
     const matchesPanchayat = item.basicDetails?.panchayat?.toLowerCase().includes(panchayat.toLowerCase());
     const matchesBlock = item.basicDetails?.block?.toLowerCase().includes(block.toLowerCase());
@@ -60,7 +61,7 @@ const TotalSubmit = () => {
     const matchesStart = !startDate || itemDate >= new Date(startDate);
     const matchesEnd = !endDate || itemDate <= new Date(endDate);
   
-    return matchesType && matchesName && matchesPanchayat && matchesBlock &&
+    return isprefd&&matchesType && matchesName && matchesPanchayat && matchesBlock &&
       matchesHamlet && matchesGender && matchesStart && matchesEnd;
   });
   

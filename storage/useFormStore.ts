@@ -5,6 +5,7 @@ interface FormData {
   id?: string;
   submittedAt?: string;
   date?: string;
+  fundStatus?:"postfund" | "prefund";
   formType?: "LAND" | "POND" | "PLANTATION";
   formStatus?: "Approved" | "Pending" | "Rejected";
   basicDetails?: any;
@@ -60,7 +61,8 @@ export const useFormStore = create<FormStore>((set, get) => ({
         ...currentData,
         id: Date.now().toString(),
         submittedAt: new Date().toISOString(),
-        formStatus: currentData.formStatus ?? "Pending",
+        formStatus: currentData.formStatus ,
+        fundStatus:currentData.fundStatus || "prefund",
       };
       updatedForms = [...allForms, formWithMeta];
     }
