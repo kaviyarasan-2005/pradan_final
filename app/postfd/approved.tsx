@@ -93,7 +93,8 @@ const Approved = () => {
     <ScrollView contentContainerStyle={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.push("/dashboard")} style={styles.icon}>
+        <TouchableOpacity onPress={() => router.push({ pathname: "/dashboard", params: { view: "2" } })}
+ style={styles.icon}>
           <Ionicons name="arrow-back" size={24} color="#1B5E20" />
         </TouchableOpacity>
         <Text style={styles.title}> POST Approved Forms</Text>
