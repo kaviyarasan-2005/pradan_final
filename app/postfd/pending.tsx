@@ -1,6 +1,6 @@
-// Pending.tsx
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Picker } from '@react-native-picker/picker';
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -12,13 +12,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useFormStore } from "../../storage/useFormStore";
 
 const statusStyles = {
-  Pending: {
-    backgroundColor: "#FFF9C4",
-    textColor: "#F57F17",
-  },
+  Approved: { backgroundColor: '#C8E6C9', textColor: '#2E7D32' },
+  Pending: { backgroundColor: '#FFF9C4', textColor: '#F9A825' },
+  Rejected: { backgroundColor: '#FFCDD2', textColor: '#C62828' },
 };
 
 const Pending = () => {
@@ -27,47 +27,53 @@ const Pending = () => {
   const { showActionSheetWithOptions } = useActionSheet();
 
   const [searchText, setSearchText] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState("ALL");
+  const [formType, setFormType] = useState("ALL");
+  const [panchayat, setPanchayat] = useState("");
+  const [block, setBlock] = useState("");
+  const [hamlet, setHamlet] = useState("");
+  const [gender, setGender] = useState("ALL");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [showFilters, setShowFilters] = useState(false);
+  const [isStartDatePickerVisible, setStartDatePickerVisible] = useState(false);
+  const [isEndDatePickerVisible, setEndDatePickerVisible] = useState(false);
 
   useEffect(() => {
     loadSubmittedForms();
   }, []);
 
-  const openFilterSheet = () => {
-    const options = ["ALL", "LAND", "POND", "PLANTATION", "Cancel"];
-    const cancelButtonIndex = 4;
+  const filteredForms = submittedForms.filter((item) => {
+    const matchesType = formType === "ALL" || item.formType === formType;
+    const isPostFund = item.fundStatus === "postfund";
+    const isPending = item.formStatus === "Pending";
+    const matchesName = item.basicDetails?.name?.toLowerCase().includes(searchText.toLowerCase());
+    const matchesPanchayat = item.basicDetails?.panchayat?.toLowerCase().includes(panchayat.toLowerCase());
+    const matchesBlock = item.basicDetails?.block?.toLowerCase().includes(block.toLowerCase());
+    const matchesHamlet = item.basicDetails?.hamlet?.toLowerCase().includes(hamlet.toLowerCase());
+    const matchesGender = gender === "ALL" || item.basicDetails?.gender === gender;
 
-    showActionSheetWithOptions(
-      {
-        options,
-        cancelButtonIndex,
-        title: "Filter by Form Type",
-      },
-      (buttonIndex) => {
-        if (buttonIndex !== cancelButtonIndex) {
-          setSelectedFilter(options[buttonIndex]);
-        }
-      }
-    );
-  };
+    const formatDate = (dateString) => {
+      const [day, month, year] = dateString.split('/');
+      return new Date(year, month - 1, day);
+    };
+
+    const itemDate = formatDate(item.landDevelopment.date);
+    const matchesStart = !startDate || itemDate >= new Date(startDate);
+    const matchesEnd = !endDate || itemDate <= new Date(endDate);
+
+    return isPostFund && isPending && matchesType && matchesName &&
+      matchesPanchayat && matchesBlock && matchesHamlet && matchesGender &&
+      matchesStart && matchesEnd;
+  });
 
   const handleCardPress = (item) => {
-    const formType = item.formType?.toLowerCase();
     let previewPath = "";
+    if (item.formType === "LAND") previewPath = "/landform/Preview";
+    else if (item.formType === "POND") previewPath = "/pondform/Preview";
+    else if (item.formType === "PLANTATION") previewPath = "/plantationform/Preview";
+    else return alert("Unknown form type.");
 
-    if (formType === "land") {
-      previewPath = "/landform/Preview";
-    } else if (formType === "pond") {
-      previewPath = "/pondform/Preview";
-    } else if (formType === "plantation") {
-      previewPath = "/plantationform/Preview";
-    } else {
-      alert("Unknown form type.");
-      return;
-    }
-
-    router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", 
-      returnsubmit: "/postfd/pending", } });
+    router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/postfd/pending" } });
   };
 
   const handleDelete = (index) => {
@@ -75,36 +81,45 @@ const Pending = () => {
       { text: "Cancel", style: "cancel" },
       {
         text: "Delete",
-        onPress: () => {
-          deleteFormByIndex(index);
-        },
+        onPress: () => deleteFormByIndex(index),
         style: "destructive",
       },
     ]);
   };
 
-  const filteredForms = submittedForms.filter((item) => {
-    const isPending = item.formStatus === "Pending";
-    const ispostfd = item.fundStatus === "postfund";
-    const matchesType = selectedFilter === "ALL" || item.formType === selectedFilter;
-    const matchesSearch = item.basicDetails?.name?.toLowerCase().includes(searchText.toLowerCase());
-    return  ispostfd&&isPending && matchesType && matchesSearch;
-  });
+  const handleConfirmStartDate = (date) => {
+    setStartDate(date);
+    setStartDatePickerVisible(false);
+  };
+
+  const handleConfirmEndDate = (date) => {
+    setEndDate(date);
+    setEndDatePickerVisible(false);
+  };
+
+  const resetFilters = () => {
+    setSearchText("");
+    setFormType("ALL");
+    setPanchayat("");
+    setBlock("");
+    setHamlet("");
+    setGender("ALL");
+    setStartDate(null);
+    setEndDate(null);
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.push("/dashboard")} style={styles.icon}>
           <Ionicons name="arrow-back" size={24} color="#1B5E20" />
         </TouchableOpacity>
-        <Text style={styles.title}> POST Pending Forms</Text>
-        <TouchableOpacity onPress={openFilterSheet} style={styles.icon}>
+        <Text style={styles.title}>Post Pending Forms</Text>
+        <TouchableOpacity onPress={() => setShowFilters(!showFilters)} style={styles.icon}>
           <MaterialIcons name="filter-list" size={24} color="#1B5E20" />
         </TouchableOpacity>
       </View>
 
-      {/* Search */}
       <View style={styles.searchContainer}>
         <FontAwesome5 name="search" size={16} color="#1B5E20" style={styles.searchIcon} />
         <TextInput
@@ -116,59 +131,91 @@ const Pending = () => {
         />
       </View>
 
-      {/* No data */}
-      {filteredForms.length === 0 ? (
-        <Text style={styles.noDataText}>No pending forms yet.</Text>
-      ) : (
-        filteredForms.map((item, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.card}
-            onPress={() => handleCardPress(item)}
-          >
-            <View style={styles.cardHeader}>
-              <Text style={styles.name}>{item.basicDetails?.name || "N/A"}</Text>
-              <View
-                style={[
-                  styles.statusBadge,
-                  { backgroundColor: statusStyles.Pending.backgroundColor },
-                ]}
-              >
-                <Text style={[styles.statusText, { color: statusStyles.Pending.textColor }]}>
-                  {item.formStatus}
-                </Text>
-              </View>
-            </View>
+      {showFilters && (
+        <View style={styles.filtersBox}>
+          <TextInput placeholder="Panchayat" value={panchayat} onChangeText={setPanchayat} style={styles.searchInput} />
+          <TextInput placeholder="Block" value={block} onChangeText={setBlock} style={styles.searchInput} />
+          <TextInput placeholder="Hamlet" value={hamlet} onChangeText={setHamlet} style={styles.searchInput} />
 
-            <Text style={styles.label}>
-              Form: <Text style={styles.value}>{item.formType}</Text>
-            </Text>
-            <Text style={styles.label}>
-              Submission ID: <Text style={styles.value}>{item.id}</Text>
-            </Text>
-            <Text style={styles.label}>
-              Date: <Text style={styles.value}>{item.date || "N/A"}</Text>
-            </Text>
+          <Text style={styles.filterLabel}>Form Type</Text>
+          <Picker selectedValue={formType} onValueChange={setFormType}>
+            <Picker.Item label="ALL" value="ALL" />
+            <Picker.Item label="LAND" value="LAND" />
+            <Picker.Item label="POND" value="POND" />
+            <Picker.Item label="PLANTATION" value="PLANTATION" />
+          </Picker>
 
-            <View style={styles.bioContainer}>
-              <Text style={styles.bioTitle}>Remarks</Text>
-              <Text style={styles.bioContent}>{item.basicDetails?.remarks || "No remarks"}</Text>
-            </View>
+          <Text style={styles.filterLabel}>Gender</Text>
+          <Picker selectedValue={gender} onValueChange={setGender}>
+            <Picker.Item label="ALL" value="ALL" />
+            <Picker.Item label="MALE" value="Male" />
+            <Picker.Item label="FEMALE" value="Female" />
+            <Picker.Item label="TRANSGENDER" value="Transgender" />
+          </Picker>
 
-            <TouchableOpacity
-              onPress={() => handleDelete(index)}
-              style={styles.deleteButton}
-            >
-              <Text style={styles.deleteButtonText}>Delete</Text>
-            </TouchableOpacity>
+          <TouchableOpacity onPress={() => setStartDatePickerVisible(true)} style={styles.dateButton}>
+            <Text>{startDate ? `Start Date: ${startDate.toLocaleDateString()}` : "Start Date"}</Text>
           </TouchableOpacity>
-        ))
+          <TouchableOpacity onPress={() => setEndDatePickerVisible(true)} style={styles.dateButton}>
+            <Text>{endDate ? `End Date: ${endDate.toLocaleDateString()}` : "End Date"}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={resetFilters} style={styles.resetButton}>
+            <Text>Reset Filters</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      <DateTimePickerModal
+        isVisible={isStartDatePickerVisible}
+        mode="date"
+        onConfirm={handleConfirmStartDate}
+        onCancel={() => setStartDatePickerVisible(false)}
+      />
+
+      <DateTimePickerModal
+        isVisible={isEndDatePickerVisible}
+        mode="date"
+        onConfirm={handleConfirmEndDate}
+        onCancel={() => setEndDatePickerVisible(false)}
+      />
+
+      {filteredForms.length === 0 ? (
+        <Text style={styles.noDataText}>No pending forms found.</Text>
+      ) : (
+        filteredForms.map((item, index) => {
+          const statusStyle = statusStyles[item.formStatus] || {
+            backgroundColor: "#E0E0E0",
+            textColor: "#424242",
+          };
+
+          return (
+            <TouchableOpacity key={index} style={styles.card} onPress={() => handleCardPress(item)}>
+              <View style={styles.cardHeader}>
+                <Text style={styles.name}>{item.basicDetails?.name || "N/A"}</Text>
+                <View style={[styles.statusBadge, { backgroundColor: statusStyle.backgroundColor }]}>
+                  <Text style={[styles.statusText, { color: statusStyle.textColor }]}>
+                    {item.formStatus}
+                  </Text>
+                </View>
+              </View>
+              <Text style={styles.label}>Form: <Text style={styles.value}>{item.formType}</Text></Text>
+              <Text style={styles.label}>Date: <Text style={styles.value}>{item.basicDetails.date}</Text></Text>
+              <View style={styles.actions}>
+                <TouchableOpacity onPress={() => handleDelete(index)} style={styles.deleteButton}>
+                  <Text>Delete</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+          );
+        })
       )}
     </ScrollView>
   );
 };
 
 export default Pending;
+
 
 
 const styles = StyleSheet.create({
