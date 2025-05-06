@@ -227,7 +227,6 @@ const canEdit = () => {
         { label: "33. Land to benefit (ha)", value: selectedForm.landDevelopment?.landBenefit },
         { label: "36. Date of Inspection", value: selectedForm.landDevelopment?.date},
         { label: "38. Type of plantation proposed", value: selectedForm.landDevelopment?.workType },
-        { label: "   Type of plantation", value: selectedForm.landDevelopment?.workTypeText },
         { label: "39. Area benefited (ha)", value: selectedForm.landDevelopment?.proposalArea },
         { label: "40. Any other works proposed", value: selectedForm.landDevelopment?.otherWorks },
         { label: "41. PRADAN Contribution", value: selectedForm.landDevelopment?.pradanContribution },
