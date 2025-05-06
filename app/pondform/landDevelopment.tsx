@@ -1,18 +1,18 @@
-import { useRouter,useLocalSearchParams } from "expo-router";
-import { useState,useEffect } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Text, TextInput, Checkbox, Button, IconButton, Divider } from "react-native-paper";
+import { Button, Checkbox, IconButton, Text, TextInput } from "react-native-paper";
 import { useFormStore } from "../../storage/useFormStore";
 
 export default function PondDevelopment() {
   const router = useRouter();
-  const { id, fromPreview } = useLocalSearchParams<{ id?: string; fromPreview?: string }>();
+  const { id, fromPreview,returnTo,returnsubmit,fromsubmit } = useLocalSearchParams<{ id?: string; fromPreview?: string }>();
   const { data, submittedForms, setData } = useFormStore();
-
   const [form, setForm] = useState(
     data.landDevelopment || {
+      date:"",
       sfNumber: "",
-      soilType: [],
+      soilTypeCombined: [],
       landBenefit: "",
       inspectionBy: "",
       approvedBy: "",
@@ -30,6 +30,10 @@ export default function PondDevelopment() {
     }
   );
   useEffect(() => {
+    const today = new Date();
+    const formattedDate = ("0" + today.getDate()).slice(-2) + '/' + ("0" + (today.getMonth() + 1)).slice(-2) + '/' + today.getFullYear();
+    
+      updateField("date", formattedDate);
     if (id && fromPreview === "true") {
       // Load the form by ID and update current working data
       const selected = submittedForms.find((form) => form.id === id);
@@ -47,14 +51,63 @@ export default function PondDevelopment() {
   };
 
   const toggleCheckbox = (field: string, value: string) => {
-    setForm((prev) => ({
-      ...prev,
-      [field]: prev[field].includes(value)
-        ? prev[field].filter((item: string) => item !== value)
-        : [...prev[field], value],
-    }));
+    setForm((prev) => {
+      const currentValue = typeof prev[field] === "string" ? prev[field] : "";
+      const current = currentValue.split(",").filter(Boolean); // removes empty strings
+  
+      let updated;
+      if (current.includes(value)) {
+        updated = current.filter((item) => item !== value);
+      } else {
+        updated = [...current, value];
+      }
+  
+      return {
+        ...prev,
+        [field]: updated.join(","),
+      };
+    });
   };
-
+ 
+  const renderCheckboxGroup = (
+    
+    field: string,
+    options: string[],
+    isSingle: boolean = false
+  ) =>
+    
+    options.map((item) => (
+      
+      <Checkbox.Item
+        key={item}
+        label={item}
+        status={
+          isSingle
+            ? form[field] === item
+              ? "checked"
+              : "unchecked"
+            : form[field].includes(item)
+            ? "checked"
+            : "unchecked"
+        }
+        
+        onPress={() =>
+          
+          isSingle ? updateField(field, item) : toggleCheckbox(field, item)
+        }
+      />
+    ));
+    const handleNext = () => {
+      setData("landDevelopment", form);
+      setTimeout(() => {
+        if (fromPreview && returnTo) {
+     
+          router.push({ pathname: returnTo, params: { id ,returnsubmit:returnsubmit,fromsubmit:fromsubmit} });
+        } else {
+          router.push("/landform/bankDetails");
+        }
+      }, 50); 
+    };
   // Auto-calculate volume
   useEffect(() => {
     const l = parseFloat(form.length);
@@ -68,43 +121,6 @@ export default function PondDevelopment() {
       setForm((prev) => ({ ...prev, volume: "" }));
     }
   }, [form.length, form.breadth, form.depth]);
-
-  const renderCheckboxGroup = (
-    field: string,
-    options: string[],
-    isSingle: boolean = false
-  ) =>
-    options.map((item) => (
-      <Checkbox.Item
-        key={item}
-        label={item}
-        status={
-          isSingle
-            ? form[field] === item
-              ? "checked"
-              : "unchecked"
-            : form[field].includes(item)
-            ? "checked"
-            : "unchecked"
-        }
-        onPress={() =>
-          isSingle ? updateField(field, item) : toggleCheckbox(field, item)
-        }
-      />
-    ));
-
-
-  const handleNext = () => {
-    setData("landDevelopment", form);
-    setTimeout(() => {
-      if (fromPreview && returnTo) {
-     
-        router.push({ pathname: returnTo, params: { id } });
-      } else {
-        router.push("/plantationform/bankDetails");
-      }
-    }, 50);
-  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -141,17 +157,8 @@ export default function PondDevelopment() {
         />
       </View>
 
-      <Text style={styles.label}>32. Soil Type</Text>
-      {["Red Soil", "Black Cotton", "Sandy Loam", "Laterite"].map((type) => (
-        <Checkbox.Item
-          key={type}
-          label={type}
-          status={form.soilType.includes(type) ? "checked" : "unchecked"}
-          onPress={() => toggleCheckbox("soilType", type)}
-        />
-      ))}
-
-      <Divider style={styles.divider} />
+    <Text style={styles.label}>32. Soil Type:</Text>
+        {renderCheckboxGroup("soilTypeCombined", ["Red Soil", "Black Cotton", "Sandy Loam", "Laterite"])}
 
       <Text style={styles.label}>33. Land to benefit (ha)</Text>
       <TextInput
@@ -162,43 +169,12 @@ export default function PondDevelopment() {
         mode="outlined"
       />
 
-      <Text style={styles.label}>34. Field Inspection done by</Text>
-      {["Associate", "Professional"].map((role) => (
-        <Checkbox.Item
-          key={role}
-          label={role}
-          status={form.inspectionBy === role ? "checked" : "unchecked"}
-          onPress={() => updateField("inspectionBy", role)}
-        />
-      ))}
-
-      <Text style={styles.label}>35. Site Approved by</Text>
-      {["Coordinator", "Team Leader"].map((role) => (
-        <Checkbox.Item
-          key={role}
-          label={role}
-          status={form.approvedBy === role ? "checked" : "unchecked"}
-          onPress={() => updateField("approvedBy", role)}
-        />
-      ))}
-
-      <Text style={styles.label}>36. Date of Inspection</Text>
-      <TextInput
-        value={form.dateInspectionText}
-        onChangeText={(text) => updateField("dateInspectionText", text)}
-        style={styles.input}
-        placeholder="DD/MM/YYYY"
-        mode="outlined"
-      />
-
-      <Text style={styles.label}>37. Date of Approval</Text>
-      <TextInput
-        value={form.dateApprovalText}
-        onChangeText={(text) => updateField("dateApprovalText", text)}
-        style={styles.input}
-        placeholder="DD/MM/YYYY"
-        mode="outlined"
-      />
+     <Text style={styles.label}>36. Date of Inspection:</Text>
+               <TextInput
+           value={form.date}
+           style={styles.input}
+           editable={false}
+         />
 
       <Text style={styles.label}>38. Length (m)</Text>
       <TextInput
