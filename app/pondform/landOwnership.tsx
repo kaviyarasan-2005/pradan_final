@@ -1,14 +1,14 @@
-import { useRouter,useLocalSearchParams } from "expo-router";
-import { useState,useEffect } from "react";
-import { View, Text, TextInput, ScrollView, StyleSheet } from "react-native";
-import { Checkbox, Button, IconButton,RadioButton  } from "react-native-paper";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { ScrollView, StyleSheet, Text, TextInput } from "react-native";
+import { Button, Checkbox, IconButton, RadioButton } from "react-native-paper";
 import { useFormStore } from "../../storage/useFormStore";
 
 export default function LandOwnership() {
   const router = useRouter();
-  const { id, fromPreview,returnTo } = useLocalSearchParams<{ id?: string; fromPreview?: string }>();
-  const { data, submittedForms, setData } = useFormStore();
-
+ const { id, fromPreview,returnTo,fromsubmit,returnsubmit } = useLocalSearchParams<{ id?: string; fromPreview?: string }>();
+   const { data, submittedForms, setData } = useFormStore();
+ 
   const [form, setForm] = useState(
     data.landOwnership || {
       landOwnershipType: "",
@@ -26,7 +26,6 @@ export default function LandOwnership() {
       revenueVillage: "",
       cropSeason: "",
       cropSeasonOther: "",
-      livestockCombinedField:"",
       livestock: {
         goat:"",
         sheep:"",
@@ -35,46 +34,27 @@ export default function LandOwnership() {
         poultry:"",
         others:"",
       },
+      irrigatedLandCombined:"",
+      cropSeasonCombined: "",
+      livestockCombined:"",
     }
   );
-  const handleLivestockChange = (field, value) => {
-    let filteredText = value.replace(/[^0-9]/g, '');
-  
-    const updatedLivestock = {
-      ...form.livestock,
-      [field]: filteredText,
-    };
-  
-    // Default any empty fields to 0 for the combined string
-    const goat = updatedLivestock.goat || '0';
-    const sheep = updatedLivestock.sheep || '0';
-    const milchAnimals = updatedLivestock.milchAnimals || '0';
-    const draught_animals = updatedLivestock.draught_animals || '0';
-    const poultry = updatedLivestock.poultry || '0';
-    const others = updatedLivestock.others || '0';
-  
-    const livestockCombinedField = `${goat},${sheep},${milchAnimals},${draught_animals},${poultry},${others}`;
-  
-    setForm((prev) => ({
-      ...prev,
-      livestock: {
-        ...updatedLivestock,
-        livestockCombinedField: livestockCombinedField,
-      },
-    }));
-  };
-  useEffect(() => {
-    if (id && fromPreview === "true") {
-      // Load the form by ID and update current working data
-      const selected = submittedForms.find((form) => form.id === id);
-      if (selected) {
-        // Set every key in the form data
-        Object.entries(selected).forEach(([key, value]) => {
-          setData(key as keyof typeof data, value);
-        });
-      }
-    }
-  }, [id]);
+      useEffect(() => {
+        if (id && fromPreview === "true") {
+          // Load the form by ID and update current working data
+          const selected = submittedForms.find((form) => form.id === id);
+          if (selected) {
+            // Set every key in the form data
+            Object.entries(selected).forEach(([key, value]) => {
+              setData(key as keyof typeof data, value);
+            });
+          }
+        }
+      }, [id]);
+
+    
+      
+
   const updateField = (field: string, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
@@ -123,12 +103,13 @@ export default function LandOwnership() {
     ));
 
   const handleNext = () => {
+    console.log(form.livestockCombined+" - "+form.irrigatedLandCombined+" - "+form.cropSeasonCombined);
     setData("landOwnership", form);
     if (fromPreview && returnTo) {
      
-      router.push({ pathname: returnTo, params: { id } });
+      router.push({ pathname: returnTo, params: { id,returnsubmit:returnsubmit,fromsubmit:fromsubmit} });
     } else {
-      router.push("/plantationform/landDevelopment");
+      router.push("/pondform/landDevelopment");
     }
   };
 
@@ -175,21 +156,40 @@ export default function LandOwnership() {
       <Text>Rainfed:</Text>
       <TextInput
         value={form.irrigatedLand.rainfed}
-        onChangeText={(text) => updateNestedField("irrigatedLand", "rainfed", text)}
+        onChangeText={(text) =>{ 
+          updateNestedField("irrigatedLand", "rainfed", text)
+          const rainfed = form.irrigatedLand.rainfed || "0";
+          const irrigatedLandcombined = `${rainfed},${form.irrigatedLand.tankfed},${form.irrigatedLand.wellIrrigated}`;
+          
+          updateField("irrigatedLandCombined", irrigatedLandcombined);
+        }}
         style={styles.input}
         keyboardType="numeric"
       />
       <Text>Tankfed:</Text>
       <TextInput
         value={form.irrigatedLand.tankfed}
-        onChangeText={(text) => updateNestedField("irrigatedLand", "tankfed", text)}
+        onChangeText={(text) =>
+          {updateNestedField("irrigatedLand", "tankfed", text)
+            const tank = form.irrigatedLand.tankfed || "0";
+            const irrigatedLandcombined = `${form.irrigatedLand.rainfed},${tank},${form.irrigatedLand.wellIrrigated}`;
+            
+            updateField("irrigatedLandCombined", irrigatedLandcombined);
+
+          }}
         style={styles.input}
         keyboardType="numeric"
       />
       <Text>Well Irrigated:</Text>
       <TextInput
         value={form.irrigatedLand.wellIrrigated}
-        onChangeText={(text) => updateNestedField("irrigatedLand", "wellIrrigated", text)}
+        onChangeText={(text) => {updateNestedField("irrigatedLand", "wellIrrigated", text)
+
+          const well = form.irrigatedLand.wellIrrigated || "0";
+          const irrigatedLandcombined = `${form.irrigatedLand.rainfed},${form.irrigatedLand.tankfed},${well}`;
+          
+          updateField("irrigatedLandCombined", irrigatedLandcombined);
+        }}
         style={styles.input}
         keyboardType="numeric"
       />
@@ -228,85 +228,118 @@ export default function LandOwnership() {
         style={styles.input}
       />
 
-<Text style={styles.question}>29. Crop Season:</Text>
-<RadioButton.Group
-  onValueChange={(value) => updateField("cropSeason", value)}
-  value={form.cropSeason}
->
-  <RadioButton.Item label="Kharif" value="Kharif" />
-  <RadioButton.Item label="Rabi" value="Rabi" />
-  <RadioButton.Item label="Other" value="Other" />
-</RadioButton.Group>
+<Text style={styles.question}>29. Crop Season (Choose all that apply):</Text>
+{["Kharif", "Rabi", "Other"].map((season) => (
+  <Checkbox.Item
+    key={season}
+    label={season}
+    status={form.cropSeason?.includes(season) ? "checked" : "unchecked"}
+    onPress={() => {
+      const newSelection = form.cropSeason?.includes(season)
+        ? form.cropSeason.filter((s: string) => s !== season)
+        : [...(form.cropSeason || []), season];
+      updateField("cropSeason", newSelection);
+      updateField("cropSeasonCombined", newSelection.join(", "));
+    }}
+  />
+))}
 
-{form.cropSeason === "Other" && (
+{form.cropSeason?.includes("Other") && (
   <TextInput
     placeholder="Enter Crop Season"
     value={form.cropSeasonOther}
-    onChangeText={(text) => updateField("cropSeasonOther", text)}
+    onChangeText={(text) => {
+      updateField("cropSeasonOther", text);
+      const updated = [...form.cropSeason.filter((s: string) => s !== "Other"), text];
+      updateField("cropSeasonCombined", updated.join(", "));
+    }}
     style={styles.input}
   />
 )}
 
-    <Text style={styles.question}>30. Livestock at Home:</Text>
+
+ <Text style={styles.question}>30. Livestock at Home:</Text>
+
+<TextInput
+  placeholder="Goat"
+  value={form.livestock.goat}
+  onChangeText={(text) => {updateNestedField("livestock","goat",text)
     
-    <TextInput
-      placeholder="Goat"
-      value={form.livestock.goat}
-      onChangeText={(text) => handleLivestockChange("goat", text)}
-      onBlur={() => handleLivestockChange("goat", form.livestock.goat || "0")}
-      keyboardType="numeric"
-      style={styles.input}
-    />
-    
-    <TextInput
-      placeholder="Sheep"
-      value={form.livestock.sheep}
-      onChangeText={(text) => handleLivestockChange("sheep", text)}
-      onBlur={() => handleLivestockChange("sheep", form.livestock.sheep || "0")}
-      keyboardType="numeric"
-      style={styles.input}
-    />
-    
-    <TextInput
-      placeholder="Milch animals"
-      value={form.livestock.milchAnimals}
-      onChangeText={(text) => handleLivestockChange("milchAnimals", text)}
-      onBlur={() => handleLivestockChange("milchAnimals", form.livestock.milchAnimals || "0")}
-      keyboardType="numeric"
-      style={styles.input}
-    />
-    
-    <TextInput
-      placeholder="Draught Animals"
-      value={form.livestock.draught_animals}
-      onChangeText={(text) => handleLivestockChange("draught_animals", text)}
-      onBlur={() => handleLivestockChange("draught_animals", form.livestock.draught_animals || "0")}
-      keyboardType="numeric"
-      style={styles.input}
-    />
-    
-    <TextInput
-      placeholder="Poultry"
-      value={form.livestock.poultry}
-      onChangeText={(text) => handleLivestockChange("poultry", text)}
-      onBlur={() => handleLivestockChange("poultry", form.livestock.poultry || "0")}
-      keyboardType="numeric"
-      style={styles.input}
-    />
-    
-    <TextInput
-      placeholder="Others"
-      value={form.livestock.others}
-      onChangeText={(text) => handleLivestockChange("others", text)}
-      onBlur={() => handleLivestockChange("others", form.livestock.others || "0")}
-      keyboardType="numeric"
-      style={styles.input}
-    />
-      <Button mode="contained" onPress={handleNext} style={styles.button}>
-      {fromPreview ? "Preview" : "Next"}
-      </Button>
+    const goat = form.livestock.goat ||"0";
+    const livestockCombinedField = `${goat},${form.livestock.sheep},${form.livestock.milchAnimals},${form.livestock.draught_animals},${form.livestock.poultry},${form.livestock.others}`;
+    updateField("livestockCombined",livestockCombinedField);
+
+  }}
+  keyboardType="numeric" 
+  style={styles.input}
+/>
+
+<TextInput
+  placeholder="Sheep"
+  value={form.livestock.sheep}
+  onChangeText={(text) => {updateNestedField("livestock","sheep",text)
+    const sheep = form.livestock.sheep ||"0";
+    const livestockCombinedField = `${form.livestock.goat},${sheep},${form.livestock.milchAnimals},${form.livestock.draught_animals},${form.livestock.poultry},${form.livestock.others}`;
+    updateField("livestockCombined",livestockCombinedField);
+
+  }}
+  keyboardType="numeric"
+  style={styles.input}
+/>
+
+<TextInput
+  placeholder="Milch animals"
+  value={form.livestock.milchAnimals}
+  onChangeText={(text) => {updateNestedField("livestock","milchAnimals",text)
+    const milchAnimals = form.livestock.milchAnimals ||"0";
+    const livestockCombinedField = `${form.livestock.goat},${form.livestock.sheep},${milchAnimals},${form.livestock.draught_animals},${form.livestock.poultry},${form.livestock.others}`;
+    updateField("livestockCombined",livestockCombinedField);
+
+  }}
+  keyboardType="numeric"
+  style={styles.input}
+/>
+
+<TextInput
+  placeholder="Draught Animals"
+  value={form.livestock.draught_animals}
+  onChangeText={(text) => {updateNestedField("livestock","draught_animals",text)
+    const draught_animals= form.livestock.draught_animals ||"0";
+    const livestockCombinedField = `${form.livestock.goat},${form.livestock.sheep},${form.livestock.milchAnimals},${draught_animals},${form.livestock.poultry},${form.livestock.others}`;
+    updateField("livestockCombined",livestockCombinedField);
+  }}
+  keyboardType="numeric"
+  style={styles.input}
+/>
+
+<TextInput
+  placeholder="Poultry"
+  value={form.livestock.poultry}
+  onChangeText={(text) => {updateNestedField("livestock","poultry",text)
+    const poultry= form.livestock.poultry ||"0";
+    const livestockCombinedField = `${form.livestock.goat},${form.livestock.sheep},${form.livestock.milchAnimals},${form.livestock.draught_animals},${poultry},${form.livestock.others}`;
+    updateField("livestockCombined",livestockCombinedField);
+  }}
+  keyboardType="numeric"
+  style={styles.input}
+/>
+
+<TextInput
+  placeholder="Others"
+  value={form.livestock.others}
+  onChangeText={(text) => {updateNestedField("livestock","others",text)
+    const others= form.livestock.others ||"0";
+    const livestockCombinedField = `${form.livestock.goat},${form.livestock.sheep},${form.livestock.milchAnimals},${form.livestock.draught_animals},${form.livestock.poultry},${others}`;
+    updateField("livestockCombined",livestockCombinedField);
+  }}
+  keyboardType="numeric"
+  style={styles.input}
+/>
+     <Button mode="contained" onPress={handleNext} style={styles.button}>
+     {fromPreview ? "Preview" : "Next"}
+     </Button>
     </ScrollView>
-  );
+  ); 
 }
 
 const styles = StyleSheet.create({

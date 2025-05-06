@@ -117,7 +117,7 @@ export default function LandOwnership() {
     <ScrollView contentContainerStyle={styles.container}>
       <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
 
-      <Text style={styles.title}>Plantation Form</Text>
+      <Text style={styles.title}>Land Form</Text>
       <Text style={styles.subtitle}>Land Ownership & Livestock</Text>
 
       <Text style={styles.question}>23. Land Ownership:</Text>
