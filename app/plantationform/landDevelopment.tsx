@@ -4,23 +4,20 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import {
   Button,
   Checkbox,
-  Divider,
   IconButton,
   Text,
-  TextInput,
+  TextInput
 } from "react-native-paper";
 import { useFormStore } from "../../storage/useFormStore";
-
 export default function LandDevelopment() {
   const router = useRouter();
-  const { id, fromPreview,returnTo } = useLocalSearchParams<{ id?: string; fromPreview?: string }>();
+  const { id, fromPreview,returnTo,returnsubmit,fromsubmit } = useLocalSearchParams<{ id?: string; fromPreview?: string }>();
    const { data, submittedForms, setData } = useFormStore();
-
   const [form, setForm] = useState(
     data.landDevelopment || {
       date:"",
       sfNumber: "",
-      soilType: [],
+      soilTypeCombined: [],
       landBenefit: "",
       inspectionBy: "",
       approvedBy: "",
@@ -37,6 +34,45 @@ export default function LandDevelopment() {
       workTypeText: "",
     }
   );
+  useEffect(() => {
+    const today = new Date();
+    const formattedDate = ("0" + today.getDate()).slice(-2) + '/' + ("0" + (today.getMonth() + 1)).slice(-2) + '/' + today.getFullYear();
+    
+      updateField("date", formattedDate);
+    if (id && fromPreview === "true") {
+      // Load the form by ID and update current working data
+      const selected = submittedForms.find((form) => form.id === id);
+      if (selected) {
+        // Set every key in the form data
+        Object.entries(selected).forEach(([key, value]) => {
+          setData(key as keyof typeof data, value);
+        });
+      }
+    }
+  }, [id]);
+  
+  const updateField = (field: string, value: any) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
+  const toggleCheckbox = (field: string, value: string) => {
+    setForm((prev) => {
+      const currentValue = typeof prev[field] === "string" ? prev[field] : "";
+      const current = currentValue.split(",").filter(Boolean); // removes empty strings
+  
+      let updated;
+      if (current.includes(value)) {
+        updated = current.filter((item) => item !== value);
+      } else {
+        updated = [...current, value];
+      }
+  
+      return {
+        ...prev,
+        [field]: updated.join(","),
+      };
+    });
+  };
+
   const renderCheckboxGroup = (
     field: string,
     options: string[],
@@ -61,42 +97,12 @@ export default function LandDevelopment() {
       />
     ));
 
-    useEffect(() => {
-      if (id && fromPreview === "true") {
-        // Load the form by ID and update current working data
-        const selected = submittedForms.find((form) => form.id === id);
-        if (selected) {
-          // Set every key in the form data
-          Object.entries(selected).forEach(([key, value]) => {
-            setData(key as keyof typeof data, value);
-            const today = new Date();
-            const formattedDate = ("0" + today.getDate()).slice(-2) + '/' + ("0" + (today.getMonth() + 1)).slice(-2) + '/' + today.getFullYear();
-            
-              updateField("date", formattedDate);
-          });
-        }
-      }
-    }, [id]);
-
-  const updateField = (field: string, value: any) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const toggleCheckbox = (field: string, value: string) => {
-    setForm((prev) => ({
-      ...prev,
-      [field]: prev[field].includes(value)
-        ? prev[field].filter((item: string) => item !== value)
-        : [...prev[field], value],
-    }));
-  };
-
   const handleNext = () => {
     setData("landDevelopment", form);
     setTimeout(() => {
       if (fromPreview && returnTo) {
      
-        router.push({ pathname: returnTo, params: { id } });
+        router.push({ pathname: returnTo, params: { id ,returnsubmit:returnsubmit,fromsubmit:fromsubmit} });
       } else {
         router.push("/plantationform/bankDetails");
       }
@@ -138,17 +144,8 @@ export default function LandDevelopment() {
         />
       </View>
 
-      <Text style={styles.question}>32. Soil Type</Text>
-      {["Red Soil", "Black Cotton", "Sandy Loam", "Laterite"].map((type) => (
-        <Checkbox.Item
-          key={type}
-          label={type}
-          status={form.soilType.includes(type) ? "checked" : "unchecked"}
-          onPress={() => toggleCheckbox("soilType", type)}
-        />
-      ))}
-
-      <Divider style={styles.divider} />
+       <Text style={styles.question}>32. Soil Type:</Text>
+            {renderCheckboxGroup("soilTypeCombined", ["Red Soil", "Black Cotton", "Sandy Loam", "Laterite"])}
 
       <Text style={styles.question}>33. Land to benefit (ha)</Text>
       <TextInput
@@ -159,13 +156,12 @@ export default function LandDevelopment() {
         mode="outlined"
       />
 
-      <Text style={styles.question}>36. Date of Inspection</Text>
-            <TextInput
-        value={form.date}
-        style={styles.input}
-        editable={false}
-      />
-
+      <Text style={styles.question}>36. Date of Inspection:</Text>
+                <TextInput
+            value={form.date}
+            style={styles.input}
+            editable={false}
+          />
 
      <Text style={styles.question}>38. Type of Plantation proposed:</Text>
      {renderCheckboxGroup("workType", [
