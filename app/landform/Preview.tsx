@@ -266,7 +266,6 @@ const canEdit = () => {
       onPress={async () => {
         try {
           setData("formType", "LAND");
-          setData("formStatus", "Draft");
           setData("fundStatus",data.bankDetails?.fundStatus)
 
           await new Promise((res) => setTimeout(res, 50));
