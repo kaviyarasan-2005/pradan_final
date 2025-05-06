@@ -1,12 +1,12 @@
-import { useRouter ,useLocalSearchParams, usePathname} from "expo-router";
-import React, { useState,useEffect } from "react";
-import { View, ScrollView, Text, TextInput, StyleSheet } from "react-native";
-import { Button, IconButton, RadioButton } from "react-native-paper";
-import * as ImagePicker from "expo-image-picker";
-import * as DocumentPicker from "expo-document-picker";
-import { useFormStore } from "../../storage/useFormStore";
-import * as FileSystem from "expo-file-system"; // Import FileSystem
 import { Picker } from "@react-native-picker/picker";
+import * as DocumentPicker from "expo-document-picker";
+import * as FileSystem from "expo-file-system"; // Import FileSystem
+import * as ImagePicker from "expo-image-picker";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Button, IconButton, RadioButton } from "react-native-paper";
+import { useFormStore } from "../../storage/useFormStore";
 
 export default function BankDetails() {
   const router = useRouter();
@@ -22,6 +22,7 @@ export default function BankDetails() {
       ifscCode: "",
       farmerAgreed: "",
       formStatus: "",
+      fundStatus:"",
       submittedFiles: {
         patta: null,
         idCard: null,
@@ -219,6 +220,18 @@ export default function BankDetails() {
           <Picker.Item label="Approved" value="Approved" />
           <Picker.Item label="Pending" value="Pending" />
           <Picker.Item label="Rejected" value="Rejected" />
+          <Picker.Item label="Review" value="Review" />
+        </Picker>
+      </View>
+      <Text style={styles.question}>FUND Status:</Text>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={form.formStatus}
+          onValueChange={(itemValue) => updateField("fundStatus", itemValue)}
+        >
+          <Picker.Item label="Select status..." value="Not Filled" />
+          <Picker.Item label="Pre Fund" value="prefund" />
+          <Picker.Item label="Post Fund" value="postfund" />
         </Picker>
       </View>
 

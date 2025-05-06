@@ -101,9 +101,9 @@ const renderCard2 = ({ item }: any) => {
     const handleCardPress = () => {
       switch (item.id) {
         case '1':
-          router.push('/postfd/tatalsubmit');
+          router.push('/postfd/totalsubmit');
           break;
-        case '2':
+        case '2': 
           router.push('/postfd/pending');
           break;
         case '3':
