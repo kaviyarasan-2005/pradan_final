@@ -7,7 +7,6 @@ import { useFormStore } from "../../storage/useFormStore";
 
 export default function BasicDetails() {
   const router = useRouter();
-  // tpe specified 
   const { id, fromPreview, returnTo, returnsubmit, fromsubmit } = useLocalSearchParams<{
     id?: string;
     fromPreview?: string;
@@ -19,7 +18,6 @@ export default function BasicDetails() {
 
   const [form, setForm] = useState(
     data.basicDetails || {
-      date:"",
       name: "",
       age: "",
       mobile: "",
@@ -36,11 +34,9 @@ export default function BasicDetails() {
       adults: "",
       children: "",
       occupation: { agriculture: "", business: "", other: "" },
-      occupationCombinedField: "",
       specialCategory: false,
       specialCategoryNumber: "",
       caste: "",
-      hhcombinedfiled:"",
       houseOwnership: "",
       houseType: "",
       drinkingWater: [],
@@ -49,6 +45,11 @@ export default function BasicDetails() {
       toiletAvailability: "",
       toiletCondition: "",
       education: "",
+      hhcombined:"",
+      occupationCombined:"",
+      drinkingWaterCombined:[],
+      potabilityCombined:[],
+      domesticWaterCombined:[],
     }
   );
   
@@ -61,22 +62,35 @@ export default function BasicDetails() {
         });
       }
     }
-    const today = new Date();
-    const formattedDate = ("0" + today.getDate()).slice(-2) + '/' + ("0" + (today.getMonth() + 1)).slice(-2) + '/' + today.getFullYear();
-    
-      updateField("date", formattedDate);
   }, [id]);
   const updateField = (field: string, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
-
-  const toggleCheckbox = (field: string, value: string) => {
+  const updateNestedField = (parent: string, field: string, value: any) => {
     setForm((prev) => ({
       ...prev,
-      [field]: prev[field].includes(value)
-        ? prev[field].filter((item: string) => item !== value)
-        : [...prev[field], value],
+      [parent]: {
+        ...prev[parent],[field]: value,
+      },
     }));
+  };
+  const toggleCheckbox = (field: string, value: string) => {
+    setForm((prev) => {
+      const currentValue = typeof prev[field] === "string" ? prev[field] : "";
+      const current = currentValue.split(",").filter(Boolean); // removes empty strings
+  
+      let updated;
+      if (current.includes(value)) {
+        updated = current.filter((item) => item !== value);
+      } else {
+        updated = [...current, value];
+      }
+  
+      return {
+        ...prev,
+        [field]: updated.join(","),
+      };
+    });
   };
 
   // in which id the basics updated while from submitted text
@@ -92,16 +106,19 @@ export default function BasicDetails() {
       router.push({ pathname: returnTo, params: { id ,returnsubmit:returnsubmit,fromsubmit:fromsubmit} });
     }
     else {
-      router.push("/landform/landOwnership");
+      router.push("/plantationform/landOwnership");
     }
   };
 
   const renderCheckboxGroup = (
+    
     field: string,
     options: string[],
     isSingle: boolean = false
   ) =>
+    
     options.map((item) => (
+      
       <Checkbox.Item
         key={item}
         label={item}
@@ -114,11 +131,14 @@ export default function BasicDetails() {
             ? "checked"
             : "unchecked"
         }
+        
         onPress={() =>
+          
           isSingle ? updateField(field, item) : toggleCheckbox(field, item)
         }
       />
     ));
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -128,12 +148,7 @@ export default function BasicDetails() {
 
       <Text style={styles.title}>Plantation Form</Text>
       <Text style={styles.subtitle}>Basic Details</Text>
-      <Text style={styles.question}>Date:</Text>
-      <TextInput
-  value={form.date}
-  style={styles.input}
-  editable={false}
-/>
+      
 
 
       {/* Inputs */}
@@ -305,8 +320,8 @@ export default function BasicDetails() {
     const updatedChildren = form.children; // or get children value here
     
     // Combine both values and update a single field
-    const hhcombinedfiled = `${updatedAdults},${updatedChildren}`;
-    updateField("hhcombinedfiled", hhcombinedfiled); // Save combined value in a single field
+    const hhcombined = `${updatedAdults},${updatedChildren}`;
+    updateField("hhcombined", hhcombined); // Save combined value in a single field
     updateField("adults", updatedAdults); // Optionally, keep adults separate
   }}
   style={styles.input}
@@ -325,8 +340,8 @@ export default function BasicDetails() {
     const updatedAdults = form.adults; // or get adults value here
     
     // Combine both values and update a single field
-    const hhcombinedfiled = `${updatedAdults},${updatedChildren}`;
-    updateField("hhcombinedfiled", hhcombinedfiled); // Save combined value in a single field
+    const hhcombined = `${updatedAdults},${updatedChildren}`;
+    updateField("hhcombined", hhcombined); // Save combined value in a single field
     updateField("children", updatedChildren); // Optionally, keep children separate
   }}
   style={styles.input}
@@ -340,23 +355,12 @@ export default function BasicDetails() {
 <TextInput
   value={form.occupation.agriculture}
   onChangeText={(text) => {
-    let filteredText = text.replace(/[^0-9]/g, '');
-    if (parseInt(filteredText) > 50) filteredText = '50';
-
-    const updatedAgriculture = filteredText;
+    updateNestedField("occupation","agriculture",text);
+    const updatedAgriculture = text;
     const updatedBusiness = form.occupation.business;
     const updatedOther = form.occupation.other;
-
-    const occupationCombinedField = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
-
-    setForm((prev) => ({
-      ...prev,
-      occupation: {
-        ...prev.occupation,
-        agriculture: updatedAgriculture,
-        occupationCombinedField: occupationCombinedField,
-      },
-    }));
+    const occupationCombined = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
+    updateField("occupationCombined" , occupationCombined);
   }}
   style={[
     styles.input,
@@ -368,30 +372,16 @@ export default function BasicDetails() {
   placeholder="Agriculture"
   keyboardType="numeric"
 />
-{form.occupation.agriculture !== '' && parseInt(form.occupation.agriculture) > 50 && (
-  <Text style={{ color: 'red', fontSize: 12 }}>Cannot exceed 50</Text>
-)}
-
 <TextInput
   value={form.occupation.business}
   onChangeText={(text) => {
-    let filteredText = text.replace(/[^0-9]/g, '');
-    if (parseInt(filteredText) > 50) filteredText = '50';
-
-    const updatedBusiness = filteredText;
+    updateNestedField("occupation","business",text);
+    const updatedBusiness = text;
     const updatedAgriculture = form.occupation.agriculture;
     const updatedOther = form.occupation.other;
 
-    const occupationCombinedField = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
-
-    setForm((prev) => ({
-      ...prev,
-      occupation: {
-        ...prev.occupation,
-        business: updatedBusiness,
-        occupationCombinedField: occupationCombinedField,
-      },
-    }));
+    const occupationCombined = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
+    updateField("occupationCombined" , occupationCombined);
   }}
   style={[
     styles.input,
@@ -403,30 +393,17 @@ export default function BasicDetails() {
   placeholder="Business"
   keyboardType="numeric"
 />
-{form.occupation.business !== '' && parseInt(form.occupation.business) > 50 && (
-  <Text style={{ color: 'red', fontSize: 12 }}>Cannot exceed 50</Text>
-)}
 
 <TextInput
   value={form.occupation.other}
   onChangeText={(text) => {
-    let filteredText = text.replace(/[^0-9]/g, '');
-    if (parseInt(filteredText) > 50) filteredText = '50';
-
-    const updatedOther = filteredText;
+    updateNestedField("occupation","other",text);
+    const updatedOther = text;
     const updatedAgriculture = form.occupation.agriculture;
     const updatedBusiness = form.occupation.business;
 
-    const occupationCombinedField = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
-
-    setForm((prev) => ({
-      ...prev,
-      occupation: {
-        ...prev.occupation,
-        other: updatedOther,
-        occupationCombinedField: occupationCombinedField,
-      },
-    }));
+    const occupationCombined = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
+    updateField("occupationCombined" , occupationCombined);
   }}
   style={[
     styles.input,
@@ -438,20 +415,12 @@ export default function BasicDetails() {
   placeholder="Other"
   keyboardType="numeric"
 />
-{form.occupation.other !== '' && parseInt(form.occupation.other) > 50 && (
-  <Text style={{ color: 'red', fontSize: 12 }}>Cannot exceed 50</Text>
-)}
-
-
-
 <Text style={styles.question}>15. Special Category:</Text>
-
 <Checkbox.Item
   label="Disabled"
   status={form.specialCategory ? "checked" : "unchecked"}
   onPress={() => updateField("specialCategory", !form.specialCategory)}
 />
-
 {form.specialCategory && (
   <>
     <TextInput
@@ -511,13 +480,13 @@ export default function BasicDetails() {
 </RadioButton.Group>
 
       <Text style={styles.question}>19. Drinking Water Source:</Text>
-      {renderCheckboxGroup("drinkingWater", ["Ponds", "Well & Borewells", "Trucks"])}
+      {renderCheckboxGroup("drinkingWaterCombined", ["Ponds", "Well & Borewells", "Trucks"])}
 
       <Text style={styles.question}>20. Potability:</Text>
-      {renderCheckboxGroup("potability", ["Ponds", "Tanks", "Well & Borewells"])}
+      {renderCheckboxGroup("potabilityCombined", ["Ponds", "Tanks", "Well & Borewells"])}
 
       <Text style={styles.question}>21. Domestic Water Source:</Text>
-      {renderCheckboxGroup("domesticWater", ["Ponds", "Tanks", "Well & Borewells"])}
+      {renderCheckboxGroup("domesticWaterCombined", ["Ponds", "Tanks", "Well & Borewells"])}
 
       <Text style={styles.question}>22. Toilet Availability:</Text>
 <RadioButton.Group
@@ -536,7 +505,6 @@ export default function BasicDetails() {
   <RadioButton.Item label="Yes" value="yes" />
   <RadioButton.Item label="No" value="no" />
 </RadioButton.Group>
-
       <Text style={styles.question}>24. Education of Householder:</Text>
 <RadioButton.Group
   onValueChange={(value) => updateField("education", value)}
