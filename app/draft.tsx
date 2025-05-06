@@ -50,16 +50,14 @@ export default function DraftsScreen() {
     setData("formType", item.formType);
     setData("formStatus", item.formStatus);
     setData("fundStatus",item.fundStatus)
-  
-if(item.formType == "LAND" ){
-  const path = "/landform/Preview";
-}
-else if(item.formType == "POND"){
-  const path = "/pondform/Preview";
-}
-else {
-  const path = "/platation/Preview";
-}
+    const pathMap = {
+      LAND: "/landform/Preview",
+      POND: "/pondform/Preview",
+      PLANTATION: "/plantationform/Preview",
+    };
+    
+    const path = pathMap[item.formType]; // default fallback
+    
     // Now navigate — no need to pass id anymore
     router.push({
       pathname:path,
