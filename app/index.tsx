@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert } from "react-native";
+import { FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import { FontAwesome } from '@expo/vector-icons';
+import { useEffect, useState } from "react";
+import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 
 export default function LoginScreen() {
@@ -87,6 +87,9 @@ export default function LoginScreen() {
       {/* Login Button */}
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>LOGIN</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={router.push("/Verifier/verifierdashboard")}>
+        <Text style={styles.buttonText}>Verifier</Text>
       </TouchableOpacity>
     </View>
   );
