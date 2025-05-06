@@ -2,16 +2,16 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Animated,
-    Dimensions,
-    FlatList,
-    Image,
-    Pressable,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  Animated,
+  Dimensions,
+  FlatList,
+  Image,
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -95,9 +95,9 @@ const DashboardScreen: React.FC = () => {
           style={styles.profileImage}
         />
         <View style={styles.profileText}>
-          <Text style={styles.profileName}>Akshaykumar S</Text>
+          <Text style={styles.profileName}>KAVIYARASAN </Text>
           <Text style={styles.profileDesignation}>Verifier</Text>
-          <Text style={styles.profileEmail}>akshaykumar059004@pradan.net</Text>
+          <Text style={styles.profileEmail}>Kaviyarasan@pradan.net</Text>
         </View>
       </Pressable>
 
