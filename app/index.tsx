@@ -88,9 +88,6 @@ export default function LoginScreen() {
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>LOGIN</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={router.push("/Verifier/verifierdashboard")}>
-        <Text style={styles.buttonText}>Verifier</Text>
-      </TouchableOpacity>
     </View>
   );
 }

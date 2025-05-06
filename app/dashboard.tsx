@@ -257,6 +257,14 @@ const renderCard2 = ({ item }: any) => {
       >
         <Text style={styles.cancelText}>Cancel</Text>
       </Pressable>
+      <Pressable
+        style={[styles.optionButton, styles.cancelButton]}
+        onPress={() =>{ setModalVisible(false)
+              router.push("/Verifier/verifierdashboard");
+        }}
+      >
+        <Text style={styles.cancelText}>Verifier</Text>
+      </Pressable>
     </Pressable>
   </Pressable>
 </Modal>
