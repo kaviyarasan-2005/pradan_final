@@ -48,6 +48,7 @@ export default function DraftsScreen() {
     setData("id", item.id);
     setData("formType", item.formType);
     setData("formStatus", item.formStatus);
+    setData("fundStatus",item.fundStatus)
   
     // Now navigate — no need to pass id anymore
     router.push({

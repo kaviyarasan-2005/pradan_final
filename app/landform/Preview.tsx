@@ -267,6 +267,8 @@ const canEdit = () => {
         try {
           setData("formType", "LAND");
           setData("formStatus", "Draft");
+          setData("fundStatus",data.bankDetails?.fundStatus)
+
           await new Promise((res) => setTimeout(res, 50));
           useFormStore.getState().saveDraft(data);
           Alert.alert("Saved", "Form saved as draft successfully!");
