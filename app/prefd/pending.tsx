@@ -1,18 +1,18 @@
 // Pending.tsx
+import { useActionSheet } from "@expo/react-native-action-sheet";
+import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  ScrollView,
-  TouchableOpacity,
   Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { useRouter } from "expo-router";
-import { useFormStore } from "../storage/useFormStore";
-import { Ionicons, MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
-import { useActionSheet } from "@expo/react-native-action-sheet";
+import { useFormStore } from "../../storage/useFormStore";
 
 const statusStyles = {
   Pending: {
@@ -67,7 +67,7 @@ const Pending = () => {
     }
 
     router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", 
-      returnsubmit: "/pending", } });
+      returnsubmit: "/prefd/pending", } });
   };
 
   const handleDelete = (index) => {
@@ -97,7 +97,7 @@ const Pending = () => {
         <TouchableOpacity onPress={() => router.push("/dashboard")} style={styles.icon}>
           <Ionicons name="arrow-back" size={24} color="#1B5E20" />
         </TouchableOpacity>
-        <Text style={styles.title}>Pending Forms</Text>
+        <Text style={styles.title}>PRE Pending Forms</Text>
         <TouchableOpacity onPress={openFilterSheet} style={styles.icon}>
           <MaterialIcons name="filter-list" size={24} color="#1B5E20" />
         </TouchableOpacity>

@@ -1,26 +1,26 @@
+import { useActionSheet } from "@expo/react-native-action-sheet";
+import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  ScrollView,
-  TouchableOpacity,
   Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { useRouter } from "expo-router";
-import { useFormStore } from "../storage/useFormStore";
-import { Ionicons, MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
-import { useActionSheet } from "@expo/react-native-action-sheet";
+import { useFormStore } from "../../storage/useFormStore";
 
 const statusStyles = {
-  Rejected: {
-    backgroundColor: "#FFCDD2",
-    textColor: "#C62828",
+  Approved: {
+    backgroundColor: "#C8E6C9",
+    textColor: "#2E7D32",
   },
 };
 
-const Rejected = () => {
+const Approved = () => {
   const router = useRouter();
   const { submittedForms, loadSubmittedForms, deleteFormByIndex } = useFormStore();
   const { showActionSheetWithOptions } = useActionSheet();
@@ -65,8 +65,7 @@ const Rejected = () => {
       return;
     }
 
-    router.push({ pathname: previewPath, params: { id: item.id ,fromsubmit: "true", 
-      returnsubmit: "/rejected", } });
+    router.push({ pathname: previewPath, params: { id: item.id } });
   };
 
   const handleDelete = (index) => {
@@ -83,10 +82,10 @@ const Rejected = () => {
   };
 
   const filteredForms = submittedForms.filter((item) => {
-    const isRejected = item.formStatus === "Rejected";
+    const isApproved = item.formStatus === "Approved";
     const matchesType = selectedFilter === "ALL" || item.formType === selectedFilter;
     const matchesSearch = item.basicDetails?.name?.toLowerCase().includes(searchText.toLowerCase());
-    return isRejected && matchesType && matchesSearch;
+    return isApproved && matchesType && matchesSearch;
   });
 
   return (
@@ -94,17 +93,17 @@ const Rejected = () => {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.push("/dashboard")} style={styles.icon}>
-          <Ionicons name="arrow-back" size={24} color="#B71C1C" />
+          <Ionicons name="arrow-back" size={24} color="#1B5E20" />
         </TouchableOpacity>
-        <Text style={styles.title}>Rejected Forms</Text>
+        <Text style={styles.title}>PRE Approved Forms</Text>
         <TouchableOpacity onPress={openFilterSheet} style={styles.icon}>
-          <MaterialIcons name="filter-list" size={24} color="#B71C1C" />
+          <MaterialIcons name="filter-list" size={24} color="#1B5E20" />
         </TouchableOpacity>
       </View>
 
       {/* Search */}
       <View style={styles.searchContainer}>
-        <FontAwesome5 name="search" size={16} color="#B71C1C" style={styles.searchIcon} />
+        <FontAwesome5 name="search" size={16} color="#1B5E20" style={styles.searchIcon} />
         <TextInput
           placeholder="Search by farmer name"
           value={searchText}
@@ -116,7 +115,7 @@ const Rejected = () => {
 
       {/* No data */}
       {filteredForms.length === 0 ? (
-        <Text style={styles.noDataText}>No rejected forms yet.</Text>
+        <Text style={styles.noDataText}>No approved forms yet.</Text>
       ) : (
         filteredForms.map((item, index) => (
           <TouchableOpacity
@@ -129,10 +128,10 @@ const Rejected = () => {
               <View
                 style={[
                   styles.statusBadge,
-                  { backgroundColor: statusStyles.Rejected.backgroundColor },
+                  { backgroundColor: statusStyles.Approved.backgroundColor },
                 ]}
               >
-                <Text style={[styles.statusText, { color: statusStyles.Rejected.textColor }]}>
+                <Text style={[styles.statusText, { color: statusStyles.Approved.textColor }]}>
                   {item.formStatus}
                 </Text>
               </View>
@@ -166,7 +165,7 @@ const Rejected = () => {
   );
 };
 
-export default Rejected;
+export default Approved;
 
 const styles = StyleSheet.create({
   container: {
@@ -186,7 +185,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#B71C1C",
+    color: "#1B5E20",
   },
   searchContainer: {
     flexDirection: "row",
@@ -212,7 +211,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   card: {
-    backgroundColor: "#fdf1f0",
+    backgroundColor: "#f5f5f5",
     borderRadius: 10,
     padding: 16,
     marginBottom: 14,
@@ -253,20 +252,22 @@ const styles = StyleSheet.create({
   bioTitle: {
     fontWeight: "bold",
     marginBottom: 4,
-    color: "#333",
+    color: "#444",
   },
   bioContent: {
-    color: "#555",
+    fontSize: 13,
+    color: "#666",
   },
   deleteButton: {
-    marginTop: 12,
+    marginTop: 10,
+    alignSelf: "flex-end",
     backgroundColor: "#FFCDD2",
-    paddingVertical: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
     borderRadius: 6,
-    alignItems: "center",
   },
   deleteButtonText: {
-    color: "#B71C1C",
+    color: "#C62828",
     fontWeight: "bold",
   },
 });

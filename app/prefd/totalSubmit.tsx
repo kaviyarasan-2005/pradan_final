@@ -13,7 +13,7 @@ import {
   View,
 } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker"; // For date picker
-import { useFormStore } from "../storage/useFormStore";
+import { useFormStore } from "../../storage/useFormStore";
 
 const statusStyles = {
   Approved: { backgroundColor: '#C8E6C9', textColor: '#2E7D32' },
@@ -72,7 +72,7 @@ const TotalSubmit = () => {
     else if (item.formType === "PLANTATION") previewPath = "/plantationform/Preview";
     else return alert("Unknown form type.");
 
-    router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/totalSubmit" } });
+    router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/prefd/totalSubmit" } });
   };
 
   const handleDelete = (index) => {
@@ -115,7 +115,7 @@ const TotalSubmit = () => {
         <TouchableOpacity onPress={() => router.push("/dashboard")} style={styles.icon}>
           <Ionicons name="arrow-back" size={24} color="#1B5E20" />
         </TouchableOpacity>
-        <Text style={styles.title}>Form Submissions</Text>
+        <Text style={styles.title}>PRE TotalForm Submissions</Text>
         <TouchableOpacity onPress={() => setShowFilters(!showFilters)} style={styles.icon}>
           <MaterialIcons name="filter-list" size={24} color="#1B5E20" />
         </TouchableOpacity>

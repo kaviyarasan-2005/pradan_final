@@ -71,16 +71,16 @@ const DashboardScreen: React.FC = () => {
         const handleCardPress = () => {
           switch (item.id) {
             case '1':
-              router.push('/totalSubmit');
+              router.push('/prefd/totalSubmit');
               break;
             case '2':
-              router.push('/pending');
+              router.push('/prefd/pending');
               break;
             case '3':
-              router.push('/rejected');
+              router.push('/prefd/rejected');
               break;
             case '4':
-              router.push('/approved');
+              router.push('/prefd/approved');
               break;
             default:
               break;

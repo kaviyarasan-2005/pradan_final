@@ -3,13 +3,13 @@ import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-    Alert,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useFormStore } from "../../storage/useFormStore";
 
@@ -66,7 +66,7 @@ const Rejected = () => {
     }
 
     router.push({ pathname: previewPath, params: { id: item.id ,fromsubmit: "true", 
-      returnsubmit: "/rejected", } });
+      returnsubmit: "/postfd/remarks", } });
   };
 
   const handleDelete = (index) => {
@@ -96,7 +96,7 @@ const Rejected = () => {
         <TouchableOpacity onPress={() => router.push("/dashboard")} style={styles.icon}>
           <Ionicons name="arrow-back" size={24} color="#B71C1C" />
         </TouchableOpacity>
-        <Text style={styles.title}>Rejected Forms</Text>
+        <Text style={styles.title}> POST Remarks Forms</Text>
         <TouchableOpacity onPress={openFilterSheet} style={styles.icon}>
           <MaterialIcons name="filter-list" size={24} color="#B71C1C" />
         </TouchableOpacity>
