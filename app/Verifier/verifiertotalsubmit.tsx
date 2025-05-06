@@ -3,12 +3,12 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Button } from 'react-native-paper';
@@ -37,7 +37,7 @@ const ApplicationCard = ({ name, form, date, bio, status }) => {
 
   return (
     <TouchableOpacity style={styles.card} onPress={() => {
-      router.push('/dashboard_verifier');
+      router.push('/Verifier/plantationformverifier');
     }}>
       <View style={styles.cardHeader}>
         <Text style={styles.name}>{name}</Text>
