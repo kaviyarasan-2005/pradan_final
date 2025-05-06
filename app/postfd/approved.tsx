@@ -83,9 +83,10 @@ const Approved = () => {
 
   const filteredForms = submittedForms.filter((item) => {
     const isApproved = item.formStatus === "Approved";
+    const ispostfd = item.fundStatus === "postfund";
     const matchesType = selectedFilter === "ALL" || item.formType === selectedFilter;
     const matchesSearch = item.basicDetails?.name?.toLowerCase().includes(searchText.toLowerCase());
-    return isApproved && matchesType && matchesSearch;
+    return ispostfd&&isApproved && matchesType && matchesSearch;
   });
 
   return (

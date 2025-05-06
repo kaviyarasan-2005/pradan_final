@@ -83,10 +83,11 @@ const Rejected = () => {
   };
 
   const filteredForms = submittedForms.filter((item) => {
-    const isRejected = item.formStatus === "Rejected";
+    const isReviewed = item.formStatus === "Review";
+    const ispostfd = item.fundStatus === "postfund";
     const matchesType = selectedFilter === "ALL" || item.formType === selectedFilter;
     const matchesSearch = item.basicDetails?.name?.toLowerCase().includes(searchText.toLowerCase());
-    return isRejected && matchesType && matchesSearch;
+    return ispostfd&&isReviewed && matchesType && matchesSearch;
   });
 
   return (

@@ -7,7 +7,7 @@ interface FormData {
   date?: string;
   fundStatus?:"postfund" | "prefund";
   formType?: "LAND" | "POND" | "PLANTATION";
-  formStatus?: "Approved" | "Pending" | "Rejected";
+  formStatus?: "Approved" | "Pending" | "Rejected" |"Review";
   basicDetails?: any;
   landOwnership?: any;
   landDevelopment?: any;
