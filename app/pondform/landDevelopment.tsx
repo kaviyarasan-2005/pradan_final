@@ -104,7 +104,7 @@ export default function PondDevelopment() {
      
           router.push({ pathname: returnTo, params: { id ,returnsubmit:returnsubmit,fromsubmit:fromsubmit} });
         } else {
-          router.push("/landform/bankDetails");
+          router.push("/pondform/bankDetails");
         }
       }, 50); 
     };
@@ -113,7 +113,6 @@ export default function PondDevelopment() {
     const l = parseFloat(form.length);
     const b = parseFloat(form.breadth);
     const d = parseFloat(form.depth);
-
     if (!isNaN(l) && !isNaN(b) && !isNaN(d)) {
       const volume = (l * b * d).toFixed(2);
       setForm((prev) => ({ ...prev, volume }));
