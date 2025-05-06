@@ -89,7 +89,7 @@ const DashboardScreen: React.FC = () => {
         resizeMode="contain"
       />
 
-      <Pressable onPress={() => router.replace('/profile')} style={({ pressed }) => [styles.profileCard]}>
+      <Pressable onPress={() => router.replace('/Verifier/verifierprofile')} style={({ pressed }) => [styles.profileCard]}>
         <Image
           source={require('../../assets/images/PROFILE.jpg')}
           style={styles.profileImage}

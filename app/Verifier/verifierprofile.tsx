@@ -72,7 +72,7 @@ export default function Profile() {
 
         <View style={styles.detailRow}>
           <Text style={styles.label}>Email</Text>
-          <Text style={styles.value}>associative@pradan.net</Text>
+          <Text style={styles.value}>verifier@pradan.net</Text>
         </View>
 
         <View style={styles.detailRow}>
