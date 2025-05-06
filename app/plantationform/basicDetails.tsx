@@ -328,7 +328,6 @@ export default function BasicDetails() {
   placeholder="Adults"
   keyboardType="numeric"
 />
-
 <TextInput
   value={form.children}
   onChangeText={(text) => {
