@@ -40,6 +40,7 @@ export default function DraftsScreen() {
   // }, []);
   
   const openDraft = (item) => {
+    console.log(item.formType);
     // Store draft data in the form store
     setData("basicDetails", item.basicDetails);
     setData("landOwnership", item.landOwnership);
@@ -50,9 +51,18 @@ export default function DraftsScreen() {
     setData("formStatus", item.formStatus);
     setData("fundStatus",item.fundStatus)
   
+if(item.formType == "LAND" ){
+  const path = "/landform/Preview";
+}
+else if(item.formType == "POND"){
+  const path = "/pondform/Preview";
+}
+else {
+  const path = "/platation/Preview";
+}
     // Now navigate — no need to pass id anymore
     router.push({
-      pathname:"/landform/Preview",
+      pathname:path,
       params:{fromdraft:"true"}
     });
   };
