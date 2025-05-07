@@ -95,10 +95,14 @@ export default function BasicDetails() {
       };
     });
   };
+  const hand = () =>{
+    if(form.idCardType == "Other"){
+      updateField("idCardType",form.othercard);
+    }
+  }
 
   // in which id the basics updated while from submitted text
   const handleNext = () => {
-
     setData("basicDetails", form);
 
     if (fromPreview && returnTo ){
@@ -114,6 +118,7 @@ export default function BasicDetails() {
           router.push({pathname:"/prefd/landOwnership",params:{fromland:"true", frompond :"false",fromplantation:"false"}});
         }
         else if(frompond=="true"){
+         
           router.push({pathname:"/prefd/landOwnership",params:{fromland:"false", frompond :"true",fromplantation:"false"}});
         }
         else{
@@ -257,7 +262,7 @@ export default function BasicDetails() {
       />
 <Text style={styles.question}>8. Identity Card:</Text>
 <RadioButton.Group
-  onValueChange={(value) => updateField("idCardType", value)}
+  onValueChange={(value) => {updateField("idCardType", value)}}
   value={form.idCardType}
 >
   <RadioButton.Item label="Aadhar" value="Aadhar" />
@@ -266,10 +271,12 @@ export default function BasicDetails() {
   <RadioButton.Item label="Other" value="Other" />
 </RadioButton.Group>
 
-{form.idCardType === "Other" && (
+{ form.idCardType === "Other" && (
   <TextInput
     value={form.othercard}
-    onChangeText={(text) => updateField("idCardType", text)}
+    onChangeText={(text) => {{updateField("othercard", text)
+    }
+    }}  
     style={styles.input}
     placeholder="Specify Identity Card"
   />
@@ -286,6 +293,7 @@ export default function BasicDetails() {
     } else if (form.idCardType === "EPIC" || form.idCardType === "Driving License") {
       filteredText = text.replace(/[^a-zA-Z0-9]/g, '');
     } 
+    hand();
     updateField("idCardNumber", filteredText);
   }}
   style={styles.input}
