@@ -4,13 +4,12 @@ import { Picker } from '@react-native-picker/picker';
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-  Alert,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useFormStore } from "../../storage/useFormStore";
@@ -74,17 +73,6 @@ const Approved = () => {
     else return alert("Unknown form type.");
 
     router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/postfd/approved" } });
-  };
-
-  const handleDelete = (index) => {
-    Alert.alert("Delete Form", "Are you sure you want to delete this form?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        onPress: () => deleteFormByIndex(index),
-        style: "destructive",
-      },
-    ]);
   };
 
   const handleConfirmStartDate = (date) => {
