@@ -225,6 +225,7 @@ const canEdit = () => {
         { label: "      Longitude", value: selectedForm.landDevelopment?.longitude },
         { label: "32. Soil Type", value: selectedForm.landDevelopment?.soilTypeCombined },
         { label: "33. Land to benefit (ha)", value: selectedForm.landDevelopment?.landBenefit },
+        { label: "33 added. Area benefited by proposal (ha)", value: selectedForm.landDevelopment?.proposalArea },
         { label: "36. Date of Inspection", value: selectedForm.landDevelopment?.date},
         { label: "38. Length", value: selectedForm.landDevelopment?.length },
         { label: "39. Breadth", value: selectedForm.landDevelopment?.breadth },
