@@ -68,9 +68,9 @@ const Review = () => {
 
   const handleCardPress = (item) => {
     let previewPath = "";
-    if (item.formType === "LAND") previewPath = "/landform/Preview";
-    else if (item.formType === "POND") previewPath = "/pondform/Preview";
-    else if (item.formType === "PLANTATION") previewPath = "/plantationform/Preview";
+    if (item.formType === "LAND") previewPath = "./postland";
+    else if (item.formType === "POND") previewPath = "./postpond";
+    else if (item.formType === "PLANTATION") previewPath = "./postplantation";
     else return alert("Unknown form type.");
 
     router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/postfd/pending" } });
