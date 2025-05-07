@@ -269,7 +269,7 @@ export default function BasicDetails() {
 {form.idCardType === "Other" && (
   <TextInput
     value={form.othercard}
-    onChangeText={(text) => updateField("othercard", text)}
+    onChangeText={(text) => updateField("idCardType", text)}
     style={styles.input}
     placeholder="Specify Identity Card"
   />
