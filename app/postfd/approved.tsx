@@ -73,7 +73,7 @@ const Approved = () => {
     else if (item.formType === "PLANTATION") previewPath = "./postplantation";
     else return alert("Unknown form type.");
 
-    router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/postfd/pending" } });
+    router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/postfd/approved" } });
   };
 
   const handleDelete = (index) => {
