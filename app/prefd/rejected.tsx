@@ -214,7 +214,7 @@ const Rejected = () => {
   );
 };
 
-export default Pending;
+export default Rejected;
 
 
 
