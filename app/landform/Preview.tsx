@@ -197,7 +197,7 @@ const canEdit = () => {
         { label: "20. Toilet Availability", value: selectedForm.basicDetails?.toiletAvailability },
         { label: "21. Toilet Condition", value: selectedForm.basicDetails?.toiletCondition },
         { label: "22. Education of Householder", value: selectedForm.basicDetails?.education },
-      ], "/landform/basicDetails")}
+      ], "/prefd/basicDetails")}
 
       {renderSection("Land Ownership & Livestock", [
         { label: "23. Land Ownership", value: selectedForm.landOwnership?.landOwnershipType },
@@ -217,7 +217,7 @@ const canEdit = () => {
         { label: "    Draught Animals :", value: selectedForm.landOwnership?.livestock?.draught_animals || "0" },
         { label: "    Poultry :", value: selectedForm.landOwnership?.livestock?.poultry || "0" },
         { label: "    Others :", value: selectedForm.landOwnership?.livestock?.others || "0" },
-      ], "/landform/landOwnership")}
+      ], "/prefd/landOwnership")}
 
       {renderSection("Land Development Details", [
         { label: "31. S.F. No.", value: selectedForm.landDevelopment?.sfNumber },
@@ -257,7 +257,7 @@ const canEdit = () => {
         },
         { label: "Form Status", value: selectedForm.bankDetails?.formStatus },
         { label: "Fund Status", value: selectedForm.bankDetails?.fundStatus },
-      ], "/landform/bankDetails")}
+      ], "/prefd/bankDetails")}
 
 {!isSubmittedPreview && !fromdraft&& (
   <>
