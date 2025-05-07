@@ -200,7 +200,7 @@ const Approved = () => {
                 </View>
               </View>
               <Text style={styles.label}>Form: <Text style={styles.value}>{item.formType}</Text></Text>
-              <Text style={styles.label}>Date: <Text style={styles.value}>{item.basicDetails.date}</Text></Text>
+              <Text style={styles.label}>Date: <Text style={styles.value}>{item.landDevelopment.date}</Text></Text>
               <View style={styles.actions}>
                 <TouchableOpacity onPress={() => handleDelete(index)} style={styles.deleteButton}>
                   <Text>Delete</Text>

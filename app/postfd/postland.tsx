@@ -1,43 +1,73 @@
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { router } from 'expo-router';
-import React, { useState } from 'react';
-import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from 'react';
+import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useFormStore } from '../../storage/useFormStore'; // adjust path if needed
+
 
 const { width, height } = Dimensions.get('window');
+const getFormDataById = async (formId) => {
+  const data = await AsyncStorage.getItem('submittedForms');
+  const forms = data ? JSON.parse(data) : [];
+  return forms.find((form) => form.id === formId);
+};
+const Postland = () => {
+  const { id } = useLocalSearchParams<{ id?: string }>();
+  const { data, submittedForms, draftForms } = useFormStore();
 
-const BasicDetailsForm = () => {
+  const isSubmittedPreview = !!id;
+  const selectedForm = React.useMemo(() => {
+    if (isSubmittedPreview && id) {
+      return (
+        submittedForms.find((form) => String(form.id) === id)
+      );
+    }
+    return data;
+  }, [id, submittedForms, draftForms, data]);
+
+  const [formData, setFormData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   const navigation = useNavigation();
   const route = useRoute();
-  const { onSubmit } = route.params || {};
 
-  const [formData, setFormData] = useState({
-    name: 'John Doe',
-    fatherSpouse: 'Father Name',
-    code: '12345',
-    hamlet: 'Hamlet Name',
-    panchayat: 'Panchayat Name',
-    revenueVillage: 'Revenue Village Name',
-    block: 'Block Name',
-    district: 'District Name',
-    totalArea: '100 Acres',
-    pradanContribution: '5000',
-    farmerContribution: '2000',
-    measuredBy: 'Associate',
-  });
+  useEffect(() => {
+    if (selectedForm) {
+      setFormData(selectedForm);
+      setLoading(false);
+    }
+  }, [selectedForm]);
 
   const [isEditable, setIsEditable] = useState(false);
 
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
   };
+  const renderCard = (title: string, fields: { label: string; value: any }[]) => (
+    <View style={styles.formGroup}>
+      <Text style={styles.cardTitle}>{title}</Text>
+      {fields.map((field, idx) => (
+        <View key={idx} style={styles.cardRow}>
+          <Text style={styles.cardLabel}>{field.label}</Text>
+          <Text style={styles.cardValue}>
+            {Array.isArray(field.value) ? field.value.join(', ') : String(field.value || '')}
+          </Text>
+        </View>
+      ))}
+    </View>
+  );
+  
+ 
 
-  const handleSubmit = () => {
-    console.log('Form Data Submitted:', formData);
-    if (onSubmit) {
-      onSubmit(); // Call the function passed via route
-    }
-  };
+  if (loading || !formData) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <Text>Loading form data...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -47,44 +77,23 @@ const BasicDetailsForm = () => {
         </TouchableOpacity>
         <Text style={styles.header}>Post Fund Land Inspection</Text>
       </View>
+     
+      {renderCard("Farmer Details", [
+  { label: 'Name of Farmer', value: formData?.basicDetails.name },
+  { label: 'Father/Spouse', value: formData?.basicDetails.fatherOrSpouse },
+  { label: 'Code', value: formData?.basicDetails.code },
+  { label: 'Hamlet', value: formData?.basicDetails.hamlet },
+  { label: 'Panchayat', value: formData?.basicDetails.panchayat },
+  { label: 'Revenue Village', value: formData?.basicDetails.revenueVillage },
+  { label: 'Block', value: formData?.basicDetails.block },
+  { label: 'District', value: formData?.basicDetails.district },
+])}
 
-      {[
-        { label: 'Name of Farmer', field: 'name' },
-        { label: 'Father/Spouse', field: 'fatherSpouse' },
-        { label: 'Code', field: 'code' },
-        { label: 'Hamlet', field: 'hamlet' },
-        { label: 'Panchayat', field: 'panchayat' },
-        { label: 'Revenue Village', field: 'revenueVillage' },
-        { label: 'Block', field: 'block' },
-        { label: 'District', field: 'district' },
-      ].map((item, index) => (
-        <View style={styles.formGroup} key={index}>
-          <Text style={styles.label}>{item.label}</Text>
-          <TextInput
-            style={styles.input}
-            value={formData[item.field]}
-            editable={false}
-          />
-        </View>
-      ))}
-
-      {[
-        { label: 'Total Area', field: 'totalArea' },
-        { label: 'Pradan Contribution', field: 'pradanContribution' },
-        { label: 'Farmer Contribution', field: 'farmerContribution' },
-      ].map((item, index) => (
-        <View style={styles.formGroup} key={index}>
-          <Text style={styles.label}>{item.label}</Text>
-          <View style={styles.editableContainer}>
-            <TextInput
-              style={styles.inputEditable}
-              value={formData[item.field]}
-              editable={isEditable}
-              onChangeText={(text) => handleChange(item.field, text)}
-            />
-          </View>
-        </View>
-      ))}
+{renderCard("Fund Contribution", [
+  { label: 'Total Area', value: formData?.landDevelopment.totalArea },
+  { label: 'Pradan Contribution', value: formData?.landDevelopment.pradanContribution },
+  { label: 'Farmer Contribution', value: formData?.landDevelopment.farmerContribution },
+])}
 
       <View style={styles.formGroup}>
         <Text style={styles.label}>Measured By</Text>
@@ -209,6 +218,33 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
   },
+  card: {
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#0B8B42',
+  },
+  cardRow: {
+    marginBottom: 10,
+  },
+  cardLabel: {
+    fontWeight: '600',
+    color: '#555',
+  },
+  cardValue: {
+    color: '#333',
+  },
+  
 });
 
-export default BasicDetailsForm;
+export default Postland;

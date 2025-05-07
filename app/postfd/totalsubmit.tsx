@@ -4,13 +4,12 @@ import { Picker } from '@react-native-picker/picker';
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-  Alert,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker"; // For date picker
 import { useFormStore } from "../../storage/useFormStore";
@@ -75,16 +74,6 @@ const TotalSubmit = () => {
     router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/postfd/totalsubmit" } });
   };
 
-  const handleDelete = (index) => {
-    Alert.alert("Delete Form", "Are you sure you want to delete this form?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        onPress: () => deleteFormByIndex(index),
-        style: "destructive",
-      },
-    ]);
-  };
 
   // Function to handle the date selection
   const handleConfirmStartDate = (date) => {
@@ -214,7 +203,7 @@ const TotalSubmit = () => {
               </View>
 
               <Text style={styles.label}>Form: <Text style={styles.value}>{item.formType}</Text></Text>
-              <Text style={styles.label}>Date: <Text style={styles.value}>{item.basicDetails.date}</Text></Text>
+              <Text style={styles.label}>Date: <Text style={styles.value}>{item.landDevelopment.date}</Text></Text>
 
               <View style={styles.actions}>
                 <TouchableOpacity onPress={() => handleDelete(index)} style={styles.deleteButton}>
