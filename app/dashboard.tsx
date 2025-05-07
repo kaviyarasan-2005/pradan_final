@@ -225,7 +225,7 @@ const renderCard2 = ({ item }: any) => {
         style={styles.optionButton}
         onPress={() => {
           setModalVisible(false);
-          router.push("/landform/basicDetails");
+          router.push({pathname:"/prefd/basicDetails",params:{fromland:"true", frompond :"false",fromplantation:"false"}});
         }}
       >
         <Text style={styles.optionText}>Land Development Form</Text>
@@ -235,7 +235,7 @@ const renderCard2 = ({ item }: any) => {
         style={styles.optionButton}
         onPress={() => {
           setModalVisible(false);
-          router.push("/pondform/basicDetails");
+          router.push({pathname:"/prefd/basicDetails",params:{fromland:"false", frompond :"true",fromplantation:"false"}});
         }}
       >
         <Text style={styles.optionText}>Pond Construction Form</Text>
@@ -245,7 +245,7 @@ const renderCard2 = ({ item }: any) => {
         style={styles.optionButton}
         onPress={() => {
           setModalVisible(false);
-          router.push("/plantationform/basicDetails");
+          router.push({pathname:"/prefd/basicDetails",params:{fromland:"false", frompond :"false",fromplantation:"true"}});
         }}
       >
         <Text style={styles.optionText}>Plantation Form</Text>

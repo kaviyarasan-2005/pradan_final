@@ -45,7 +45,7 @@ const Approved = () => {
   const filteredForms = submittedForms.filter((item) => {
     const matchesType = formType === "ALL" || item.formType === formType;
     const isPostFund = item.fundStatus === "prefund";
-    const isPending = item.formStatus === "Pending";
+    const isPending = item.formStatus === "Approved";
     const matchesName = item.basicDetails?.name?.toLowerCase().includes(searchText.toLowerCase());
     const matchesPanchayat = item.basicDetails?.panchayat?.toLowerCase().includes(panchayat.toLowerCase());
     const matchesBlock = item.basicDetails?.block?.toLowerCase().includes(block.toLowerCase());
@@ -73,7 +73,7 @@ const Approved = () => {
     else if (item.formType === "PLANTATION") previewPath = "/plantationform/Preview";
     else return alert("Unknown form type.");
 
-    router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/postfd/pending" } });
+    router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/prefd/approved" } });
   };
 
   const handleDelete = (index) => {
@@ -181,7 +181,7 @@ const Approved = () => {
       />
 
       {filteredForms.length === 0 ? (
-        <Text style={styles.noDataText}>No pending forms found.</Text>
+        <Text style={styles.noDataText}>No Approved forms forms found.</Text>
       ) : (
         filteredForms.map((item, index) => {
           const statusStyle = statusStyles[item.formStatus] || {

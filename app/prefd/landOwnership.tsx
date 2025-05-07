@@ -6,7 +6,7 @@ import { useFormStore } from "../../storage/useFormStore";
 
 export default function LandOwnership() {
   const router = useRouter();
- const { id, fromPreview,returnTo,fromsubmit,returnsubmit } = useLocalSearchParams<{ id?: string; fromPreview?: string }>();
+ const { id, fromPreview,returnTo,fromsubmit,returnsubmit,fromland,fromplantation,frompond } = useLocalSearchParams<{ id?: string; fromPreview?: string }>();
    const { data, submittedForms, setData } = useFormStore();
  
   const [form, setForm] = useState(
@@ -109,7 +109,15 @@ export default function LandOwnership() {
      
       router.push({ pathname: returnTo, params: { id,returnsubmit:returnsubmit,fromsubmit:fromsubmit} });
     } else {
-      router.push("/pondform/landDevelopment");
+      if(fromland == "true"){
+        router.push({pathname:"/landform/landDevelopment",params:{fromland:"true", frompond :"false",fromplantation:"false"}});
+      }
+      else if(frompond== "true"){
+        router.push({pathname:"/pondform/landDevelopment",params:{fromland:"false", frompond :"true",fromplantation:"false"}});
+      }
+      else{
+        router.push({pathname:"/plantationform/landDevelopment",params:{fromland:"false", frompond :"false",fromplantation:"true"}});
+      }
     }
   };
 
@@ -117,7 +125,15 @@ export default function LandOwnership() {
     <ScrollView contentContainerStyle={styles.container}>
       <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
 
-      <Text style={styles.title}>Pond Form</Text>
+      <Text style={styles.title}>
+  {fromland === "true"
+    ? "Land Form"
+    : frompond === "true"
+    ? "Pond Form"
+    : fromplantation === "true"
+    ? "Plantation Form"
+    : "Form"}
+</Text>
       <Text style={styles.subtitle}>Land Ownership & Livestock</Text>
 
       <Text style={styles.question}>23. Land Ownership:</Text>

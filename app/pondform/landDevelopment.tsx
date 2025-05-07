@@ -6,7 +6,7 @@ import { useFormStore } from "../../storage/useFormStore";
 
 export default function PondDevelopment() {
   const router = useRouter();
-  const { id, fromPreview,returnTo,returnsubmit,fromsubmit } = useLocalSearchParams<{ id?: string; fromPreview?: string }>();
+  const { id, fromPreview,returnTo,returnsubmit,fromsubmit,fromland,fromplantation,frompond } = useLocalSearchParams<{ id?: string; fromPreview?: string }>();
   const { data, submittedForms, setData } = useFormStore();
   const [form, setForm] = useState(
     data.landDevelopment || {
@@ -104,7 +104,15 @@ export default function PondDevelopment() {
      
           router.push({ pathname: returnTo, params: { id ,returnsubmit:returnsubmit,fromsubmit:fromsubmit} });
         } else {
-          router.push("/pondform/bankDetails");
+          if(fromland== "true"){
+            router.push({pathname:"/prefd/bankDetails",params:{fromland:"true", frompond :"false",fromplantation:"false"}});
+          }
+          else if(frompond== "true"){
+            router.push({pathname:"/prefd/bankDetails",params:{fromland:"false", frompond :"true",fromplantation:"false"}});
+          }
+          else{
+            router.push({pathname:"/prefd/bankDetails",params:{fromland:"false", frompond :"false",fromplantation:"true"}});
+          }
         }
       }, 50); 
     };

@@ -7,12 +7,15 @@ import { useFormStore } from "../../storage/useFormStore";
 
 export default function BasicDetails() {
   const router = useRouter();
-  const { id, fromPreview, returnTo, returnsubmit, fromsubmit } = useLocalSearchParams<{
+  const { id, fromPreview, returnTo, returnsubmit, fromsubmit,fromland,fromplantation,frompond } = useLocalSearchParams<{
     id?: string;
     fromPreview?: string;
     returnTo?: string;
     returnsubmit?: string;
     fromsubmit?: string;
+    fromland?: string;
+    frompond?: string;
+    fromplantation?: string;
   }>();
   const { data, submittedForms, setData } = useFormStore();
 
@@ -106,7 +109,16 @@ export default function BasicDetails() {
       router.push({ pathname: returnTo, params: { id ,returnsubmit:returnsubmit,fromsubmit:fromsubmit} });
     }
     else {
-      router.push("/plantationform/landOwnership");
+        if(fromland == "true"){
+          
+          router.push({pathname:"/prefd/landOwnership",params:{fromland:"true", frompond :"false",fromplantation:"false"}});
+        }
+        else if(frompond=="true"){
+          router.push({pathname:"/prefd/landOwnership",params:{fromland:"false", frompond :"true",fromplantation:"false"}});
+        }
+        else{
+          router.push({pathname:"/prefd/landOwnership",params:{fromland:"false", frompond :"false",fromplantation:"true"}});
+        }
     }
   };
 
@@ -146,7 +158,15 @@ export default function BasicDetails() {
     <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
   )}
 
-      <Text style={styles.title}>Plantation Form</Text>
+<Text style={styles.title}>
+  {fromland === "true"
+    ? "Land Form"
+    : frompond === "true"
+    ? "Pond Form"
+    : fromplantation === "true"
+    ? "Plantation Form"
+    : "Form"}
+</Text>
       <Text style={styles.subtitle}>Basic Details</Text>
       
 
@@ -328,6 +348,7 @@ export default function BasicDetails() {
   placeholder="Adults"
   keyboardType="numeric"
 />
+
 <TextInput
   value={form.children}
   onChangeText={(text) => {
