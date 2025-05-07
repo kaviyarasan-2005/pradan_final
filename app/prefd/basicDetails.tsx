@@ -96,6 +96,7 @@ export default function BasicDetails() {
     });
   };
   const hand = () =>{
+    updateField("specialCategoryNumber", 0);
     if(form.idCardType == "Other"){
       updateField("idCardType",form.othercard);
     }
@@ -447,7 +448,9 @@ export default function BasicDetails() {
 <Checkbox.Item
   label="Disabled"
   status={form.specialCategory ? "checked" : "unchecked"}
-  onPress={() => updateField("specialCategory", !form.specialCategory)}
+  onPress={() => {
+    
+    updateField("specialCategory", !form.specialCategory)}}
 />
 {form.specialCategory && (
   <>
