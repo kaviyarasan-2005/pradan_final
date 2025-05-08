@@ -30,7 +30,8 @@ export default function LandDevelopment() {
       pradanContribution: "",
       farmerContribution: "",
       totalEstimate: "",
-      workType: [],
+      workType2: "",
+      workType: "",
       workTypeText: "",
     }
   );
@@ -180,14 +181,25 @@ export default function LandDevelopment() {
      ])}
      
      {/* Show text input only if 'Other' is selected */}
-     {form.workType.includes("Other") && (
-       <TextInput
-         value={form.workTypeText}
-         onChangeText={(text) => updateField("workTypeText", text)}
-         style={styles.input}
-         placeholder="Specify other work types"
-       />
-     )}
+     {form.workType?.split(",").includes("Other") && (
+  <TextInput
+    value={form.workTypeText}
+    onChangeText={(text) => {
+      updateField("workTypeText", text);
+      if (typeof form.workType === "string") {
+        const updatedWorkType = form.workType
+          .split(",")
+          .map((item) => (item === "Other" ? text : item))
+          .join(",");
+        updateField("workType2", updatedWorkType);
+      }
+    }}
+    
+    style={styles.input}
+    placeholder="Specify other work types"
+  />
+)}
+
 
       <Text style={styles.question}>39. Area benefited by proposal works (ha)</Text>
       <TextInput
