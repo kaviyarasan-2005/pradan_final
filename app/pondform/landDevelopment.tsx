@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Button, Checkbox, IconButton, Text, TextInput } from "react-native-paper";
 import { useFormStore } from "../../storage/useFormStore";
@@ -14,7 +14,7 @@ export default function PondDevelopment() {
       sfNumber: "",
       soilTypeCombined: [],
       landBenefit: "",
-      proposalArea:"",
+      proposalArea: "",
       inspectionBy: "",
       approvedBy: "",
       dateInspectionText: "",
@@ -176,7 +176,7 @@ export default function PondDevelopment() {
         keyboardType="numeric"
         mode="outlined"
       />
-      <Text style={styles.label}>33. Area benefited by Proposal (ha) - Added</Text>
+      <Text style={styles.label}>33. Area benefited by proposal added (ha)</Text>
       <TextInput
         value={form.proposalArea}
         onChangeText={(text) => updateField("proposalArea", text)}
@@ -245,7 +245,7 @@ export default function PondDevelopment() {
         mode="outlined"
       />
 
-       <Text style={styles.label}>43. Total Estimate (Rs)</Text>
+<Text style={styles.label}>43. Total Estimate (Rs)</Text>
             <TextInput
               value={String(parseInt(form.farmerContribution) + parseInt(form.pradanContribution))}
               editable={false}
