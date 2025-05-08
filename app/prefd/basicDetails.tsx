@@ -288,6 +288,7 @@ export default function BasicDetails() {
     let filteredText = text;
 
     if (form.idCardType === "Aadhar") {
+      
       filteredText = text.replace(/[^0-9]/g, '').slice(0, 12);
     } else if (form.idCardType === "EPIC" || form.idCardType === "Driving License") {
       filteredText = text.replace(/[^a-zA-Z0-9]/g, '');

@@ -69,7 +69,12 @@ export default function PondDevelopment() {
       };
     });
   };
- 
+  const totalestimation =(feild : any,value : any) =>{
+    const farmer = parseInt(feild) || 0;
+    const pradan = parseInt(value) || 0;
+    const totalestimate  = String(farmer + pradan);
+    updateField("totalEstimate",totalestimate);
+  }
   const renderCheckboxGroup = (
     
     field: string,
@@ -236,24 +241,25 @@ export default function PondDevelopment() {
         mode="outlined"
       />
 
-      <Text style={styles.label}>43. Farmer Contribution (Rs)</Text>
-      <TextInput
-        value={form.farmerContribution}
-        onChangeText={(text) => updateField("farmerContribution", text)}
-        style={styles.input}
-        keyboardType="numeric"
-        mode="outlined"
-      />
-
-<Text style={styles.label}>43. Total Estimate (Rs)</Text>
-            <TextInput
-              value={String(parseInt(form.farmerContribution) + parseInt(form.pradanContribution))}
-              editable={false}
-              onChangeText={(text) => updateField("totalEstimate", text)}
-              style={styles.input}
-              keyboardType="numeric"
-              mode="outlined"
-            />
+     
+           <Text style={styles.label}>42. Farmer Contribution (Rs):</Text>
+           <TextInput
+             value={form.farmerContribution}
+             onChangeText={(text) => {updateField("farmerContribution", text)
+               totalestimation( text, form.pradanContribution )
+             }}
+             
+             style={styles.input}
+             keyboardType="numeric"
+           />
+     
+            <Text style={styles.label}>43. Total Estimate (Rs)</Text>
+                       <TextInput
+                       value={form.totalEstimate}
+                         editable={false}
+                         style={styles.input}
+                         mode="outlined"
+                       />
       
 
       <Button mode="contained" onPress={handleNext} style={styles.button}>

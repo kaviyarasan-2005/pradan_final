@@ -73,7 +73,12 @@ export default function LandDevelopment() {
       };
     });
   };
-
+  const totalestimation =(feild : any,value : any) =>{
+    const farmer = parseInt(feild) || 0;
+    const pradan = parseInt(value) || 0;
+    const totalestimate  = String(farmer + pradan);
+    updateField("totalEstimate",totalestimate);
+  }
   const renderCheckboxGroup = (
     field: string,
     options: string[],
@@ -187,10 +192,7 @@ export default function LandDevelopment() {
     onChangeText={(text) => {
       updateField("workTypeText", text);
       if (typeof form.workType === "string") {
-        const updatedWorkType = form.workType
-          .split(",")
-          .map((item) => (item === "Other" ? text : item))
-          .join(",");
+        const updatedWorkType = form.workType.split(",").map((item) => (item === "Other" ? text : item)).join(",");
         updateField("workType2", updatedWorkType);
       }
     }}
@@ -227,24 +229,24 @@ export default function LandDevelopment() {
         mode="outlined"
       />
 
-      <Text style={styles.question}>42. Farmer Contribution (Rs)</Text>
+      <Text style={styles.question}>42. Farmer Contribution (Rs):</Text>
       <TextInput
         value={form.farmerContribution}
-        onChangeText={(text) => updateField("farmerContribution", text)}
+        onChangeText={(text) => {updateField("farmerContribution", text)
+          totalestimation( text, form.pradanContribution )
+        }}
+        
         style={styles.input}
         keyboardType="numeric"
-        mode="outlined"
       />
 
-      <Text style={styles.question}>43. Total Estimate (Rs)</Text>
-      <TextInput
-        value={String(parseInt(form.farmerContribution) + parseInt(form.pradanContribution))}
-        editable={false}
-        onChangeText={(text) => updateField("totalEstimate", text)}
-        style={styles.input}
-        keyboardType="numeric"
-        mode="outlined"
-      />
+       <Text style={styles.question}>43. Total Estimate (Rs)</Text>
+                  <TextInput
+                  value={form.totalEstimate}
+                    editable={false}
+                    style={styles.input}
+                    mode="outlined"
+                  />
 
       <Button mode="contained" onPress={handleNext} style={styles.button}>
       {fromPreview ? "SUBMIT" : "NEXT"}
