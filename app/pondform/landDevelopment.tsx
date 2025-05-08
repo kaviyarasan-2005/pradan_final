@@ -179,7 +179,7 @@ export default function PondDevelopment() {
       <Text style={styles.label}>33. Area benefited by Proposal (ha) - Added</Text>
       <TextInput
         value={form.proposalArea}
-        onChangeText={(text) => updateField(" proposalArea", text)}
+        onChangeText={(text) => updateField("proposalArea", text)}
         style={styles.input}
         keyboardType="numeric"
         mode="outlined"

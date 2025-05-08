@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput } from "react-native";
 import { Button, Checkbox, IconButton, RadioButton } from "react-native-paper";
 
+import React from "react";
 import { useFormStore } from "../../storage/useFormStore";
 
 export default function BasicDetails() {
@@ -52,8 +53,7 @@ export default function BasicDetails() {
       occupationCombined:"",
       drinkingWaterCombined:[],
       potabilityCombined:[],
-      domesticWaterCombined:[],
-    }
+      domesticWaterCombined:[],    }
   );
   
   useEffect(() => {
@@ -95,15 +95,17 @@ export default function BasicDetails() {
       };
     });
   };
-  const hand = () =>{
-    updateField("specialCategoryNumber", 0);
-    if(form.idCardType == "Other"){
+
+  const hand =() =>{
+    updateField("specialCategoryNumber",0);
+    if(form.idCardType === "Other"){
       updateField("idCardType",form.othercard);
     }
   }
 
   // in which id the basics updated while from submitted text
   const handleNext = () => {
+    updateField("idCardType",form.othercard);
     setData("basicDetails", form);
 
     if (fromPreview && returnTo ){
@@ -119,7 +121,6 @@ export default function BasicDetails() {
           router.push({pathname:"/prefd/landOwnership",params:{fromland:"true", frompond :"false",fromplantation:"false"}});
         }
         else if(frompond=="true"){
-         
           router.push({pathname:"/prefd/landOwnership",params:{fromland:"false", frompond :"true",fromplantation:"false"}});
         }
         else{
@@ -263,7 +264,7 @@ export default function BasicDetails() {
       />
 <Text style={styles.question}>8. Identity Card:</Text>
 <RadioButton.Group
-  onValueChange={(value) => {updateField("idCardType", value)}}
+  onValueChange={(value) => updateField("idCardType", value)}
   value={form.idCardType}
 >
   <RadioButton.Item label="Aadhar" value="Aadhar" />
@@ -271,13 +272,10 @@ export default function BasicDetails() {
   <RadioButton.Item label="Driving License" value="Driving License" />
   <RadioButton.Item label="Other" value="Other" />
 </RadioButton.Group>
-
-{ form.idCardType === "Other" && (
+{form.idCardType === "Other" && (
   <TextInput
     value={form.othercard}
-    onChangeText={(text) => {{updateField("othercard", text)
-    }
-    }}  
+    onChangeText={(text) => updateField("othercard", text)}
     style={styles.input}
     placeholder="Specify Identity Card"
   />
@@ -448,9 +446,7 @@ export default function BasicDetails() {
 <Checkbox.Item
   label="Disabled"
   status={form.specialCategory ? "checked" : "unchecked"}
-  onPress={() => {
-    
-    updateField("specialCategory", !form.specialCategory)}}
+  onPress={() => updateField("specialCategory", !form.specialCategory)}
 />
 {form.specialCategory && (
   <>
