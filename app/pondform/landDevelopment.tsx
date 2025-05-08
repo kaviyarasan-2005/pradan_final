@@ -245,14 +245,16 @@ export default function PondDevelopment() {
         mode="outlined"
       />
 
-      <Text style={styles.label}>44. Total Estimate (Rs)</Text>
-      <TextInput
-        value={form.totalEstimate}
-        onChangeText={(text) => updateField("totalEstimate", text)}
-        style={styles.input}
-        keyboardType="numeric"
-        mode="outlined"
-      />
+       <Text style={styles.label}>43. Total Estimate (Rs)</Text>
+            <TextInput
+              value={String(parseInt(form.farmerContribution) + parseInt(form.pradanContribution))}
+              editable={false}
+              onChangeText={(text) => updateField("totalEstimate", text)}
+              style={styles.input}
+              keyboardType="numeric"
+              mode="outlined"
+            />
+      
 
       <Button mode="contained" onPress={handleNext} style={styles.button}>
       {fromPreview ? "Preview" : "Next"}

@@ -222,13 +222,15 @@ export default function LandDevelopment() {
         keyboardType="numeric"
       />
 
-      <Text style={styles.question}>43. Total Estimate (Rs):</Text>
-      <TextInput
-        value={form.totalEstimate}
-        onChangeText={(text) => updateField("totalEstimate", text)}
-        style={styles.input}
-        keyboardType="numeric"
-      />
+       <Text style={styles.question}>43. Total Estimate (Rs)</Text>
+                  <TextInput
+                    value={String(parseInt(form.farmerContribution) + parseInt(form.pradanContribution))}
+                    editable={false}
+                    onChangeText={(text) => updateField("totalEstimate", text)}
+                    style={styles.input}
+                    keyboardType="numeric"
+                    mode="outlined"
+                  />
 
       <Button mode="contained" onPress={handleNext} style={styles.button}>
       {fromPreview ? "Preview" : "Next"}
