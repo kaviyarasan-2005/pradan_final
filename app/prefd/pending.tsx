@@ -53,7 +53,7 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
 
   const filteredForms = dashbdforms.filter((item) => {
     const matchesType = formType === "ALL" || String(item.form_type) === formType;
-    const matchesStatus = formStatus ==="1";
+    const matchesStatus = formStatus ==="1" || formStatus ==="2";
     const matchesName = item.farmer_name?.toLowerCase().includes(searchText.toLowerCase());
     const matchesPanchayat = item.panchayat?.toLowerCase().includes(panchayat.toLowerCase());
     const matchesBlock = item.block?.toLowerCase().includes(block.toLowerCase());
