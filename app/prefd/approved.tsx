@@ -18,9 +18,7 @@ import { DashbdStore } from "../../storage/DashbdStore";
 
 
 const statusStyles = {
-  Approved: { backgroundColor: '#C8E6C9', textColor: '#2E7D32' },
-  Pending: { backgroundColor: '#FFF9C4', textColor: '#F9A825' },
-  Rejected: { backgroundColor: '#FFCDD2', textColor: '#C62828' },
+  4: { backgroundColor: '#C8E6C9', textColor: '#2E7D32' },
 };
 
 const Approved = () => {
@@ -36,7 +34,6 @@ const Approved = () => {
 const {dashbdforms,loaddashbdForms} = DashbdStore();
   const [searchText, setSearchText] = useState("");
   const [formType, setFormType] = useState("ALL");
-  const [formStatus,setFormStatus] = useState("4");
   const [panchayat, setPanchayat] = useState("");
   const [block, setBlock] = useState("");
   const [hamlet, setHamlet] = useState("");
@@ -53,7 +50,7 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
 
   const filteredForms = dashbdforms.filter((item) => {
     const matchesType = formType === "ALL" || String(item.form_type) === formType;
-    const matchesStatus = formStatus ==="4";
+    const matchesStatus = item.status === 4;
     const matchesName = item.farmer_name?.toLowerCase().includes(searchText.toLowerCase());
     const matchesPanchayat = item.panchayat?.toLowerCase().includes(panchayat.toLowerCase());
     const matchesBlock = item.block?.toLowerCase().includes(block.toLowerCase());
@@ -84,7 +81,7 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
     else if (item.formType === 3) previewPath = "/plantationform/Preview";
     else return alert("Unknown form type.");
 
-    router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/prefd/pending" } });
+    router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/prefd/approved" } });
   };
 
   // Function to handle the date selection
@@ -212,7 +209,7 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
                 <Text style={styles.name}>{item.farmer_name|| "N/A"}</Text>
                 <View style={[styles.statusBadge, { backgroundColor: statusStyle.backgroundColor }]}>
                   <Text style={[styles.statusText, { color: statusStyle.textColor }]}>
-                    {item.form_type}
+                    {item.status === 4? 'Approved':'Unknown'}
                   </Text>
                 </View>
               </View>

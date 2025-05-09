@@ -17,9 +17,10 @@ import { DashbdStore } from "../../storage/DashbdStore";
 
 
 const statusStyles = {
-  Approved: { backgroundColor: '#C8E6C9', textColor: '#2E7D32' },
-  Pending: { backgroundColor: '#FFF9C4', textColor: '#F9A825' },
-  Rejected: { backgroundColor: '#FFCDD2', textColor: '#C62828' },
+  4: { backgroundColor: '#C8E6C9', textColor: '#2E7D32' },
+  1: { backgroundColor: '#FFF9C4', textColor: '#F9A825' },
+  2: { backgroundColor: '#BBDEFB', textColor: '#1976D2' },
+  3: { backgroundColor: '#FFCDD2', textColor: '#C62828' },
 };
 
 const TotalSubmit = () => {
@@ -51,7 +52,9 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
 
   const filteredForms = dashbdforms.filter((item) => {
     const matchesType = formType === "ALL" || String(item.form_type) === formType;
+
     const matchesName = item.farmer_name?.toLowerCase().includes(searchText.toLowerCase());
+        const matchesStatus = item.status ===1 || item.status ===2 || item.status ===3 || item.status ===4;
     const matchesPanchayat = item.panchayat?.toLowerCase().includes(panchayat.toLowerCase());
     const matchesBlock = item.block?.toLowerCase().includes(block.toLowerCase());
     const matchesHamlet = item.hamlet?.toLowerCase().includes(hamlet.toLowerCase());
@@ -67,7 +70,7 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
     const matchesStart = !startDate || itemDate >= new Date(startDate);
     const matchesEnd = !endDate || itemDate <= new Date(endDate);
   
-    return matchesType && matchesBlock && matchesHamlet&& matchesName && matchesPanchayat && matchesGender&& matchesStart && matchesEnd;
+    return matchesStatus&&matchesType && matchesBlock && matchesHamlet&& matchesName && matchesPanchayat && matchesGender&& matchesStart && matchesEnd;
       //   
    
   });
@@ -115,7 +118,7 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
         </TouchableOpacity>
         <Text style={styles.title}>PRE TotalForm Submissions</Text>
         <TouchableOpacity onPress={() =>{ setShowFilters(!showFilters) 
-        console.log(JSON.stringify(dashbdforms) +"total submit 111");
+        // console.log(JSON.stringify(dashbdforms) +"total submit 111");
         }} style={styles.icon}>
           <MaterialIcons name="filter-list" size={24} color="#1B5E20" />
         </TouchableOpacity>
@@ -209,8 +212,17 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
                 <Text style={styles.name}>{item.farmer_name|| "N/A"}</Text>
                 <View style={[styles.statusBadge, { backgroundColor: statusStyle.backgroundColor }]}>
                   <Text style={[styles.statusText, { color: statusStyle.textColor }]}>
-                    {item.form_type}
-                  </Text>
+  {item.status === 1
+    ? 'Pending'
+    : item.status === 2
+    ? 'Change'
+    : item.status === 3
+    ? 'Rejected'
+    : item.status === 4
+    ? 'Approved'
+    : 'Unknown'}
+</Text>
+
                 </View>
               </View>
               

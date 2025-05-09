@@ -18,9 +18,8 @@ import { DashbdStore } from "../../storage/DashbdStore";
 
 
 const statusStyles = {
-  Approved: { backgroundColor: '#C8E6C9', textColor: '#2E7D32' },
-  Pending: { backgroundColor: '#FFF9C4', textColor: '#F9A825' },
-  Rejected: { backgroundColor: '#FFCDD2', textColor: '#C62828' },
+  1: { backgroundColor: '#FFF9C4', textColor: '#F9A825' },
+  2: { backgroundColor: '#BBDEFB', textColor: '#1976D2' },
 };
 
 const Pending = () => {
@@ -36,7 +35,6 @@ const Pending = () => {
 const {dashbdforms,loaddashbdForms} = DashbdStore();
   const [searchText, setSearchText] = useState("");
   const [formType, setFormType] = useState("ALL");
-  const [formStatus,setFormStatus] = useState("1");
   const [panchayat, setPanchayat] = useState("");
   const [block, setBlock] = useState("");
   const [hamlet, setHamlet] = useState("");
@@ -53,7 +51,7 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
 
   const filteredForms = dashbdforms.filter((item) => {
     const matchesType = formType === "ALL" || String(item.form_type) === formType;
-    const matchesStatus = formStatus ==="1" || formStatus ==="2";
+    const matchesStatus = item.status ===1 || item.status ===2;
     const matchesName = item.farmer_name?.toLowerCase().includes(searchText.toLowerCase());
     const matchesPanchayat = item.panchayat?.toLowerCase().includes(panchayat.toLowerCase());
     const matchesBlock = item.block?.toLowerCase().includes(block.toLowerCase());
@@ -212,7 +210,7 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
                 <Text style={styles.name}>{item.farmer_name|| "N/A"}</Text>
                 <View style={[styles.statusBadge, { backgroundColor: statusStyle.backgroundColor }]}>
                   <Text style={[styles.statusText, { color: statusStyle.textColor }]}>
-                    {item.form_type}
+                    {item.status === 1? 'Pending': item.status === 2? 'Change':'Unknown'}
                   </Text>
                 </View>
               </View>
