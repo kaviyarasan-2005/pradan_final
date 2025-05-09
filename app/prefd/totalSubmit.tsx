@@ -11,8 +11,10 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { DashbdStore } from "../../storage/DashbdStore";
-import { useFormStore } from "../../storage/useFormStore";
+
+
 
 const statusStyles = {
   Approved: { backgroundColor: '#C8E6C9', textColor: '#2E7D32' },
@@ -21,12 +23,18 @@ const statusStyles = {
 };
 
 const TotalSubmit = () => {
+    const formTypeMap = {
+  1: "LAND",
+  2: "POND",
+  3: "PLANTATION"
+};
+
   const router = useRouter();
-  const { submittedForms, loadSubmittedForms, deleteFormByIndex } = useFormStore();
+  // const { submittedForms, loadSubmittedForms, deleteFormByIndex } = useFormStore();
   const { showActionSheetWithOptions } = useActionSheet();
 const {dashbdforms,loaddashbdForms} = DashbdStore();
   const [searchText, setSearchText] = useState("");
-  const [formType, setFormType] = useState("ALL");
+  const [formType, setFormType] = useState("");
   const [panchayat, setPanchayat] = useState("");
   const [block, setBlock] = useState("");
   const [hamlet, setHamlet] = useState("");
@@ -42,51 +50,50 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
   }, []);
 
   const filteredForms = dashbdforms.filter((item) => {
-    const matchesType =  item.status === 1 || item.status === 2 || item.status === 3;
-    //  const isprefd = item.status == 2;
-    // const matchesName = item.basicDetails?.name?.toLowerCase().includes(searchText.toLowerCase());
-    // const matchesPanchayat = item.basicDetails?.panchayat?.toLowerCase().includes(panchayat.toLowerCase());
-    // const matchesBlock = item.basicDetails?.block?.toLowerCase().includes(block.toLowerCase());
-    // const matchesHamlet = item.basicDetails?.hamlet?.toLowerCase().includes(hamlet.toLowerCase());
-    // const matchesGender = gender === "ALL" || item.basicDetails?.gender === gender;
-  
+    const matchesType = formType === "ALL" || String(item.form_type) === formType;
+    const matchesName = item.farmer_name?.toLowerCase().includes(searchText.toLowerCase());
+    const matchesPanchayat = item.panchayat?.toLowerCase().includes(panchayat.toLowerCase());
+    const matchesBlock = item.block?.toLowerCase().includes(block.toLowerCase());
+    const matchesHamlet = item.hamlet?.toLowerCase().includes(hamlet.toLowerCase());
+    const matchesGender = gender === "ALL" || item.gender === gender;
+
     // Date range filtering logic
-    // const formatDate = (dateString) => {
-    //   const [day, month, year] = dateString.split('/');
-    //   return new Date(year, month - 1, day); // Create a Date object with year, month (0-indexed), and day
-    // };
+    const formatDate = (dateString) => {
+      const [day, month, year] = dateString.split('/');
+      return new Date(year, month - 1, day); // Create a Date object with year, month (0-indexed), and day
+    };
   
-    // const itemDate = formatDate(item.created_at); // Convert the item's date to Date object
-    // const matchesStart = !startDate || itemDate >= new Date(startDate);
-    // const matchesEnd = !endDate || itemDate <= new Date(endDate);
+    const itemDate = formatDate(item.created_at); // Convert the item's date to Date object
+    const matchesStart = !startDate || itemDate >= new Date(startDate);
+    const matchesEnd = !endDate || itemDate <= new Date(endDate);
   
-    return matchesType; 
-    // isprefd&&&& matchesName && matchesPanchayat && matchesBlock &&
-    //   matchesHamlet && matchesGender && matchesStart && matchesEnd;
+    return matchesType && matchesBlock && matchesHamlet&& matchesName && matchesPanchayat && matchesGender&& matchesStart && matchesEnd;
+      //   
+   
   });
   
 
   const handleCardPress = (item) => {
     
     let previewPath = "";
-    if (item.formType === "LAND") previewPath = "/landform/Preview";
-    else if (item.formType === "POND") previewPath = "/pondform/Preview";
-    else if (item.formType === "PLANTATION") previewPath = "/plantationform/Preview";
+    if (item.formType === 1) previewPath = "/landform/Preview";
+    else if (item.formType === 2) previewPath = "/pondform/Preview";
+    else if (item.formType === 3) previewPath = "/plantationform/Preview";
     else return alert("Unknown form type.");
 
     router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/prefd/totalSubmit" } });
   };
 
   // Function to handle the date selection
-  // const handleConfirmStartDate = (date) => {
-  //   setStartDate(date);
-  //   setStartDatePickerVisible(false);
-  // };
+  const handleConfirmStartDate = (date) => {
+    setStartDate(date);
+    setStartDatePickerVisible(false);
+  };
 
-  // const handleConfirmEndDate = (date) => {
-  //   setEndDate(date);
-  //   setEndDatePickerVisible(false);
-  // };
+  const handleConfirmEndDate = (date) => {
+    setEndDate(date);
+    setEndDatePickerVisible(false);
+  };
 
   const resetFilters = () => {
     setSearchText("");
@@ -134,12 +141,13 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
           <TextInput placeholder="Hamlet" value={hamlet} onChangeText={setHamlet} style={styles.searchInput} />
 
           <Text style={styles.filterLabel}>Form Type</Text>
-          <Picker selectedValue={formType} onValueChange={setFormType}>
-            <Picker.Item label="ALL" value="ALL" />
-            <Picker.Item label="LAND" value="LAND" />
-            <Picker.Item label="POND" value="POND" />
-            <Picker.Item label="PLANTATION" value="PLANTATION" />
-          </Picker>
+          <Picker selectedValue={formType} onValueChange={(val) => setFormType(val)}>
+  <Picker.Item label="ALL" value="ALL" />
+  <Picker.Item label="LAND" value="1" />
+  <Picker.Item label="POND" value="2" />
+  <Picker.Item label="PLANTATION" value="3" />
+</Picker>
+
 
           <Text style={styles.filterLabel}>Gender</Text>
           <Picker selectedValue={gender} onValueChange={setGender}>
@@ -149,19 +157,19 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
             <Picker.Item label="TRANSGENDER" value="Transgender" />
           </Picker>
 
-          {/* <TouchableOpacity onPress={() => setStartDatePickerVisible(true)} style={styles.dateButton}> */}
-            {/* <Text>{startDate ? `Start Date: ${startDate.toLocaleDateString()}` : "Start Date"}</Text>
+          <TouchableOpacity onPress={() => setStartDatePickerVisible(true)} style={styles.dateButton}>
+         <Text>{startDate ? `Start Date: ${startDate.toLocaleDateString()}` : "Start Date"}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setEndDatePickerVisible(true)} style={styles.dateButton}>
             <Text>{endDate ? `End Date: ${endDate.toLocaleDateString()}` : "End Date"}</Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity> 
 
           {/* Display the selected date range */}
-          {/* {startDate && endDate && (
+          {startDate && endDate && (
             <Text style={styles.dateRangeText}>
               Showing data from {startDate.toLocaleDateString()} to {endDate.toLocaleDateString()}
             </Text>
-          )} */}
+          )}
 
           <TouchableOpacity onPress={resetFilters} style={styles.resetButton}>
             <Text>Reset Filters</Text>
@@ -170,20 +178,20 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
       )}
 
       {/* Date Time Picker Modal for Start Date */}
-      {/* <DateTimePickerModal
+      <DateTimePickerModal
         isVisible={isStartDatePickerVisible}
         mode="date"
         onConfirm={handleConfirmStartDate}
         onCancel={() => setStartDatePickerVisible(false)}
-      /> */}
+      />
 
       {/* Date Time Picker Modal for End Date */}
-     {/*  <DateTimePickerModal
+      <DateTimePickerModal
         isVisible={isEndDatePickerVisible}
         mode="date"
-        // onConfirm={handleConfirmEndDate}
+        onConfirm={handleConfirmEndDate}
         onCancel={() => setEndDatePickerVisible(false)}
-      /> */}
+      />
 
       {/* No Data */}
       {filteredForms.length === 0 ? (
@@ -198,7 +206,7 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
           return (
             <TouchableOpacity key={index} style={styles.card} onPress={() => handleCardPress(item)}>
               <View style={styles.cardHeader}>
-                <Text style={styles.name}>{item.farmer_name || "N/A"}</Text>
+                <Text style={styles.name}>{item.farmer_name|| "N/A"}</Text>
                 <View style={[styles.statusBadge, { backgroundColor: statusStyle.backgroundColor }]}>
                   <Text style={[styles.statusText, { color: statusStyle.textColor }]}>
                     {item.form_type}
@@ -207,7 +215,7 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
               </View>
               
               
-              <Text style={styles.label}>Form: <Text style={styles.value}>{item.form_type}</Text></Text>
+             <Text style={styles.label}>Form: <Text style={styles.value}>{formTypeMap[item.form_type] }</Text></Text>
               <Text style={styles.label}>Date: <Text style={styles.value}>{item.created_at}</Text></Text>
             </TouchableOpacity>
           );

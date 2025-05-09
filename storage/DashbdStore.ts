@@ -9,6 +9,10 @@ export interface DashbdData {
   form_type: number;
   status: number;
   created_at: string;
+  block: string;
+  gender: string;
+  hamlet:string;
+  panchayat:string;
 }
 
 interface DashbdStore {
