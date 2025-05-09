@@ -39,25 +39,17 @@ const canEdit = () => {
     );
   }
 
-
   const [submitting, setSubmitting] = React.useState(false);
 
   const handleSubmit = async () => {
     if (submitting) return; 
     try {
       setSubmitting(true);
-      const userStatus = data.bankDetails?.formStatus || "Not Filled";
-      const fundStatus = data.bankDetails?.fundStatus || "Not Filled";
-      setData("formType", "LAND");
-      setData("formStatus", userStatus);
-       setData("fundStatus",fundStatus);
-  
+      
       await new Promise((resolve) => setTimeout(resolve, 50));
 
       // console.log(data);
       await axios.post(`${url}/api/formData/postLandformData`, data);
-  
-      await submitForm();
       Alert.alert("Success", "Form Successfully Submitted!", [
         { text: "OK", onPress: () => router.push("/dashboard") },
       ]);
