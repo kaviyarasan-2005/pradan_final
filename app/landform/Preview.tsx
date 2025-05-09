@@ -254,8 +254,6 @@ const canEdit = () => {
                   }))
               : ["No files uploaded"],
         },
-        { label: "Form Status", value: selectedForm.bankDetails?.formStatus },
-        { label: "Fund Status", value: selectedForm.bankDetails?.fundStatus },
       ], "/prefd/bankDetails")}
 
 {!isSubmittedPreview && !fromdraft&& (

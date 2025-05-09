@@ -1,6 +1,8 @@
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { Picker } from '@react-native-picker/picker';
+import axios from "axios";
+import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -15,7 +17,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { DashbdStore } from "../../storage/DashbdStore";
 
 
-
+const url = Constants.expoConfig.extra.API_URL;
 const statusStyles = {
   4: { backgroundColor: '#C8E6C9', textColor: '#2E7D32' },
   1: { backgroundColor: '#FFF9C4', textColor: '#F9A825' },
@@ -76,14 +78,37 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
   });
   
 
-  const handleCardPress = (item) => {
+ const handleCardPress = async (item) => {
     let previewPath = "";
-    if (item.form_type === 1) previewPath = "/landform/Preview";
+  
+     if (item.form_type === 1) previewPath = "/landform/Preview";
     else if (item.form_type === 2) previewPath = "/pondform/Preview";
     else if (item.form_type === 3) previewPath = "/plantationform/Preview";
     else return alert("Unknown form type.");
-    router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/prefd/totalSubmit" } });
+  
+    try {
+      const response = await axios.get(`${url}/api/dashboard/getpreviewspecificformData`,{params:{form_id:item.id}});
+      const fetchedData = response.data;
+      console.log(JSON.stringify(fetchedData) +" "+item.id);
+    router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/postfd/totalsubmit" } });
+  
+    } catch (error) {
+      console.error("Error fetching form details:", error);
+      // Alert.alert("Error", "Failed to fetch form details.");
+    }
   };
+
+  // const handleCardPress = (item) => {
+    
+  //   let previewPath = "";
+  //  if (item.form_type === 1) previewPath = "/landform/Preview";
+  //   else if (item.form_type === 2) previewPath = "/pondform/Preview";
+  //   else if (item.form_type === 3) previewPath = "/plantationform/Preview";
+  //   else return alert("Unknown form type.");
+
+  //   router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/postfd/totalsubmit" } });
+  // };
+
 
   // Function to handle the date selection
   const handleConfirmStartDate = (date) => {
