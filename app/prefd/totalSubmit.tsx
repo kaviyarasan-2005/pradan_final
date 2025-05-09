@@ -1,7 +1,7 @@
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { Picker } from '@react-native-picker/picker';
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ScrollView,
@@ -12,6 +12,7 @@ import {
   View
 } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker"; // For date picker
+import { DashbdStore } from "../../storage/DashbdStore";
 import { useFormStore } from "../../storage/useFormStore";
 
 const statusStyles = {
@@ -19,13 +20,12 @@ const statusStyles = {
   Pending: { backgroundColor: '#FFF9C4', textColor: '#F9A825' },
   Rejected: { backgroundColor: '#FFCDD2', textColor: '#C62828' },
 };
-const {response_total} = useLocalSearchParams<{ response_total?: any}>();
 
 const TotalSubmit = () => {
   const router = useRouter();
   const { submittedForms, loadSubmittedForms, deleteFormByIndex } = useFormStore();
   const { showActionSheetWithOptions } = useActionSheet();
-
+const {dashbdforms,loaddashbdForms} = DashbdStore();
   const [searchText, setSearchText] = useState("");
   const [formType, setFormType] = useState("ALL");
   const [panchayat, setPanchayat] = useState("");
@@ -39,7 +39,7 @@ const TotalSubmit = () => {
   const [isEndDatePickerVisible, setEndDatePickerVisible] = useState(false);
 
   useEffect(() => {
-    loadSubmittedForms();
+    loaddashbdForms();
   }, []);
 
   const filteredForms = submittedForms.filter((item) => {
@@ -108,7 +108,7 @@ const TotalSubmit = () => {
         </TouchableOpacity>
         <Text style={styles.title}>PRE TotalForm Submissions</Text>
         <TouchableOpacity onPress={() =>{ setShowFilters(!showFilters) 
-          console.log(response_total);
+        console.log(JSON.stringify(dashbdforms) +"total submit 111");
         }} style={styles.icon}>
           <MaterialIcons name="filter-list" size={24} color="#1B5E20" />
         </TouchableOpacity>

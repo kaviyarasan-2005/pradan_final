@@ -17,9 +17,9 @@ import {
   View,
 } from "react-native";
 import PagerView from 'react-native-pager-view';
+import { DashbdStore } from "../storage/DashbdStore";
 import { FormStatus_todayCount, FormStatus_totalCount, useFormStore } from "../storage/useFormStore";
 import { useUserStore } from "../storage/userDatastore";
-
 const url = Constants.expoConfig.extra.API_URL;
 
 const DashboardScreen: React.FC = () => {
@@ -29,6 +29,7 @@ const DashboardScreen: React.FC = () => {
   const [pageIndex, setPageIndex] = useState(0);
   const {user} = useUserStore();
   const {setData} = useFormStore();
+ const { setForms, dashbdforms } = DashbdStore();
 
   const { setStatus_totalCount, resetStatus_totalCount, status_total } = FormStatus_totalCount(); //global Zustand store for total count of forms
   const {setStatus_todayCount, resetStatus_todayCount, status_today } = FormStatus_todayCount(); //global Zustand store for today's count of forms
@@ -46,6 +47,16 @@ const DashboardScreen: React.FC = () => {
       const dashborad_status_count_response_today = await axios.get(`${url}/api/dashboard/getTodayFormsStatusCount`,{params: {
         user_id: user?.id,
       }});
+
+      //  axios.get(`${url}/api/dashboard/getpreviewformsData`, { params: { user_id: user?.id } })
+      // .then(response => {
+      //   const response_total = response.data;
+      //   // console.log(response_total);
+      //   setForms(response_total);
+      // })
+      // .catch(error => {
+      //   console.error('Error fetching forms:', error);
+      // });
 
       setData("user_id",user?.id);
      // console.log("Dashboard Status Count:", dashborad_status_count_response_today.data);
@@ -287,15 +298,11 @@ const DashboardScreen: React.FC = () => {
      const renderCard = ({ item }: any) => {
         const handleCardPress = () => {
           switch (item.id) {
+            
             case '1':
-              axios.get(`${url}/api/dashboard/getpreviewformsData`,{params:{"user_id":user?.id}}).then(response => {
-                      const response_total = response.data;// setForms(response.data); // in React, for example
-                      console.log(response_total);
-                      router.push({pathname:'/prefd/totalSubmit', params: { response_total }});
-                    }).catch(error => {
-                      console.error('Error fetching forms:', error);
-                    });
-              break;
+              // console.log(JSON.stringify(dashbdforms));
+              router.push('/prefd/totalSubmit');       
+            break;
             case '2':
               router.push('/prefd/pending');
               break;
