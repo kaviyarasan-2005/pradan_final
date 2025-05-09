@@ -34,7 +34,7 @@ const TotalSubmit = () => {
   const { showActionSheetWithOptions } = useActionSheet();
 const {dashbdforms,loaddashbdForms} = DashbdStore();
   const [searchText, setSearchText] = useState("");
-  const [formType, setFormType] = useState("");
+  const [formType, setFormType] = useState("ALL");
   const [panchayat, setPanchayat] = useState("");
   const [block, setBlock] = useState("");
   const [hamlet, setHamlet] = useState("");
