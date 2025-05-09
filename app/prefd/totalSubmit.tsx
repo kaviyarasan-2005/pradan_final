@@ -201,7 +201,7 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
                 <Text style={styles.name}>{item.farmer_name || "N/A"}</Text>
                 <View style={[styles.statusBadge, { backgroundColor: statusStyle.backgroundColor }]}>
                   <Text style={[styles.statusText, { color: statusStyle.textColor }]}>
-                    {item.status}
+                    {item.form_type}
                   </Text>
                 </View>
               </View>
