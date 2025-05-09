@@ -11,7 +11,6 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import DateTimePickerModal from "react-native-modal-datetime-picker"; // For date picker
 import { DashbdStore } from "../../storage/DashbdStore";
 import { useFormStore } from "../../storage/useFormStore";
 
@@ -42,27 +41,28 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
     loaddashbdForms();
   }, []);
 
-  const filteredForms = submittedForms.filter((item) => {
-    const matchesType = formType === "ALL" || item.formType === formType;
-    const isprefd = item.fundStatus == "prefund";
-    const matchesName = item.basicDetails?.name?.toLowerCase().includes(searchText.toLowerCase());
-    const matchesPanchayat = item.basicDetails?.panchayat?.toLowerCase().includes(panchayat.toLowerCase());
-    const matchesBlock = item.basicDetails?.block?.toLowerCase().includes(block.toLowerCase());
-    const matchesHamlet = item.basicDetails?.hamlet?.toLowerCase().includes(hamlet.toLowerCase());
-    const matchesGender = gender === "ALL" || item.basicDetails?.gender === gender;
+  const filteredForms = dashbdforms.filter((item) => {
+    const matchesType =  item.status === 1 || item.status === 2 || item.status === 3;
+    //  const isprefd = item.status == 2;
+    // const matchesName = item.basicDetails?.name?.toLowerCase().includes(searchText.toLowerCase());
+    // const matchesPanchayat = item.basicDetails?.panchayat?.toLowerCase().includes(panchayat.toLowerCase());
+    // const matchesBlock = item.basicDetails?.block?.toLowerCase().includes(block.toLowerCase());
+    // const matchesHamlet = item.basicDetails?.hamlet?.toLowerCase().includes(hamlet.toLowerCase());
+    // const matchesGender = gender === "ALL" || item.basicDetails?.gender === gender;
   
     // Date range filtering logic
-    const formatDate = (dateString) => {
-      const [day, month, year] = dateString.split('/');
-      return new Date(year, month - 1, day); // Create a Date object with year, month (0-indexed), and day
-    };
+    // const formatDate = (dateString) => {
+    //   const [day, month, year] = dateString.split('/');
+    //   return new Date(year, month - 1, day); // Create a Date object with year, month (0-indexed), and day
+    // };
   
-    const itemDate = formatDate(item.landDevelopment.date); // Convert the item's date to Date object
-    const matchesStart = !startDate || itemDate >= new Date(startDate);
-    const matchesEnd = !endDate || itemDate <= new Date(endDate);
+    // const itemDate = formatDate(item.created_at); // Convert the item's date to Date object
+    // const matchesStart = !startDate || itemDate >= new Date(startDate);
+    // const matchesEnd = !endDate || itemDate <= new Date(endDate);
   
-    return isprefd&&matchesType && matchesName && matchesPanchayat && matchesBlock &&
-      matchesHamlet && matchesGender && matchesStart && matchesEnd;
+    return matchesType; 
+    // isprefd&&&& matchesName && matchesPanchayat && matchesBlock &&
+    //   matchesHamlet && matchesGender && matchesStart && matchesEnd;
   });
   
 
@@ -78,15 +78,15 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
   };
 
   // Function to handle the date selection
-  const handleConfirmStartDate = (date) => {
-    setStartDate(date);
-    setStartDatePickerVisible(false);
-  };
+  // const handleConfirmStartDate = (date) => {
+  //   setStartDate(date);
+  //   setStartDatePickerVisible(false);
+  // };
 
-  const handleConfirmEndDate = (date) => {
-    setEndDate(date);
-    setEndDatePickerVisible(false);
-  };
+  // const handleConfirmEndDate = (date) => {
+  //   setEndDate(date);
+  //   setEndDatePickerVisible(false);
+  // };
 
   const resetFilters = () => {
     setSearchText("");
@@ -149,19 +149,19 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
             <Picker.Item label="TRANSGENDER" value="Transgender" />
           </Picker>
 
-          <TouchableOpacity onPress={() => setStartDatePickerVisible(true)} style={styles.dateButton}>
-            <Text>{startDate ? `Start Date: ${startDate.toLocaleDateString()}` : "Start Date"}</Text>
+          {/* <TouchableOpacity onPress={() => setStartDatePickerVisible(true)} style={styles.dateButton}> */}
+            {/* <Text>{startDate ? `Start Date: ${startDate.toLocaleDateString()}` : "Start Date"}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setEndDatePickerVisible(true)} style={styles.dateButton}>
             <Text>{endDate ? `End Date: ${endDate.toLocaleDateString()}` : "End Date"}</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           {/* Display the selected date range */}
-          {startDate && endDate && (
+          {/* {startDate && endDate && (
             <Text style={styles.dateRangeText}>
               Showing data from {startDate.toLocaleDateString()} to {endDate.toLocaleDateString()}
             </Text>
-          )}
+          )} */}
 
           <TouchableOpacity onPress={resetFilters} style={styles.resetButton}>
             <Text>Reset Filters</Text>
@@ -170,27 +170,27 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
       )}
 
       {/* Date Time Picker Modal for Start Date */}
-      <DateTimePickerModal
+      {/* <DateTimePickerModal
         isVisible={isStartDatePickerVisible}
         mode="date"
         onConfirm={handleConfirmStartDate}
         onCancel={() => setStartDatePickerVisible(false)}
-      />
+      /> */}
 
       {/* Date Time Picker Modal for End Date */}
-      <DateTimePickerModal
+     {/*  <DateTimePickerModal
         isVisible={isEndDatePickerVisible}
         mode="date"
-        onConfirm={handleConfirmEndDate}
+        // onConfirm={handleConfirmEndDate}
         onCancel={() => setEndDatePickerVisible(false)}
-      />
+      /> */}
 
       {/* No Data */}
       {filteredForms.length === 0 ? (
         <Text style={styles.noDataText}>No forms submitted yet.</Text>
       ) : (
         filteredForms.map((item, index) => {
-          const statusStyle = statusStyles[item.formStatus] || {
+          const statusStyle = statusStyles[item.status] || {
             backgroundColor: "#E0E0E0",
             textColor: "#424242",
           };
@@ -198,16 +198,17 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
           return (
             <TouchableOpacity key={index} style={styles.card} onPress={() => handleCardPress(item)}>
               <View style={styles.cardHeader}>
-                <Text style={styles.name}>{item.basicDetails?.name || "N/A"}</Text>
+                <Text style={styles.name}>{item.farmer_name || "N/A"}</Text>
                 <View style={[styles.statusBadge, { backgroundColor: statusStyle.backgroundColor }]}>
                   <Text style={[styles.statusText, { color: statusStyle.textColor }]}>
-                    {item.formStatus}
+                    {item.status}
                   </Text>
                 </View>
               </View>
-
-              <Text style={styles.label}>Form: <Text style={styles.value}>{item.formType}</Text></Text>
-              <Text style={styles.label}>Date: <Text style={styles.value}>{item.basicDetails.date}</Text></Text>
+              
+              
+              <Text style={styles.label}>Form: <Text style={styles.value}>{item.form_type}</Text></Text>
+              <Text style={styles.label}>Date: <Text style={styles.value}>{item.created_at}</Text></Text>
             </TouchableOpacity>
           );
         })
