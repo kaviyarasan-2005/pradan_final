@@ -77,9 +77,9 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
   const handleCardPress = (item) => {
     
     let previewPath = "";
-    if (item.formType === 1) previewPath = "/landform/Preview";
-    else if (item.formType === 2) previewPath = "/pondform/Preview";
-    else if (item.formType === 3) previewPath = "/plantationform/Preview";
+    if (item.form_type === 1) previewPath = "/landform/Preview";
+    else if (item.form_type === 2) previewPath = "/pondform/Preview";
+    else if (item.form_type === 3) previewPath = "/plantationform/Preview";
     else return alert("Unknown form type.");
 
     router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/postfd/remarks" } });
