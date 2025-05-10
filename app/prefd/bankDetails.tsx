@@ -30,6 +30,7 @@ export default function BankDetails() {
       branch: "Kunoor",
       ifscCode: "RB123K02309",//cd
       farmerAgreed: "Yes",//cd
+      formStatus:"",
       submittedFiles: {
         patta: null,
         idCard: null,//cd
@@ -136,7 +137,7 @@ export default function BankDetails() {
           const localFileName = `${FileSystem.documentDirectory}${file.fileName || `${field}.jpg`}`;
 
           console.log(file);
-          uploadDocument(file,field);
+          // uploadDocument(file,field);
           //console.log("Uploaded filename:", uploaded_filename);
 
           // Move the file to the local storage directory

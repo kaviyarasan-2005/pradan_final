@@ -27,7 +27,7 @@ const selectedForm = React.useMemo(() => {
 const canEdit = () => {
   if (!isSubmittedPreview) return true; // it's a draft
   const status = selectedForm?.bankDetails?.formStatus;
-  return status === "Pending" || status === "Rejected";
+  return status === 1 || status === 2|| status === 3;
 };
   // console.log("Selected Form:", selectedForm);
   // console.log(id);

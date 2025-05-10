@@ -27,7 +27,7 @@ const selectedForm = React.useMemo(() => {
 const canEdit = () => {
   if (!isSubmittedPreview) return true; // it's a draft
   const status = selectedForm?.bankDetails?.formStatus;
-  return status === "Pending" || status === "Rejected";
+  return status === 1 || status === 2|| status === 3;
 };
   // console.log("Selected Form:", selectedForm);
   // console.log(id);
@@ -46,11 +46,11 @@ const canEdit = () => {
     if (submitting) return; 
     try {
       setSubmitting(true);
-      const userStatus = data.bankDetails?.formStatus || "Not Filled";
-      const fundStatus = data.bankDetails?.fundStatus || "Not Filled";
-      setData("formType", "PLANTATION");
-      setData("formStatus", userStatus);
-      setData("fundStatus",fundStatus);
+      // const userStatus = data.bankDetails?.formStatus || "Not Filled";
+      // const fundStatus = data.bankDetails?.fundStatus || "Not Filled";
+      // setData("formType", "PLANTATION");
+      // setData("formStatus", userStatus);
+      // setData("fundStatus",fundStatus);
   
       await new Promise((resolve) => setTimeout(resolve, 50));
       //console.log(data);
@@ -268,8 +268,8 @@ const canEdit = () => {
       mode="outlined"
       onPress={async () => {
         try {
-          setData("formType", "PLANTATION");
-          setData("fundStatus",data.bankDetails?.fundStatus)
+          // setData("formType", "PLANTATION");
+          // setData("fundStatus",data.bankDetails?.fundStatus)
 
           await new Promise((res) => setTimeout(res, 50));
           useFormStore.getState().saveDraft(data);

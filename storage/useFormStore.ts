@@ -9,19 +9,18 @@ interface FormData {
   landOwnership?: any;
   landDevelopment?: any;
   bankDetails?: any;
+  formStatus?: string;
+  fundStatus?: string;
 }
 
 interface FormStore {
   data: FormData;
   submittedForms: FormData[];
-  draftForms: FormData[];
   loading: boolean;
 
   setData: (section: keyof FormData, value: any) => void;
   resetData: () => void;
   submitForm: () => Promise<void>;
-  saveDraft: () => Promise<void>;
-  loadDrafts: () => Promise<void>;
   loadSubmittedForms: () => Promise<void>;
   clearSubmittedForms: () => Promise<void>;
 }
@@ -29,7 +28,6 @@ interface FormStore {
 export const useFormStore = create<FormStore>((set, get) => ({
   data: {},
   submittedForms: [],
-  draftForms: [],
   loading: false,
 
   setData: (section, value) =>
@@ -57,54 +55,13 @@ export const useFormStore = create<FormStore>((set, get) => ({
         ...currentData,
         id: Date.now().toString(),
         submittedAt: new Date().toISOString(),
-        formStatus: currentData.formStatus ,
-        fundStatus:currentData.fundStatus || "prefund",
+        formStatus: currentData.formStatus,
       };
       updatedForms = [...allForms, formWithMeta];
     }
 
     await AsyncStorage.setItem("submittedForms", JSON.stringify(updatedForms));
     set({ submittedForms: updatedForms, data: {} });
-  },
-
-  saveDraft: async () => {
-    const currentData = get().data;
-    const allDrafts = get().draftForms ?? [];
-
-    if (!currentData || Object.keys(currentData).length === 0) {
-      console.warn("No data to save as draft.");
-      return;
-    }
-
-    let updatedDrafts;
-
-    if (currentData.id) {
-      updatedDrafts = allDrafts.map((form) =>
-        form.id === currentData.id ? { ...form, ...currentData } : form
-      );
-    } else {
-      const draftWithMeta = {
-        ...currentData,
-        id: Date.now().toString(),
-        savedAt: new Date().toISOString(),
-        formStatus: "Draft",
-      };
-      updatedDrafts = [...allDrafts, draftWithMeta];
-    }
-
-    await AsyncStorage.setItem("draftForms", JSON.stringify(updatedDrafts));
-    set({ draftForms: updatedDrafts, data: {} });
-  },
-
-  loadDrafts: async () => {
-    try {
-      const stored = await AsyncStorage.getItem("draftForms");
-      if (stored) {
-        set({ draftForms: JSON.parse(stored) });
-      }
-    } catch (error) {
-      console.error("Failed to load draft forms", error);
-    }
   },
 
   loadSubmittedForms: async () => {
@@ -125,8 +82,8 @@ export const useFormStore = create<FormStore>((set, get) => ({
     await AsyncStorage.removeItem("submittedForms");
     set({ submittedForms: [] });
   },
-
 }));
+
 
 interface FormStoreStatusCountData{
   pendingCount_pre?: number;

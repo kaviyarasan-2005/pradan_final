@@ -10,14 +10,15 @@ const url = Constants.expoConfig.extra.API_URL;
 export default function   Preview() {
   const router = useRouter();
   const { id,fromsubmit,returnsubmit,fromdraft} = useLocalSearchParams<{ id?: string , returnsubmit?: string,fromsubmit?: string, fromdraft?:string;}>();
-  const { data, submittedForms,draftForms, setData, submitForm } = useFormStore();
+  const { data, submittedForms, resetData,setData, submitForm } = useFormStore();//draftForms,
 const isSubmittedPreview = !!id;
 const selectedForm = React.useMemo(() => {
   if (fromsubmit) {
     // console.log(JSON.stringify(data) + "inside");
     return data; // Always use updated data when fromsubmit
   }
-  if (isSubmittedPreview && id || draftForms && id) {
+  // if (isSubmittedPreview && id || draftForms && id) {
+    if (isSubmittedPreview && id ) {
     return submittedForms.find((form) => String(form.id) === id);
   }
   return data;
@@ -40,24 +41,32 @@ const canEdit = () => {
 
   const [submitting, setSubmitting] = React.useState(false);
 
-  const handleSubmit = async () => {
-    if (submitting) return; 
-    try {
-      setSubmitting(true);
-      
-      await new Promise((resolve) => setTimeout(resolve, 50));
+const handleSubmit = async () => {
+  if (submitting) return;
+  try {
+    setSubmitting(true);
 
-      // console.log(data);
-      await axios.post(`${url}/api/formData/postLandformData`, data);
-      Alert.alert("Success", "Form Successfully Submitted!", [
-        { text: "OK", onPress: () => router.push("/dashboard") },
-      ]);
-    } catch (error) {
-      Alert.alert("Error", "Failed to submit the form. Please try again.\n" + error);
-    } finally {
-      setSubmitting(false);
-    }
-  };
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    await axios.post(`${url}/api/formData/postLandformData`, data);
+
+    Alert.alert("Success", "Form Successfully Submitted!", [
+      {
+        text: "OK",
+        onPress: () => {
+          // Clear all form store data
+          resetData();
+          router.push("/dashboard");
+        },
+      },
+    ]);
+  } catch (error) {
+    Alert.alert("Error", "Failed to submit the form. Please try again.\n" + error);
+  } finally {
+    setSubmitting(false);
+  }
+};
+
 
   
   const renderSection = (title: string, fields: any[], editRoute: string) => (
@@ -262,8 +271,8 @@ const canEdit = () => {
       mode="outlined"
       onPress={async () => {
         try {
-          setData("formType", "LAND");
-          setData("fundStatus",data.bankDetails?.fundStatus)
+          // setData("formType", "LAND");
+          // setData("fundStatus",data.bankDetails?.fundStatus)
 
           await new Promise((res) => setTimeout(res, 50));
           useFormStore.getState().saveDraft(data);
