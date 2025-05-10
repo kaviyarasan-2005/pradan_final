@@ -83,28 +83,43 @@ const forms = IdFormStore((state) => state.Idforms);
   });
   
 
- const handleCardPress = async (item) => {
-    let previewPath = "";
-  
-     if (item.form_type === 1) previewPath = "/landform/Preview";
-    else if (item.form_type === 2) previewPath = "/pondform/Preview";
-    else if (item.form_type === 3) previewPath = "/plantationform/Preview";
-    else return alert("Unknown form type.");
-  
-    try {
-      const response = await axios.get(`${url}/api/dashboard/getpreviewspecificformData`,{params:{form_id:item.id}});
-      const fetchedData = response.data;
-      // console.log(JSON.stringify(fetchedData) +" "+item.id);
-      // setIdform(fetchedData);
-      setData(fetchedData);
-     
-    router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/postfd/totalsubmit" } });
-  
-    } catch (error) {
-      console.error("Error fetching form details:", error);
-      // Alert.alert("Error", "Failed to fetch form details.");
-    }
-  };
+const handleCardPress = async (item) => {
+  let previewPath = "";
+
+  if (item.form_type === 1) previewPath = "/landform/Preview";
+  else if (item.form_type === 2) previewPath = "/pondform/Preview";
+  else if (item.form_type === 3) previewPath = "/plantationform/Preview";
+  else return alert("Unknown form type.");
+
+  try {
+    const response = await axios.get(`${url}/api/dashboard/getpreviewspecificformData`, {
+      params: { form_id: item.id, form_type: item.form_type }
+    });
+
+    const fetchedData = response.data;
+    console.log(JSON.stringify(fetchedData) + " " + item.form_type);
+
+    // Set all keys of fetchedData into the form store using setData
+      setData("basicDetails", fetchedData.basicDetails);
+    setData("landOwnership", fetchedData.landOwnership);
+    setData("landDevelopment", fetchedData.landDevelopment);
+    setData("bankDetails", fetchedData.bankDetails);
+
+    router.push({
+      pathname: previewPath,
+      params: {
+        id: item.id,
+        fromsubmit: "true",
+        returnsubmit: "/postfd/totalsubmit"
+      }
+    });
+
+  } catch (error) {
+    console.error("Error fetching form details:", error);
+    // Alert.alert("Error", "Failed to fetch form details.");
+  }
+};
+
 
   // const handleCardPress = (item) => {
     

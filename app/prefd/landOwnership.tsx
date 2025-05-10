@@ -11,32 +11,32 @@ export default function LandOwnership() {
  
   const [form, setForm] = useState(
     data.landOwnership || {
-      landOwnershipType: "Owner Cultivator",
-      hasWell: "Yes",
-      areaIrrigated: "544",
-      irrigatedLand: {
-        rainfed: "212",
-        tankfed: "23",
-        wellIrrigated: "343",
+      landOwnershipType: "Owner Cultivator",//cd
+      hasWell: "Yes",//cd
+      areaIrrigated: "544",//cd
+      irrigatedLand: {//no
+        rainfed: "212",//no
+        tankfed: "23",//no
+        wellIrrigated: "343",//no
       },
-      pattaNumber: "4",
-      totalArea: "54",
+      pattaNumber: "4",//cd
+      totalArea: "54",//cd
       taluk:"fdg",
       firka:"fgd",
-      revenueVillage: "fgd",
-      cropSeason: "",
-      cropSeasonOther: "",
-      livestock: {
+      revenueVillage: "fgd",//cd
+      cropSeason: "",//no
+      cropSeasonOther: "",//no
+      livestock: {//no
         goat:"23",
         sheep:"23",
         milchAnimals:"45",
         draught_animals:"3",
         poultry:"2",
         others:"32",
-      },
-      irrigatedLandCombined:"",
-      cropSeasonCombined: "",
-      livestockCombined:"",
+      },//no
+      irrigatedLandCombined:"",//cd
+      cropSeasonCombined: "",//cd
+      livestockCombined:"",//cd
     }
   );
       useEffect(() => {

@@ -4,7 +4,6 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { Alert, Image, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Card, Divider, IconButton, Text } from "react-native-paper";
-import { IdFormStore } from "../../storage/IdStore";
 import { useFormStore } from "../../storage/useFormStore";
 const url = Constants.expoConfig.extra.API_URL;
 
@@ -12,12 +11,12 @@ export default function   Preview() {
   const router = useRouter();
   const { id,fromsubmit,returnsubmit,fromdraft} = useLocalSearchParams<{ id?: string , returnsubmit?: string,fromsubmit?: string, fromdraft?:string;}>();
   const { data, submittedForms,draftForms, setData, submitForm } = useFormStore();
-  const {Idforms} = IdFormStore();
 const isSubmittedPreview = !!id;
 const selectedForm = React.useMemo(() => {
-  // if (fromsubmit) {
-  //   return Idforms; // Always use updated data when fromsubmit
-  // }
+  if (fromsubmit) {
+    // console.log(JSON.stringify(data) + "inside");
+    return data; // Always use updated data when fromsubmit
+  }
   if (isSubmittedPreview && id || draftForms && id) {
     return submittedForms.find((form) => String(form.id) === id);
   }
@@ -27,7 +26,7 @@ const selectedForm = React.useMemo(() => {
 const canEdit = () => {
   if (!isSubmittedPreview) return true; // it's a draft
   const status = selectedForm?.bankDetails?.formStatus;
-  return status === "Pending" || status === "Rejected";
+  return status === 1 || status === 2|| status === 3;
 };
   // console.log("Selected Form:", selectedForm);
   // console.log(id);
@@ -59,20 +58,7 @@ const canEdit = () => {
       setSubmitting(false);
     }
   };
-  const renderSectionFromIdFormStore = (title: string, fields: any[]) => (
-  <Card style={styles.card}>
-    <Card.Title title={title} />
-    <Card.Content>
-      {fields.map((field, index) => (
-        <View key={index} style={styles.fieldContainer}>
-          <Text style={styles.label}>{field.label}</Text>
-          <Text style={styles.value}>{field.value}</Text>
-          <Divider style={styles.divider} />
-        </View>
-      ))}
-    </Card.Content>
-  </Card>
-);
+
   
   const renderSection = (title: string, fields: any[], editRoute: string) => (
     <Card style={styles.card}>
@@ -222,7 +208,7 @@ const canEdit = () => {
         { label: "27-28. Taluk", value: selectedForm.landOwnership?.taluk },
         { label: "27-28. Firka", value: selectedForm.landOwnership?.firka},
         { label: "28. Revenue Village", value: selectedForm.landOwnership?.revenueVillage },
-        { label: "29. Crop Season", value: selectedForm.landOwnership?.cropSeason },
+        { label: "29. Crop Season", value: selectedForm.landOwnership?.cropSeasonCombined },
         { label: "30. LiveStocks" },
         { label: " Goat", value: selectedForm.landOwnership?.livestock?.goat || "0" },
         { label: "    Sheep", value: selectedForm.landOwnership?.livestock?.sheep || "0" },
@@ -240,7 +226,7 @@ const canEdit = () => {
         { label: "33. Land to benefit (ha)", value: selectedForm.landDevelopment?.landBenefit },
         { label: "36. Date of Inspection", value: selectedForm.landDevelopment?.date},
         { label: "38. Type of work proposed", value: selectedForm.landDevelopment?.workType },
-        { label: "    Details about work types", value: selectedForm.landDevelopment?.workTypeText },
+        // { label: "    Details about work types", value: selectedForm.landDevelopment?.workTypeText },
         { label: "39. Area benefited (ha)", value: selectedForm.landDevelopment?.proposalArea },
         { label: "40. Any other works proposed", value: selectedForm.landDevelopment?.otherWorks },
         { label: "41. PRADAN Contribution", value: selectedForm.landDevelopment?.pradanContribution },

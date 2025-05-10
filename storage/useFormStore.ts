@@ -24,7 +24,6 @@ interface FormStore {
   loadDrafts: () => Promise<void>;
   loadSubmittedForms: () => Promise<void>;
   clearSubmittedForms: () => Promise<void>;
-  deleteFormByIndex: (index: number) => Promise<void>;
 }
 
 export const useFormStore = create<FormStore>((set, get) => ({
@@ -127,12 +126,6 @@ export const useFormStore = create<FormStore>((set, get) => ({
     set({ submittedForms: [] });
   },
 
-  deleteFormByIndex: async (index: number) => {
-    const currentForms = get().submittedForms;
-    const updatedForms = currentForms.filter((_, i) => i !== index);
-    await AsyncStorage.setItem("submittedForms", JSON.stringify(updatedForms));
-    set({ submittedForms: updatedForms });
-  },
 }));
 
 interface FormStoreStatusCountData{
@@ -146,7 +139,6 @@ interface FormStoreStatusCountData{
   totalCount_post?: number;
   hasfetched_total?: boolean;
 }
-
 //structure of the ZuStand store for total count of forms
 interface FormStoreStatus_totalCount {
   status_total: FormStoreStatusCountData;

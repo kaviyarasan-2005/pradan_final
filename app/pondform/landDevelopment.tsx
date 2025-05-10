@@ -10,24 +10,20 @@ export default function PondDevelopment() {
   const { data, submittedForms, setData } = useFormStore();
   const [form, setForm] = useState(
     data.landDevelopment || {
-      date:"",
-      sfNumber: "",
-      soilTypeCombined: [],
-      landBenefit: "",
-      proposalArea: "",
-      inspectionBy: "",
-      approvedBy: "",
-      dateInspectionText: "",
-      dateApprovalText: "",
-      latitude: "",
-      longitude: "",
+      date:"",//cd
+      sfNumber: "",//cd
+      soilTypeCombined: [],//cd
+      landBenefit: "",//cd
+      proposalArea: "",//cd
+      latitude: "",//cd
+      longitude: "",//cd
       length: "",
       breadth: "",
       depth: "",
       volume: "",
-      pradanContribution: "",
-      farmerContribution: "",
-      totalEstimate: "",
+      pradanContribution: "",//cd
+      farmerContribution: "",//cd
+      totalEstimate: "",//cd
     }
   );
   useEffect(() => {

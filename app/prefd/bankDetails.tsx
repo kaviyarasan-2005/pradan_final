@@ -24,21 +24,19 @@ export default function BankDetails() {
 
   const [form, setForm] = useState(
     data.bankDetails || {
-      accountHolderName: "developer",
-      accountNumber: "1423949239",
-      bankName: "react bank",
+      accountHolderName: "developer",//cd
+      accountNumber: "1423949239",//cd
+      bankName: "react bank",//cd
       branch: "Kunoor",
-      ifscCode: "RB123K02309",
-      farmerAgreed: "Yes",
-      formStatus: "",
-      fundStatus:"",
+      ifscCode: "RB123K02309",//cd
+      farmerAgreed: "Yes",//cd
       submittedFiles: {
         patta: null,
-        idCard: null,
+        idCard: null,//cd
         fmb: null,
-        farmerPhoto: null,
-        bankPassbook: null,
-        geoTag: null,
+        farmerPhoto: null,//cd
+        bankPassbook: null,//cd
+        geoTag: null,//cd
       },
     }
   );

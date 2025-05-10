@@ -22,38 +22,39 @@ export default function BasicDetails() {
 
   const [form, setForm] = useState(
     data.basicDetails || {
-      name: "k",
+      name: "k",//cd
       age: "12",
       mobile: "0990909090",
       district: "pdk",
       hamlet: "adk",
       panchayat: "kdk",
       block: "sdk",
-      idCardType: "Aadhar",
-      idCardNumber: "1234567890987",
-      othercard:"",
+      idCardType: "Aadhar",//cd
+      idCardNumber: "1234567890987",//cd
+      othercard:"", //no
       gender: "Male",
-      fatherSpouse: "raj",
-      householdType: "Joint",
-      adults: "12",
-      children: "23",
-      occupation: { agriculture: "2", business: "3", other: "4" },
-      specialCategory: false,
-      specialCategoryNumber: "",
+      fatherSpouse: "raj",//cd
+      householdType: "Joint",//cd
+      adults: "12",//no
+      children: "23",//no
+      occupation: { agriculture: "2", business: "3", other: "4" },//no
+      specialCategory: false,//no
+      specialCategoryNumber: "",//cd
       caste: "OC",
-      houseOwnership: "Rented",
-      houseType: "pucca",
-      drinkingWater: [],
-      potability: [],
-      domesticWater: [],
-      toiletAvailability: "Yes",
-      toiletCondition: "yes",
-      education: "Primary",
-      hhcombined:"",
-      occupationCombined:"",
-      drinkingWaterCombined:[],
-      potabilityCombined:[],
-      domesticWaterCombined:[],    }
+      houseOwnership: "Rented",//cd
+      houseType: "pucca",//cd
+      drinkingWater: [],//no
+      potability: [],//no
+      domesticWater: [],//no
+      toiletAvailability: "Yes",//cd
+      toiletCondition: "yes",//cd
+      education: "Primary",//cd
+      hhcombined:"",//cd
+      occupationCombined:"",//cd
+      drinkingWaterCombined:[],//cd
+      potabilityCombined:[],//cd
+      domesticWaterCombined:[],//cd    
+      }
   );
   
   useEffect(() => {

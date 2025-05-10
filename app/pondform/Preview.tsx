@@ -15,9 +15,9 @@ export default function Preview() {
   
 const isSubmittedPreview = !!id;
 const selectedForm = React.useMemo(() => {
-  // if (fromsubmit) {
-  //   return data; // Always use updated data when fromsubmit
-  // }
+  if (fromsubmit) {
+    return data; // Always use updated data when fromsubmit
+  }
   if (isSubmittedPreview && id || draftForms && id) {
     return submittedForms.find((form) => String(form.id) === id);
   }
