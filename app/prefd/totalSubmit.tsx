@@ -5,6 +5,7 @@ import axios from "axios";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
+
 import {
   ScrollView,
   StyleSheet,
@@ -15,7 +16,8 @@ import {
 } from "react-native";
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { DashbdStore } from "../../storage/DashbdStore";
-
+import { IdFormStore } from "../../storage/IdStore";
+import { useFormStore } from "../../storage/useFormStore";
 
 const url = Constants.expoConfig.extra.API_URL;
 const statusStyles = {
@@ -36,6 +38,9 @@ const TotalSubmit = () => {
   // const { submittedForms, loadSubmittedForms, deleteFormByIndex } = useFormStore();
   const { showActionSheetWithOptions } = useActionSheet();
 const {dashbdforms,loaddashbdForms} = DashbdStore();
+const {setIdform,Idforms} = IdFormStore();
+const {setData,data} = useFormStore();
+const forms = IdFormStore((state) => state.Idforms);
   const [searchText, setSearchText] = useState("");
   const [formType, setFormType] = useState("ALL");
   const [panchayat, setPanchayat] = useState("");
@@ -89,7 +94,10 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
     try {
       const response = await axios.get(`${url}/api/dashboard/getpreviewspecificformData`,{params:{form_id:item.id}});
       const fetchedData = response.data;
-      console.log(JSON.stringify(fetchedData) +" "+item.id);
+      // console.log(JSON.stringify(fetchedData) +" "+item.id);
+      // setIdform(fetchedData);
+      setData(fetchedData);
+     
     router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/postfd/totalsubmit" } });
   
     } catch (error) {
@@ -141,6 +149,7 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
         </TouchableOpacity>
         <Text style={styles.title}>PRE TotalForm Submissions</Text>
         <TouchableOpacity onPress={() =>{ setShowFilters(!showFilters) 
+
         // console.log(JSON.stringify(dashbdforms) +"total submit 111");
         }} style={styles.icon}>
           <MaterialIcons name="filter-list" size={24} color="#1B5E20" />

@@ -148,17 +148,16 @@ export interface FormData {
   plantation_verified_by: any;
 }
 
-interface FormStore {
-  forms: FormData[];
-  setForms: (data: FormData[]) => void;
+interface IdFormStore {
+  Idforms: FormData[];
+  setIdform: (data: FormData[]) => void;
   addForm: (form: FormData) => void;
 }
-
-export const useFormStore = create<FormStore>((set) => ({
-  forms: [],
-  setForms: (data) => set({ forms: data }),
+export const IdFormStore = create<IdFormStore>((set) => ({
+  Idforms: [],
+  setIdform: (data) => set({ Idforms: data }),
   addForm: (form) =>
     set((state) => ({
-      forms: [...state.forms, form],
+      Idforms: [...state.Idforms, form],
     })),
 }));

@@ -5,9 +5,6 @@ interface FormData {
   id?: string;
   submittedAt?: string;
   date?: string;
-  fundStatus?:"postfund" | "prefund";
-  formType?: "LAND" | "POND" | "PLANTATION";
-  formStatus?: "Approved" | "Pending" | "Rejected" |"Review";
   basicDetails?: any;
   landOwnership?: any;
   landDevelopment?: any;

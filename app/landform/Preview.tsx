@@ -4,19 +4,19 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { Alert, Image, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Card, Divider, IconButton, Text } from "react-native-paper";
+import { IdFormStore } from "../../storage/IdStore";
 import { useFormStore } from "../../storage/useFormStore";
-
 const url = Constants.expoConfig.extra.API_URL;
 
 export default function   Preview() {
   const router = useRouter();
   const { id,fromsubmit,returnsubmit,fromdraft} = useLocalSearchParams<{ id?: string , returnsubmit?: string,fromsubmit?: string, fromdraft?:string;}>();
   const { data, submittedForms,draftForms, setData, submitForm } = useFormStore();
-  
+  const {Idforms} = IdFormStore();
 const isSubmittedPreview = !!id;
 const selectedForm = React.useMemo(() => {
   // if (fromsubmit) {
-  //   return data; // Always use updated data when fromsubmit
+  //   return Idforms; // Always use updated data when fromsubmit
   // }
   if (isSubmittedPreview && id || draftForms && id) {
     return submittedForms.find((form) => String(form.id) === id);
@@ -59,6 +59,20 @@ const canEdit = () => {
       setSubmitting(false);
     }
   };
+  const renderSectionFromIdFormStore = (title: string, fields: any[]) => (
+  <Card style={styles.card}>
+    <Card.Title title={title} />
+    <Card.Content>
+      {fields.map((field, index) => (
+        <View key={index} style={styles.fieldContainer}>
+          <Text style={styles.label}>{field.label}</Text>
+          <Text style={styles.value}>{field.value}</Text>
+          <Divider style={styles.divider} />
+        </View>
+      ))}
+    </Card.Content>
+  </Card>
+);
   
   const renderSection = (title: string, fields: any[], editRoute: string) => (
     <Card style={styles.card}>
