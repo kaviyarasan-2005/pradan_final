@@ -57,16 +57,65 @@ const {user} = useUserStore();
   );
   
   useEffect(() => {
-    setData("user_id",user.id)
-    if (id && fromPreview === "true" || id && fromsubmit == "true") {// added from submit here
-      const selected = submittedForms.find((form) => form.id === id);
-      if (selected) {
-        Object.entries(selected).forEach(([key, value]) => {
-          setData(key as keyof typeof data, value);
-        });
-      }
+  setData("user_id", user.id);
+  if ((id && fromPreview === "true") || (id && fromsubmit === "true")) {
+    const selected = submittedForms.find((form) => form.id === id);
+    if (selected) {
+      Object.entries(selected).forEach(([key, value]) => {
+        setData(key as keyof typeof data, value);
+      });
     }
-  }, [id]);
+  }
+}, [id]);
+
+useEffect(() => {
+  // When data.basicDetails is updated, sync it to local state
+  if (data.basicDetails) {
+    setForm((prev) => ({
+      ...{
+        name: "",
+        age: "",
+        mobile: "",
+        district: "",
+        hamlet: "",
+        panchayat: "",
+        block: "",
+        idCardType: "",
+        idCardNumber: "",
+        othercard: "",
+        gender: "",
+        fatherSpouse: "",
+        householdType: "",
+        adults: "",
+        children: "",
+        occupation: { agriculture: "", business: "", other: "" },
+        specialCategory: "",
+        specialCategoryNumber: "0",
+        caste: "",
+        houseOwnership: "",
+        houseType: "",
+        drinkingWater: [],
+        potability: [],
+        domesticWater: [],
+        toiletAvailability: "",
+        toiletCondition: "",
+        education: "",
+        hhcombined: "",
+        occupationCombined: "",
+        drinkingWaterCombined: [],
+        potabilityCombined: [],
+        domesticWaterCombined: [],
+      },
+      ...data.basicDetails,
+      occupation: {
+        agriculture: data.basicDetails.occupation?.agriculture || "",
+        business: data.basicDetails.occupation?.business || "",
+        other: data.basicDetails.occupation?.other || "",
+      },
+    }));
+  }
+}, [data.basicDetails]);
+
   const updateField = (field: string, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
@@ -109,7 +158,8 @@ const {user} = useUserStore();
     updateField("idCardType",form.othercard);
     setData("basicDetails", form);
 
-    if (fromPreview && returnTo ){
+    if (fromPreview == "true" && returnTo ){
+      console.log(returnTo);
       router.push({ pathname: returnTo, params: { id ,returnsubmit:returnsubmit,fromsubmit:fromsubmit} });
     } 
     // for  from submit check here
@@ -124,7 +174,7 @@ const {user} = useUserStore();
         else if(frompond=="true"){
           router.push({pathname:"/prefd/landOwnership",params:{fromland:"false", frompond :"true",fromplantation:"false"}});
         }
-        else{
+        else if(fromplantation == "true"){
           router.push({pathname:"/prefd/landOwnership",params:{fromland:"false", frompond :"false",fromplantation:"true"}});
         }
     }
@@ -370,8 +420,9 @@ const {user} = useUserStore();
     
     // Combine both values and update a single field
     const hhcombined = `${updatedAdults},${updatedChildren}`;
-    updateField("hhcombined", hhcombined); // Save combined value in a single field
+    // Save combined value in a single field
     updateField("children", updatedChildren); // Optionally, keep children separate
+     updateField("hhcombined", hhcombined);
   }}
   style={styles.input}
   placeholder="Children"

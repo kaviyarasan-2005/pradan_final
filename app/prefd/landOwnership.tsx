@@ -105,17 +105,21 @@ export default function LandOwnership() {
   const handleNext = () => {
     console.log(form.livestockCombined+" - "+form.irrigatedLandCombined+" - "+form.cropSeasonCombined);
     setData("landOwnership", form);
-    if (fromPreview && returnTo) {
+    if (fromPreview == "true"&& returnTo) {
      
       router.push({ pathname: returnTo, params: { id,returnsubmit:returnsubmit,fromsubmit:fromsubmit} });
-    } else {
+    } 
+     else if (fromsubmit && returnsubmit){
+      router.push({ pathname: returnTo, params: { id ,returnsubmit:returnsubmit,fromsubmit:fromsubmit} });
+    }
+    else {
       if(fromland == "true"){
         router.push({pathname:"/landform/landDevelopment",params:{fromland:"true", frompond :"false",fromplantation:"false"}});
       }
       else if(frompond== "true"){
         router.push({pathname:"/pondform/landDevelopment",params:{fromland:"false", frompond :"true",fromplantation:"false"}});
       }
-      else{
+      else if(fromplantation == "true"){
         router.push({pathname:"/plantationform/landDevelopment",params:{fromland:"false", frompond :"false",fromplantation:"true"}});
       }
     }

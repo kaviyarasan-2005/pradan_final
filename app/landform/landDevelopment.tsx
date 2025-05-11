@@ -116,7 +116,7 @@ const totalestimation =(feild : any,value : any) =>{
           else if(frompond== "true"){
             router.push({pathname:"/prefd/bankDetails",params:{fromland:"false", frompond :"true",fromplantation:"false"}});
           }
-          else{
+          else if (fromplantation == "true"){
             router.push({pathname:"/prefd/bankDetails",params:{fromland:"false", frompond :"false",fromplantation:"true"}});
           }
         }

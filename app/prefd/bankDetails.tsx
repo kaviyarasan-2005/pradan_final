@@ -18,7 +18,7 @@ const url = Constants.expoConfig?.extra.API_URL;
 
 export default function BankDetails() {
   const router = useRouter();
-  const { id, fromPreview,fromsubmit,returnsubmit,fromland,fromplantation,frompond } = useLocalSearchParams<{ id?: string; fromPreview?: string }>();
+  const { id, fromPreview,returnTo,fromsubmit,returnsubmit,fromland,fromplantation,frompond } = useLocalSearchParams<{ id?: string; fromPreview?: string }>();
   const { data, submittedForms, setData } = useFormStore();
   const {user} = useUserStore();
 
@@ -197,6 +197,10 @@ export default function BankDetails() {
 
   const handlePreview = () => {
     setData("bankDetails", form);
+     if (fromPreview == "true" && returnTo ){
+      console.log(returnTo);
+      router.push({ pathname: returnTo, params: { id ,returnsubmit:returnsubmit,fromsubmit:fromsubmit} });
+    } 
     
     if(fromland== "true"){
       router.push({pathname:"/landform/Preview",params:{fromland:"true", frompond :"false",fromplantation:"false"}});
@@ -204,7 +208,7 @@ export default function BankDetails() {
     else if(frompond== "true"){
       router.push({pathname:"/pondform/Preview",params:{fromland:"false", frompond :"true",fromplantation:"false"}});
     }
-    else{
+    else if (fromplantation == "true"){
       router.push({pathname:"/plantationform/Preview",params:{fromland:"false", frompond :"false",fromplantation:"true"}});
     }
   };

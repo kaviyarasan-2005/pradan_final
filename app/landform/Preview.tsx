@@ -191,7 +191,7 @@ const handleSubmit = async () => {
         { label: "8. Gender", value: selectedForm.basicDetails?.gender },
         { label: "9. Father / Spouse Name", value: selectedForm.basicDetails?.fatherSpouse },
         { label: "10. Type of Household", value: selectedForm.basicDetails?.householdType },
-        { label: "11. Household Members - Adults", value: selectedForm.basicDetails?.hhcombined},
+        { label: "11. Household Members - Adults , childern", value: selectedForm.basicDetails?.hhcombined},
         // { label: "11. Household Members - Adults", value: selectedForm.basicDetails?.adults },
         // { label: "    Household Members - Children", value: selectedForm.basicDetails?.children },
         { label: "12. Occupation of Household Members (Agriculture , Business , Others)", value: selectedForm.basicDetails?.occupationCombined},
