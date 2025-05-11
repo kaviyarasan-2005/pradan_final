@@ -20,24 +20,24 @@ export default function DraftsScreen() {
 
   // YOU CAN SEE ALL DATA HERE BELOW USEEFFECT;
 
-  useEffect(() => {
-    const printAllStorageData = async () => {
-      try {
-        const submitted = await AsyncStorage.getItem('submittedForms');
-        const drafts = await AsyncStorage.getItem('draftForms');
+  // useEffect(() => {
+  //   const printAllStorageData = async () => {
+  //     try {
+  //       const submitted = await AsyncStorage.getItem('submittedForms');
+  //       const drafts = await AsyncStorage.getItem('draftForms');
   
-        console.log("=== Submitted Forms ===");
-        console.log(submitted ? JSON.parse(submitted) : "No submitted forms");
+  //       console.log("=== Submitted Forms ===");
+  //       console.log(submitted ? JSON.parse(submitted) : "No submitted forms");
   
-        console.log("=== Draft Forms ===");
-        console.log(drafts ? JSON.parse(drafts) : "No draft forms");
-      } catch (err) {
-        console.error("Failed to read storage", err);
-      }
-    };
+  //       console.log("=== Draft Forms ===");
+  //       console.log(drafts ? JSON.parse(drafts) : "No draft forms");
+  //     } catch (err) {
+  //       console.error("Failed to read storage", err);
+  //     }
+  //   };
   
-    printAllStorageData();
-  }, []);
+  //   printAllStorageData();
+  // }, []);
   
   const openDraft = (item) => {
     console.log(item.formType);

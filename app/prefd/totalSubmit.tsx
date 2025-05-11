@@ -38,8 +38,7 @@ const TotalSubmit = () => {
   // const { submittedForms, loadSubmittedForms, deleteFormByIndex } = useFormStore();
   const { showActionSheetWithOptions } = useActionSheet();
 const {dashbdforms,loaddashbdForms} = DashbdStore();
-const {setIdform,Idforms} = IdFormStore();
-const {setData,data} = useFormStore();
+const {setData,data,resetData} = useFormStore();
 const forms = IdFormStore((state) => state.Idforms);
   const [searchText, setSearchText] = useState("");
   const [formType, setFormType] = useState("ALL");
@@ -54,6 +53,7 @@ const forms = IdFormStore((state) => state.Idforms);
   const [isEndDatePickerVisible, setEndDatePickerVisible] = useState(false);
 
   useEffect(() => {
+    resetData();
     loaddashbdForms();
   }, []);
 
@@ -90,7 +90,8 @@ const handleCardPress = async (item) => {
   else if (item.form_type === 2) previewPath = "/pondform/Preview";
   else if (item.form_type === 3) previewPath = "/plantationform/Preview";
   else return alert("Unknown form type.");
-
+    resetData();
+    console.log( JSON.stringify(data) + " this is data");
   try {
     const response = await axios.get(`${url}/api/dashboard/getpreviewspecificformData`, {
       params: { form_id: item.id, form_type: item.form_type }

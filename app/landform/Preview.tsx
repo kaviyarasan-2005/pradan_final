@@ -63,6 +63,7 @@ const handleSubmit = async () => {
   } catch (error) {
     Alert.alert("Error", "Failed to submit the form. Please try again.\n" + error);
   } finally {
+    resetData();
     setSubmitting(false);
   }
 };
