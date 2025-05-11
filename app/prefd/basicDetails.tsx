@@ -21,33 +21,33 @@ export default function BasicDetails() {
 const {user} = useUserStore();
   const [form, setForm] = useState(
     data.basicDetails || {
-      name: "k",//cd
-      age: "12",
-      mobile: "0990909090",
-      district: "pdk",
-      hamlet: "adk",
-      panchayat: "kdk",
-      block: "sdk",
-      idCardType: "Aadhar",//cd
-      idCardNumber: "1234567890987",//cd
+      name: "",//cd
+      age: "",
+      mobile: "",
+      district: "",
+      hamlet: "",
+      panchayat: "",
+      block: "",
+      idCardType: "",//cd
+      idCardNumber: "",//cd
       othercard:"", //no
-      gender: "Male",
-      fatherSpouse: "raj",//cd
-      householdType: "Joint",//cd
-      adults: "12",//no
-      children: "23",//no
-      occupation: { agriculture: "2", business: "3", other: "4" },//no
-      specialCategory: false,//no
+      gender: "",
+      fatherSpouse: "",//cd
+      householdType: "",//cd
+      adults: "",//no
+      children: "",//no
+      occupation: { agriculture: "", business: "", other: "" },//no
+      specialCategory: "",//no
       specialCategoryNumber: "",//cd
-      caste: "OC",
-      houseOwnership: "Rented",//cd
-      houseType: "pucca",//cd
+      caste: "",
+      houseOwnership: "",//cd
+      houseType: "",//cd
       drinkingWater: [],//no
       potability: [],//no
       domesticWater: [],//no
-      toiletAvailability: "Yes",//cd
-      toiletCondition: "yes",//cd
-      education: "Primary",//cd
+      toiletAvailability: "",//cd
+      toiletCondition: "",//cd
+      education: "",//cd
       hhcombined:"",//cd
       occupationCombined:"",//cd
       drinkingWaterCombined:[],//cd

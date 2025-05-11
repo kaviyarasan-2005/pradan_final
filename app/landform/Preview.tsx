@@ -177,8 +177,7 @@ const handleSubmit = async () => {
       </View>
 
       {renderSection("Basic Details", [
-        
-        {label : "Date",value: selectedForm.landDevelopment?.date},
+         {label : "Date",value: selectedForm.landDevelopment?.date},
         {label : "ID",value: id},
         { label: "1. Name of Farmer", value: selectedForm.basicDetails?.name },
         { label: "1-2. Age", value: selectedForm.basicDetails?.age },
@@ -188,12 +187,13 @@ const handleSubmit = async () => {
         { label: "5. Panchayat", value: selectedForm.basicDetails?.panchayat },
         { label: "6. Hamlet", value: selectedForm.basicDetails?.hamlet },
         { label: "6. Identity Card", value: selectedForm.basicDetails?.idCardType },
-        { label: "7. ID Card Number", value: selectedForm.basicDetails?.IdCardNumber },
+        { label: "7. ID Card Number", value: selectedForm.basicDetails?.idCardNumber },
         { label: "8. Gender", value: selectedForm.basicDetails?.gender },
         { label: "9. Father / Spouse Name", value: selectedForm.basicDetails?.fatherSpouse },
         { label: "10. Type of Household", value: selectedForm.basicDetails?.householdType },
-        { label: "11. Household Members - Adults ,Children", value: selectedForm.basicDetails?.hhcombined },
-        { label: "12. Occupation of Household Members (agriculture,business,other)", value: selectedForm.basicDetails?.occupationCombined},
+        { label: "11. Household Members - Adults", value: selectedForm.basicDetails?.adults },
+        { label: "    Household Members - Children", value: selectedForm.basicDetails?.children },
+        { label: "12. Occupation of Household Members", value: selectedForm.basicDetails?.occupation},
         { label: "13. Special Category", value: selectedForm.basicDetails?.specialCategory ? "Yes" : "No" },
         { label: "    Special Category Number", value: selectedForm.basicDetails?.specialCategoryNumber },
         { label: "14. Caste", value: selectedForm.basicDetails?.caste },
@@ -211,15 +211,21 @@ const handleSubmit = async () => {
         { label: "23. Land Ownership", value: selectedForm.landOwnership?.landOwnershipType },
         { label: "24. Well for Irrigation", value: selectedForm.landOwnership?.hasWell },
         { label: "    Area Irrigated (ha)", value: selectedForm.landOwnership?.areaIrrigated },
-        { label: "25. Irrigated Lands (ha)  (rainfed,tankfed,wellIrrigated)", value: selectedForm.landOwnership?.irrigatedLandCombined },
+        { label: "25. Irrigated Lands (ha)", value: selectedForm.landOwnership?.irrigatedLand },
         { label: "26. Patta Number", value: selectedForm.landOwnership?.pattaNumber },
         { label: "27. Total Area (ha)", value: selectedForm.landOwnership?.totalArea },
         { label: "27-28. Taluk", value: selectedForm.landOwnership?.taluk },
         { label: "27-28. Firka", value: selectedForm.landOwnership?.firka},
         { label: "28. Revenue Village", value: selectedForm.landOwnership?.revenueVillage },
-        { label: "29. Crop Season", value: selectedForm.landOwnership?.cropSeasonCombined },
-        { label: "30. LiveStocks  (Goat,Sheep,Milch Animals, Draught Animals,Poultry,Others)",value: selectedForm.landOwnership?.livestock?.livestockCombined},
-      ], "/prefd/landOwnership")}
+        { label: "29. Crop Season", value: selectedForm.landOwnership?.cropSeason },
+        { label: "30. LiveStocks" },
+        { label: " Goat", value: selectedForm.landOwnership?.livestock?.goat || "0" },
+        { label: "    Sheep", value: selectedForm.landOwnership?.livestock?.sheep || "0" },
+        { label: "    Milch Animals :", value: selectedForm.landOwnership?.livestock?.milchAnimals || "0" },
+        { label: "    Draught Animals :", value: selectedForm.landOwnership?.livestock?.draught_animals || "0" },
+        { label: "    Poultry :", value: selectedForm.landOwnership?.livestock?.poultry || "0" },
+        { label: "    Others :", value: selectedForm.landOwnership?.livestock?.others || "0" },
+         ], "/prefd/landOwnership")}
 
       {renderSection("Land Development Details", [
         { label: "31. S.F. No.", value: selectedForm.landDevelopment?.sfNumber },
