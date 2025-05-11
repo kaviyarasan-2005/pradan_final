@@ -7,6 +7,7 @@ interface FormData {
   date?: string;
   basicDetails?: any;
   landOwnership?: any;
+  user_id?:any;
   landDevelopment?: any;
   bankDetails?: any;
   formStatus?: string;

@@ -28,8 +28,9 @@ const DashboardScreen: React.FC = () => {
   const slideAnim = useState(new Animated.Value(0))[0];
   const [pageIndex, setPageIndex] = useState(0);
   const {user} = useUserStore();
-  const {setData,resetData} = useFormStore();
+  const {setData,resetData ,data} = useFormStore();
  const { setForms, dashbdforms } = DashbdStore();
+ const {setUser} = useUserStore();
 
   const { setStatus_totalCount, resetStatus_totalCount, status_total } = FormStatus_totalCount(); //global Zustand store for total count of forms
   const {setStatus_todayCount, resetStatus_todayCount, status_today } = FormStatus_todayCount(); //global Zustand store for today's count of forms
@@ -58,7 +59,7 @@ const DashboardScreen: React.FC = () => {
       //   console.error('Error fetching forms:', error);
       // });
 
-      setData("user_id",user?.id);
+      setUser("user_id",user?.id);
      // console.log("Dashboard Status Count:", dashborad_status_count_response_today.data);
 
      //convert the array of objects to a map for easy access
@@ -100,6 +101,7 @@ const DashboardScreen: React.FC = () => {
   }
 
   useEffect(() => {
+    console.log(JSON.stringify(data) + "dash data")
     resetData();
     if (user?.id) {
       fetchDashboardData(user?.id);

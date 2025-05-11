@@ -1,10 +1,9 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput } from "react-native";
 import { Button, Checkbox, IconButton, RadioButton } from "react-native-paper";
-
-import React from "react";
 import { useFormStore } from "../../storage/useFormStore";
+import { useUserStore } from "../../storage/userDatastore";
 
 export default function BasicDetails() {
   const router = useRouter();
@@ -19,7 +18,7 @@ export default function BasicDetails() {
     fromplantation?: string;
   }>();
   const { data, submittedForms, setData } = useFormStore();
-
+const {user} = useUserStore();
   const [form, setForm] = useState(
     data.basicDetails || {
       name: "k",//cd
@@ -58,6 +57,7 @@ export default function BasicDetails() {
   );
   
   useEffect(() => {
+    setData("user_id",user.id)
     if (id && fromPreview === "true" || id && fromsubmit == "true") {// added from submit here
       const selected = submittedForms.find((form) => form.id === id);
       if (selected) {

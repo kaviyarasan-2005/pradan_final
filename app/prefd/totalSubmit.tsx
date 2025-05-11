@@ -111,7 +111,7 @@ const handleCardPress = async (item) => {
       params: {
         id: item.id,
         fromsubmit: "true",
-        returnsubmit: "/postfd/totalsubmit"
+        returnsubmit: "/prefd/totalSubmit"
       }
     });
 
