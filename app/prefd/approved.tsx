@@ -1,6 +1,8 @@
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { Picker } from '@react-native-picker/picker';
+import axios from "axios";
+import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -13,9 +15,10 @@ import {
 } from "react-native";
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { DashbdStore } from "../../storage/DashbdStore";
+import { useFormStore } from "../../storage/useFormStore";
+// import Pending from "../postfd/pending";
 
-
-
+const url = Constants.expoConfig.extra.API_URL;
 
 const statusStyles = {
   4: { backgroundColor: '#C8E6C9', textColor: '#2E7D32' },
@@ -32,6 +35,7 @@ const Approved = () => {
   // const { submittedForms, loadSubmittedForms, deleteFormByIndex } = useFormStore();
   const { showActionSheetWithOptions } = useActionSheet();
 const {dashbdforms,loaddashbdForms} = DashbdStore();
+const {setData,data,resetData} = useFormStore();
   const [searchText, setSearchText] = useState("");
   const [formType, setFormType] = useState("ALL");
   const [panchayat, setPanchayat] = useState("");
@@ -45,12 +49,13 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
   const [isEndDatePickerVisible, setEndDatePickerVisible] = useState(false);
 
   useEffect(() => {
+     resetData();
     loaddashbdForms();
   }, []);
 
   const filteredForms = dashbdforms.filter((item) => {
     const matchesType = formType === "ALL" || String(item.form_type) === formType;
-    const matchesStatus = item.status === 4;
+    const matchesStatus = item.status ===4;
     const matchesName = item.farmer_name?.toLowerCase().includes(searchText.toLowerCase());
     const matchesPanchayat = item.panchayat?.toLowerCase().includes(panchayat.toLowerCase());
     const matchesBlock = item.block?.toLowerCase().includes(block.toLowerCase());
@@ -73,16 +78,44 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
   });
   
 
-  const handleCardPress = (item) => {
-    
-    let previewPath = "";
-  if (item.form_type === 1) previewPath = "/landform/Preview";
-    else if (item.form_type === 2) previewPath = "/pondform/Preview";
-    else if (item.form_type === 3) previewPath = "/plantationform/Preview";
-    else return alert("Unknown form type.");
+ const handleCardPress = async (item) => {
+  let previewPath = "";
 
-    router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/prefd/approved" } });
-  };
+  if (item.form_type === 1) previewPath = "/landform/Preview";
+  else if (item.form_type === 2) previewPath = "/pondform/Preview";
+  else if (item.form_type === 3) previewPath = "/plantationform/Preview";
+  else return alert("Unknown form type.");
+    resetData();
+    console.log( JSON.stringify(data) + " this is data");
+  try {
+    const response = await axios.get(`${url}/api/dashboard/getpreviewspecificformData`, {
+      params: { form_id: item.id, form_type: item.form_type }
+    });
+
+    const fetchedData = response.data;
+    console.log(JSON.stringify(fetchedData) + " " + item.form_type);
+
+    // Set all keys of fetchedData into the form store using setData
+      setData("basicDetails", fetchedData.basicDetails);
+    setData("landOwnership", fetchedData.landOwnership);
+    setData("landDevelopment", fetchedData.landDevelopment);
+    setData("bankDetails", fetchedData.bankDetails);
+
+    router.push({
+      pathname: previewPath,
+      params: {
+        id: item.id,
+        fromsubmit: "true",
+        returnsubmit: "/prefd/approved"
+      }
+    });
+
+  } catch (error) {
+    console.error("Error fetching form details:", error);
+    // Alert.alert("Error", "Failed to fetch form details.");
+  }
+};
+
 
   // Function to handle the date selection
   const handleConfirmStartDate = (date) => {
