@@ -9,7 +9,7 @@ interface DraftData {
   landOwnership?: any;
   landDevelopment?: any;
   bankDetails?: any;
-  formStatus?: string;
+  formType?: string;
 }
 
 interface DraftStore {
@@ -19,8 +19,7 @@ interface DraftStore {
   deleteDraft: (id: string) => Promise<void>;
   clearDrafts: () => Promise<void>;
 }
-
-export const useDraftStore = create<DraftStore>((set, get) => ({
+export const useDraftStore = create<DraftStore>((set, get)  => ({
   drafts: [],
 
   loadDrafts: async () => {

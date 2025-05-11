@@ -10,8 +10,7 @@ interface FormData {
   user_id?:any;
   landDevelopment?: any;
   bankDetails?: any;
-  formStatus?: string;
-  fundStatus?: string;
+  formType:any;
 }
 
 interface FormStore {
@@ -27,6 +26,7 @@ interface FormStore {
 }
 
 export const useFormStore = create<FormStore>((set, get) => ({
+  
   data: {},
   submittedForms: [],
   loading: false,

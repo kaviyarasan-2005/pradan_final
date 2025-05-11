@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { Alert, Image, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Card, Divider, IconButton, Text } from "react-native-paper";
+import { useDraftStore } from "../../storage/DraftStore";
 import { useFormStore } from "../../storage/useFormStore";
 const url = Constants.expoConfig.extra.API_URL;
 
@@ -11,6 +12,7 @@ export default function   Preview() {
   const router = useRouter();
   const { id,fromsubmit,returnsubmit,fromdraft} = useLocalSearchParams<{ id?: string , returnsubmit?: string,fromsubmit?: string, fromdraft?:string;}>();
   const { data, submittedForms, resetData,setData, submitForm } = useFormStore();//draftForms,
+  const {drafts,saveDraft} = useDraftStore();
 const isSubmittedPreview = !!id;
 const selectedForm = React.useMemo(() => {
   if (fromsubmit) {
@@ -272,11 +274,10 @@ const handleSubmit = async () => {
       mode="outlined"
       onPress={async () => {
         try {
-          // setData("formType", "LAND");
+          setData("formType", 1);
           // setData("fundStatus",data.bankDetails?.fundStatus)
-
           await new Promise((res) => setTimeout(res, 50));
-          useFormStore.getState().saveDraft(data);
+          useDraftStore.getState().saveDraft(data);
           Alert.alert("Saved", "Form saved as draft successfully!");
           router.push("/dashboard");
         } catch (err) {
