@@ -38,7 +38,7 @@ const {user} = useUserStore();
       children: "",//no
       occupation: { agriculture: "", business: "", other: "" },//no
       specialCategory: "",//no
-      specialCategoryNumber: "",//cd
+      specialCategoryNumber: "0",//cd
       caste: "",
       houseOwnership: "",//cd
       houseType: "",//cd

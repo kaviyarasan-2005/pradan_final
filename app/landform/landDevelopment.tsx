@@ -22,7 +22,7 @@ export default function LandDevelopment() {
       workType: [],//cd
       workTypeText: "",//no
       proposalArea: "",//cd
-      otherWorks: "",//cd
+      otherWorks: "0",//cd
       latitude: "",//cd
       longitude: "",//cd
       pradanContribution: "",//cd
