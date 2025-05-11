@@ -28,7 +28,7 @@ const DashboardScreen: React.FC = () => {
   const slideAnim = useState(new Animated.Value(0))[0];
   const [pageIndex, setPageIndex] = useState(0);
   const {user} = useUserStore();
-  const {setData} = useFormStore();
+  const {setData,resetData} = useFormStore();
  const { setForms, dashbdforms } = DashbdStore();
 
   const { setStatus_totalCount, resetStatus_totalCount, status_total } = FormStatus_totalCount(); //global Zustand store for total count of forms
@@ -100,6 +100,7 @@ const DashboardScreen: React.FC = () => {
   }
 
   useEffect(() => {
+    resetData();
     if (user?.id) {
       fetchDashboardData(user?.id);
     }
