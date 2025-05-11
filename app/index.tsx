@@ -10,9 +10,9 @@ import { useUserStore } from "../storage/userDatastore";
 const url = Constants.expoConfig.extra.API_URL;
 
 export default function LoginScreen() {
-  const [username, setUsername] = useState("1");
+  const [username, setUsername] = useState("");
   const setUser = useUserStore((state) => state.setUser);
-  const [password, setPassword] = useState("1");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
