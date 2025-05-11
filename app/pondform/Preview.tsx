@@ -1,3 +1,4 @@
+import { useDraftStore } from "@/storage/DraftStore";
 import axios from "axios";
 import Constants from "expo-constants";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -11,14 +12,15 @@ const url = Constants.expoConfig.extra.API_URL;
 export default function Preview() {
   const router = useRouter();
   const { id,fromsubmit,returnsubmit,fromdraft} = useLocalSearchParams<{ id?: string , returnsubmit?: string,fromsubmit?: string, fromdraft?:string;}>();
-  const { data, submittedForms,draftForms, setData, submitForm } = useFormStore();
-  
+  const { data, submittedForms, setData, submitForm } = useFormStore();
+  const {saveDraft} = useDraftStore();
 const isSubmittedPreview = !!id;
 const selectedForm = React.useMemo(() => {
+   
   if (fromsubmit) {
     return data; // Always use updated data when fromsubmit
   }
-  if (isSubmittedPreview && id || draftForms && id) {
+  if (isSubmittedPreview && id ) {
     return submittedForms.find((form) => String(form.id) === id);
   }
   return data;
@@ -273,11 +275,10 @@ const canEdit = () => {
       mode="outlined"
       onPress={async () => {
         try {
-          setData("formType", "POND");
-          setData("fundStatus",data.bankDetails?.fundStatus)
-
+         
+setData("formType", 2);
           await new Promise((res) => setTimeout(res, 50));
-          useFormStore.getState().saveDraft(data);
+          useDraftStore.getState().saveDraft(data);
           Alert.alert("Saved", "Form saved as draft successfully!");
           router.push("/dashboard");
         } catch (err) {
