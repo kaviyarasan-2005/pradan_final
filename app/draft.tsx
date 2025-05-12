@@ -15,6 +15,7 @@ export default function DraftsScreen() {
   }, []);
 
   const openDraft = (item) => {
+    setData("user_id",item.user_id);
     setData("basicDetails", item.basicDetails);
     setData("landOwnership", item.landOwnership);
     setData("landDevelopment", item.landDevelopment);
@@ -32,7 +33,7 @@ export default function DraftsScreen() {
       console.log(item.formType + "  name  " + JSON.stringify(item));
     router.push({
       
-      pathname: pathMap[item.formType],
+      pathname: pathMap[item.formType],//
       params: { fromdraft: "true" },
     });
   };
