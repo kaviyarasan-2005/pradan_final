@@ -281,30 +281,34 @@ export default function BankDetails() {
         <RadioButton.Item label="No" value="No" />
       </RadioButton.Group>
 
-      <Text style={styles.question}>50. Upload Documents:</Text>
-      {[
-        { label: "Patta", key: "patta", type: "pdf" },
-        { label: "ID Card", key: "idCard", type: "pdf" },
-        { label: "FMB", key: "fmb", type: "pdf" },
-        { label: "Photo of Farmer", key: "farmerPhoto", type: "image" },
-        { label: "Bank Passbook", key: "bankPassbook", type: "pdf" },
-        { label: "Geo Tag", key: "geoTag", type: "image" },
-      ].map((file) => (
-        <React.Fragment key={file.key}>
-          <Button
-            mode="outlined"
-            onPress={() => handleUpload(file.key, file.type)}
-            style={styles.uploadButton}
-          >
-            Upload {file.label}
-          </Button>
-          {form.submittedFiles[file.key]?.name && (
-            <Text style={styles.uploadedFile}>
-              Uploaded: {form.submittedFiles[file.key].name}
-            </Text>
-          )}
-        </React.Fragment>
-      ))}
+    {!fromPreview && (
+  <>
+    <Text style={styles.question}>50. Upload Documents:</Text>
+    {[
+      { label: "Patta", key: "patta", type: "pdf" },
+      { label: "ID Card", key: "idCard", type: "pdf" },
+      { label: "FMB", key: "fmb", type: "pdf" },
+      { label: "Photo of Farmer", key: "farmerPhoto", type: "image" },
+      { label: "Bank Passbook", key: "bankPassbook", type: "pdf" },
+      { label: "Geo Tag", key: "geoTag", type: "image" },
+    ].map((file) => (
+      <React.Fragment key={file.key}>
+        <Button
+          mode="outlined"
+          onPress={() => handleUpload(file.key, file.type)}
+          style={styles.uploadButton}
+        >
+          Upload {file.label}
+        </Button>
+        {form.submittedFiles[file.key]?.name && (
+          <Text style={styles.uploadedFile}>
+            Uploaded: {form.submittedFiles[file.key].name}
+          </Text>
+        )}
+      </React.Fragment>
+    ))}
+  </>
+)}
       
       <Button
         mode="contained"
