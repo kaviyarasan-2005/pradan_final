@@ -114,7 +114,7 @@ const {user} = useUserStore();
 
     if (fromPreview == "true" && returnTo ){
       console.log(returnTo);
-      router.push({ pathname: returnTo, params: { id ,returnsubmit:returnsubmit,fromsubmit:fromsubmit} });
+      router.push({ pathname: returnTo, params: { id ,returnsubmit:returnsubmit,fromsubmit:fromsubmit ,fromPreview:fromPreview} });
     } 
     // for  from submit check here
     else if (fromsubmit && returnsubmit){

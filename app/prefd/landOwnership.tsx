@@ -40,6 +40,7 @@ export default function LandOwnership() {
     }
   );
       useEffect(() => {
+        calculateTotalArea(data.landOwnership.irrigatedLand.rainfed, data.landOwnership.irrigatedLand.tankfed,data.landOwnership.irrigatedLand.wellIrrigated);
         if (id && fromPreview === "true") {
           // Load the form by ID and update current working data
           const selected = submittedForms.find((form) => form.id === id);
@@ -190,7 +191,7 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
 <Text style={styles.question}>25. Irrigated Lands (ha):</Text>
 <Text>Rainfed:</Text>
 <TextInput
-  value={form.irrigatedLand.rainfed}
+  value={String(form.irrigatedLand.rainfed)}
   onChangeText={(text) => {
     updateNestedField("irrigatedLand", "rainfed", text);
     calculateTotalArea(text, form.irrigatedLand.tankfed, form.irrigatedLand.wellIrrigated);
@@ -201,10 +202,10 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
 
 <Text>Tankfed:</Text>
 <TextInput
-  value={form.irrigatedLand.tankfed}
+  value={String(form.irrigatedLand.tankfed)}
   onChangeText={(text) => {
     updateNestedField("irrigatedLand", "tankfed", text);
-    calculateTotalArea(form.irrigatedLand.rainfed, text, form.irrigatedLand.wellIrrigated);
+    
   }}
   style={styles.input}
   keyboardType="numeric"
@@ -212,11 +213,10 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
 
 <Text>Well Irrigated:</Text>
 <TextInput
-  value={form.irrigatedLand.wellIrrigated}
   onChangeText={(text) => {
     updateNestedField("irrigatedLand", "wellIrrigated", text);
-    calculateTotalArea(form.irrigatedLand.rainfed, form.irrigatedLand.tankfed, text);
   }}
+   value={String(form.irrigatedLand.wellIrrigated)}
   style={styles.input}
   keyboardType="numeric"
 />
@@ -285,7 +285,7 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
 
 <TextInput
   placeholder="Goat"
-  value={form.livestock.goat}
+  value={String(form.livestock.goat)}
   onChangeText={(text) => {updateNestedField("livestock","goat",text)
     
     const goat = form.livestock.goat ||"0";
@@ -299,7 +299,7 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
 
 <TextInput
   placeholder="Sheep"
-  value={form.livestock.sheep}
+  value={String(form.livestock.sheep)}
   onChangeText={(text) => {updateNestedField("livestock","sheep",text)
     const sheep = form.livestock.sheep ||"0";
     const livestockCombinedField = `${form.livestock.goat},${sheep},${form.livestock.milchAnimals},${form.livestock.draught_animals},${form.livestock.poultry},${form.livestock.others}`;
@@ -312,7 +312,7 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
 
 <TextInput
   placeholder="Milch animals"
-  value={form.livestock.milchAnimals}
+  value={String(form.livestock.milchAnimals)}
   onChangeText={(text) => {updateNestedField("livestock","milchAnimals",text)
     const milchAnimals = form.livestock.milchAnimals ||"0";
     const livestockCombinedField = `${form.livestock.goat},${form.livestock.sheep},${milchAnimals},${form.livestock.draught_animals},${form.livestock.poultry},${form.livestock.others}`;
@@ -325,7 +325,7 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
 
 <TextInput
   placeholder="Draught Animals"
-  value={form.livestock.draught_animals}
+  value={String(form.livestock.draught_animals)}
   onChangeText={(text) => {updateNestedField("livestock","draught_animals",text)
     const draught_animals= form.livestock.draught_animals ||"0";
     const livestockCombinedField = `${form.livestock.goat},${form.livestock.sheep},${form.livestock.milchAnimals},${draught_animals},${form.livestock.poultry},${form.livestock.others}`;
@@ -337,7 +337,7 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
 
 <TextInput
   placeholder="Poultry"
-  value={form.livestock.poultry}
+  value={String(form.livestock.poultry)}
   onChangeText={(text) => {updateNestedField("livestock","poultry",text)
     const poultry= form.livestock.poultry ||"0";
     const livestockCombinedField = `${form.livestock.goat},${form.livestock.sheep},${form.livestock.milchAnimals},${form.livestock.draught_animals},${poultry},${form.livestock.others}`;
@@ -349,7 +349,7 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
 
 <TextInput
   placeholder="Others"
-  value={form.livestock.others}
+  value={String(form.livestock.others)}
   onChangeText={(text) => {updateNestedField("livestock","others",text)
     const others= form.livestock.others ||"0";
     const livestockCombinedField = `${form.livestock.goat},${form.livestock.sheep},${form.livestock.milchAnimals},${form.livestock.draught_animals},${form.livestock.poultry},${others}`;

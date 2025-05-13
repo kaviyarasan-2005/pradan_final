@@ -10,7 +10,7 @@ const url = Constants.expoConfig.extra.API_URL;
 
 export default function   Preview() {
   const router = useRouter();
-  const { id,fromsubmit,returnsubmit,fromdraft} = useLocalSearchParams<{ id?: string , returnsubmit?: string,fromsubmit?: string, fromdraft?:string;}>();
+  const { id,fromsubmit,returnsubmit,fromPreview} = useLocalSearchParams<{ id?: string , returnsubmit?: string,fromsubmit?: string, fromPreview?:string;}>();
   const { data, submittedForms, resetData,setData, submitForm,setNestedData,set2NestedData } = useFormStore();//draftForms,
   const {drafts,saveDraft} = useDraftStore();
 const isSubmittedPreview = !!id;
@@ -58,24 +58,29 @@ const canEdit = () => {
     .padStart(2, "0")}${now.getMilliseconds().toString().padStart(3, "0")}`;
 };
 
-useEffect(() => {
-  if(fromsubmit == "true" ){
-    set2NestedData("basicDetails","occupation","agriculture",12);
-    set2NestedData("basicDetails","occupation","business",12);
-    set2NestedData("basicDetails","occupation","other",12);
-    setNestedData("basicDetails","adults",12);
-    setNestedData("basicDetails","children",12);
-    set2NestedData("landOwnership","irrigatedLand","rainfed",45);
-    set2NestedData("landOwnership","irrigatedLand","tankfed",45);
-    set2NestedData("landOwnership","irrigatedLand","wellIrrigated",45);
-    set2NestedData("landOwnership","livestock","goat",76);
-    set2NestedData("landOwnership","livestock","sheep",76);
-    set2NestedData("landOwnership","livestock","milchAnimals",76);
-    set2NestedData("landOwnership","livestock","draught_animals",76);
-    set2NestedData("landOwnership","livestock","poultry",76);
-    set2NestedData("landOwnership","livestock","others",76);
-    setNestedData("landOwnership" , "cropSeason", "Kharif");
-    
+useEffect(() => {  
+  if(fromsubmit == "true" && fromPreview != "true"){
+const occupationarray = data.basicDetails.occupationCombined.split(',');
+if(data.basicDetails.specialCategoryNumber >0){
+  setNestedData("basicDetails","specialCategory","Yes");
+}
+    set2NestedData("basicDetails","occupation","agriculture",occupationarray[0]);
+    set2NestedData("basicDetails","occupation","business",occupationarray[1]);
+    set2NestedData("basicDetails","occupation","other",occupationarray[2]);
+// const Householdarray = data.basicDetails.hhcombined.split(',');
+    setNestedData("basicDetails","adults",1);
+    setNestedData("basicDetails","children",1);
+    const Irrigationarray = data.landOwnership.irrigatedLandCombined.split(',');
+    set2NestedData("landOwnership","irrigatedLand","rainfed",Irrigationarray[0]);
+    set2NestedData("landOwnership","irrigatedLand","tankfed",Irrigationarray[1]);
+    set2NestedData("landOwnership","irrigatedLand","wellIrrigated",Irrigationarray[2]);
+    const livestockarray = data.landOwnership.livestockCombined.split(',');
+    set2NestedData("landOwnership","livestock","goat",livestockarray[0]);
+    set2NestedData("landOwnership","livestock","sheep",livestockarray[1]);
+    set2NestedData("landOwnership","livestock","milchAnimals",livestockarray[2]);
+    set2NestedData("landOwnership","livestock","draught_animals",livestockarray[3]);
+    set2NestedData("landOwnership","livestock","poultry",livestockarray[4]);
+    set2NestedData("landOwnership","livestock","others",livestockarray[5]);
     // setData("basicDetails",data.basicDetails);
     // setData("bankDetails",data.bankDetails)
     // setData("landDevelopment",data.landDevelopment);
@@ -91,9 +96,7 @@ const handleSubmit = async () => {
     setSubmitting(true);
 
     await new Promise((resolve) => setTimeout(resolve, 50));
-
     await axios.post(`${url}/api/formData/postLandformData`, data);
-
     Alert.alert("Success", "Form Successfully Submitted!", [
       {
         text: "OK",
@@ -111,8 +114,6 @@ const handleSubmit = async () => {
     setSubmitting(false);
   }
 };
-
-
   
   const renderSection = (title: string, fields: any[], editRoute: string) => (
     <Card style={styles.card}>
@@ -170,7 +171,6 @@ const handleSubmit = async () => {
         mode="outlined"
         onPress={() =>
           router.push({
-           
             pathname: editRoute,
             params: {
               id: id,
@@ -193,13 +193,12 @@ const handleSubmit = async () => {
   );
 
   return (
-    
     <ScrollView contentContainerStyle={styles.container}>
       <IconButton
-  icon="arrow-left"
-  size={24}
-  style={styles.backButton}
-  onPress={() => {
+     icon="arrow-left"
+     size={24}
+     style={styles.backButton}
+     onPress={() => {
     if (fromsubmit) {
       router.push(returnsubmit); // Go back to total submitted page
     } else {
@@ -208,7 +207,6 @@ const handleSubmit = async () => {
   }}
 />
       <Text style={styles.title}>Land Form</Text>
-
       <View style={styles.farmerPhotoContainer}>
         {selectedForm?.bankDetails?.submittedFiles?.farmerPhoto?.uri ? (
           <Image
@@ -220,20 +218,19 @@ const handleSubmit = async () => {
           <Text style={styles.noPhotoText}>Add a farmer photo</Text>
         )}
       </View>
-
       {renderSection("Basic Details", [
          {label : "Date",value: selectedForm.landDevelopment?.date},
         {label : "ID",value: id},
-        { label: "1. Name of Farmer", value: selectedForm.basicDetails?.name },
-        { label: "1-2. Age", value: selectedForm.basicDetails?.age },
-        { label: "2. Mobile Number", value: selectedForm.basicDetails?.mobile },
-        { label: "3. District", value: selectedForm.basicDetails?.district },
-        { label: "4. Block", value: selectedForm.basicDetails?.block },
-        { label: "5. Panchayat", value: selectedForm.basicDetails?.panchayat },
-        { label: "6. Hamlet", value: selectedForm.basicDetails?.hamlet },
-        { label: "6. Identity Card", value: selectedForm.basicDetails?.idCardType },
-        { label: "7. ID Card Number", value: selectedForm.basicDetails?.idCardNumber },
-        { label: "8. Gender", value: selectedForm.basicDetails?.gender },
+        { label: "1. Name of Farmer", value: selectedForm.basicDetails?.name},
+        { label: "1-2. Age", value: selectedForm.basicDetails?.age},
+        { label: "2. Mobile Number", value: selectedForm.basicDetails?.mobile},
+        { label: "3. District", value: selectedForm.basicDetails?.district},
+        { label: "4. Block", value: selectedForm.basicDetails?.block},
+        { label: "5. Panchayat", value: selectedForm.basicDetails?.panchayat},
+        { label: "6. Hamlet", value: selectedForm.basicDetails?.hamlet},
+        { label: "6. Identity Card", value: selectedForm.basicDetails?.idCardType},
+        { label: "7. ID Card Number", value: selectedForm.basicDetails?.idCardNumber},
+        { label: "8. Gender", value: selectedForm.basicDetails?.gender},
         { label: "9. Father / Spouse Name", value: selectedForm.basicDetails?.fatherSpouse },
         { label: "10. Type of Household", value: selectedForm.basicDetails?.householdType },
         // { label: "11. Household Members - Adults , childern", value: selectedForm.basicDetails?.hhcombined},
@@ -263,7 +260,7 @@ const handleSubmit = async () => {
         { label: "27-28. Taluk", value: selectedForm.landOwnership?.taluk },
         { label: "27-28. Firka", value: selectedForm.landOwnership?.firka},
         { label: "28. Revenue Village", value: selectedForm.landOwnership?.revenueVillage },
-        { label: "29. Crop Season", value: selectedForm.landOwnership?.cropSeason },
+        { label: "29. Crop Season", value: selectedForm.landOwnership?.cropSeasonCombined },
         { label: "30. LiveStocks (goat , Sheep , Milch Animals ,  Draught Animals , Poultry , Others)", value: selectedForm.landOwnership?.livestock},
         // { label: " Goat", value: selectedForm.landOwnership?.livestock?.goat || "0" },
         // { label: "    Sheep", value: selectedForm.landOwnership?.livestock?.sheep || "0" },
@@ -329,7 +326,7 @@ const handleSubmit = async () => {
         }
       }}
       style={{ marginTop: 10 }}
-    >
+      >
       Save as Draft
     </Button>
 </> 
@@ -339,7 +336,7 @@ const handleSubmit = async () => {
       mode="contained"
       onPress={handleSubmit}
       style={[styles.submitButton, { marginTop: 10 }]}
-    >
+>
       Submit
     </Button>
 
