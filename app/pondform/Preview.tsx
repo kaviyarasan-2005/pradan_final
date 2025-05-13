@@ -2,7 +2,7 @@ import { useDraftStore } from "@/storage/DraftStore";
 import axios from "axios";
 import Constants from "expo-constants";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import { Alert, Image, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Card, Divider, IconButton, Text } from "react-native-paper";
 import { useFormStore } from "../../storage/useFormStore";
@@ -43,7 +43,24 @@ const canEdit = () => {
 
 
   const [submitting, setSubmitting] = React.useState(false);
+ const generateDraftId = () => {
+  const now = new Date();
+  return `draft-${now.getFullYear()}${(now.getMonth() + 1)
+    .toString()
+    .padStart(2, "0")}${now.getDate().toString().padStart(2, "0")}-${now
+    .getHours()
+    .toString()
+    .padStart(2, "0")}${now.getMinutes().toString().padStart(2, "0")}${now
+    .getSeconds()
+    .toString()
+    .padStart(2, "0")}${now.getMilliseconds().toString().padStart(3, "0")}`;
+};
 
+useEffect(() => {
+  const draftId = generateDraftId();
+  setData("draft_id", draftId);
+  setData("formType", 2);
+}, []);
   const handleSubmit = async () => {
     if (submitting) return; 
     try {
@@ -268,14 +285,12 @@ const canEdit = () => {
         },
       ], "/prefd/bankDetails")}
 
-{!isSubmittedPreview && !fromdraft&& (
+{!isSubmittedPreview && (
   <>
     <Button
       mode="outlined"
       onPress={async () => {
         try {
-         
-setData("formType", 2);
           await new Promise((res) => setTimeout(res, 50));
           useDraftStore.getState().saveDraft(data);
           Alert.alert("Saved", "Form saved as draft successfully!");
