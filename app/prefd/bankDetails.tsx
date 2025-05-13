@@ -42,6 +42,7 @@ export default function BankDetails() {
     }
   );
      useEffect(() => {
+      // console.log( +" in bankdetails");
         if (id && fromPreview === "true") {
           // Load the form by ID and update current working data
           const selected = submittedForms.find((form) => form.id === id);
@@ -242,8 +243,11 @@ export default function BankDetails() {
 
       <Text style={styles.question}>45. Account Number:</Text>
       <TextInput
-        value={form.accountNumber}
-        onChangeText={(text) => updateField("accountNumber", text)}
+       value={String(form.accountNumber)}
+        // value={form.accountNumber}
+        onChangeText={(text) => {updateField("accountNumber", text)
+          
+        }}
         style={styles.input}
         keyboardType="numeric"
       />

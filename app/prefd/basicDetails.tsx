@@ -166,9 +166,9 @@ const {user} = useUserStore();
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {!fromPreview && (
+       
     <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
-  )}
+
 
 <Text style={styles.title}>
   {fromland === "true"
@@ -342,7 +342,7 @@ const {user} = useUserStore();
 <Text style={styles.question}>13. Household Members:</Text>
 
 <TextInput
-  value={form.adults}
+  value={String(form.adults)}
   onChangeText={(text) => {
     // Allow only numbers, less than 50
     let filteredText = text.replace(/[^0-9]/g, '');
@@ -363,7 +363,7 @@ const {user} = useUserStore();
 />
 
 <TextInput
-  value={form.children}
+  value={String(form.children)}
   onChangeText={(text) => {
     let filteredText = text.replace(/[^0-9]/g, '');
     if (parseInt(filteredText) > 50) filteredText = '50';
@@ -387,7 +387,7 @@ const {user} = useUserStore();
 <Text style={styles.question}>14. Occupation of Household Members (No. of persons):</Text>
 
 <TextInput
-  value={form.occupation.agriculture}
+  value={String(form.occupation.agriculture)}
   onChangeText={(text) => {
     updateNestedField("occupation","agriculture",text);
     const updatedAgriculture = text;
@@ -407,7 +407,7 @@ const {user} = useUserStore();
   keyboardType="numeric"
 />
 <TextInput
-  value={form.occupation.business}
+  value={String(form.occupation.business)}
   onChangeText={(text) => {
     updateNestedField("occupation","business",text);
     const updatedBusiness = text;
@@ -429,7 +429,7 @@ const {user} = useUserStore();
 />
 
 <TextInput
-  value={form.occupation.other}
+  value={String(form.occupation.other)|| "0"}
   onChangeText={(text) => {
     updateNestedField("occupation","other",text);
     const updatedOther = text;

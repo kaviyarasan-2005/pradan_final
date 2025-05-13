@@ -75,10 +75,11 @@ useEffect(() => {
     set2NestedData("landOwnership","livestock","poultry",76);
     set2NestedData("landOwnership","livestock","others",76);
     setNestedData("landOwnership" , "cropSeason", "Kharif");
-    setData("basicDetails",data.basicDetails);
-    setData("bankDetails",data.bankDetails)
-    setData("landDevelopment",data.landDevelopment);
-    setData("landOwnership",data.landOwnership);
+    
+    // setData("basicDetails",data.basicDetails);
+    // setData("bankDetails",data.bankDetails)
+    // setData("landDevelopment",data.landDevelopment);
+    // setData("landOwnership",data.landOwnership);
   }
   const draftId = generateDraftId();
   setData("draft_id", draftId);
@@ -290,7 +291,7 @@ const handleSubmit = async () => {
 
       {renderSection("Bank Details", [
         { label: "44. Name of Account Holder", value: selectedForm.bankDetails?.accountHolderName },
-        { label: "45. Account Number", value: selectedForm.bankDetails?.accountNumber },
+        { label: "45. Account Number", value: selectedForm.bankDetails?.accountNumber},
         { label: "46. Name of the Bank", value: selectedForm.bankDetails?.bankName },
         { label: "47. Branch", value: selectedForm.bankDetails?.branch },
         { label: "48. IFSC", value: selectedForm.bankDetails?.ifscCode },
