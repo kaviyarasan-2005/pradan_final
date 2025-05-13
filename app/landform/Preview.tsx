@@ -11,12 +11,14 @@ const url = Constants.expoConfig.extra.API_URL;
 export default function   Preview() {
   const router = useRouter();
   const { id,fromsubmit,returnsubmit,fromdraft} = useLocalSearchParams<{ id?: string , returnsubmit?: string,fromsubmit?: string, fromdraft?:string;}>();
-  const { data, submittedForms, resetData,setData, submitForm } = useFormStore();//draftForms,
+  const { data, submittedForms, resetData,setData, submitForm,setNestedData,set2NestedData } = useFormStore();//draftForms,
   const {drafts,saveDraft} = useDraftStore();
 const isSubmittedPreview = !!id;
 
 const selectedForm = React.useMemo(() => {
   if (fromsubmit) {
+
+   
     // console.log(JSON.stringify(data) + "inside");
     return data; // Always use updated data when fromsubmit
   }
@@ -30,7 +32,7 @@ const selectedForm = React.useMemo(() => {
 const canEdit = () => {
   if (!isSubmittedPreview) return true; // it's a draft
   const status = selectedForm?.bankDetails?.formStatus;
-  return status === 1 || status === 2|| status === 3;
+  return  status ===1||status === 2|| status === 3;
 };
   // console.log("Selected Form:", selectedForm);
   // console.log(id);
@@ -57,6 +59,14 @@ const canEdit = () => {
 };
 
 useEffect(() => {
+  if(fromsubmit == "true" ){
+ set2NestedData("basicDetails","occupation","agriculture",12);
+    set2NestedData("basicDetails","occupation","business",12);
+    set2NestedData("basicDetails","occupation","other",12);
+    setNestedData("basicDetails","adults",12);
+    setNestedData("basicDetails","children",12);
+   
+  }
   const draftId = generateDraftId();
   setData("draft_id", draftId);
   setData("formType", 1);
@@ -211,10 +221,10 @@ const handleSubmit = async () => {
         { label: "8. Gender", value: selectedForm.basicDetails?.gender },
         { label: "9. Father / Spouse Name", value: selectedForm.basicDetails?.fatherSpouse },
         { label: "10. Type of Household", value: selectedForm.basicDetails?.householdType },
-        { label: "11. Household Members - Adults , childern", value: selectedForm.basicDetails?.hhcombined},
-        // { label: "11. Household Members - Adults", value: selectedForm.basicDetails?.adults },
-        // { label: "    Household Members - Children", value: selectedForm.basicDetails?.children },
-        { label: "12. Occupation of Household Members (Agriculture , Business , Others)", value: selectedForm.basicDetails?.occupationCombined},
+        // { label: "11. Household Members - Adults , childern", value: selectedForm.basicDetails?.hhcombined},
+        { label: "11. Household Members - Adults", value: selectedForm.basicDetails?.adults },
+        { label: "    Household Members - Children", value: selectedForm.basicDetails?.children },
+        { label: "12. Occupation of Household Members (Agriculture , Business , Others)", value: selectedForm.basicDetails?.occupation},
         { label: "13. Special Category", value: selectedForm.basicDetails?.specialCategory ? "Yes" : "No" },
         { label: "    Special Category Number", value: selectedForm.basicDetails?.specialCategoryNumber },
         { label: "14. Caste", value: selectedForm.basicDetails?.caste },

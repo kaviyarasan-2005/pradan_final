@@ -24,6 +24,8 @@ interface FormStore {
   submitForm: () => Promise<void>;
   loadSubmittedForms: () => Promise<void>;
   clearSubmittedForms: () => Promise<void>;
+   setNestedData: (section: keyof FormData, key: string, value: any) => void;
+  set2NestedData: (section: keyof FormData, key1: string, key2: string, value: any) => void;
 }
 
 export const useFormStore = create<FormStore>((set, get) => ({
@@ -39,6 +41,31 @@ export const useFormStore = create<FormStore>((set, get) => ({
         [section]: value,
       },
     })),
+    setNestedData: (section, key, value) =>
+    set((state) => ({
+      data: {
+        ...state.data,
+        [section]: {
+          ...(state.data[section] || {}),
+          [key]: value,
+        },
+      },
+    })),
+
+  set2NestedData: (section, key1, key2, value) =>
+    set((state) => ({
+      data: {
+        ...state.data,
+        [section]: {
+          ...(state.data[section] || {}),
+          [key1]: {
+            ...((state.data[section] || {})[key1] || {}),
+            [key2]: value,
+          },
+        },
+      },
+    })),
+
 
   resetData: () => set({ data: {} }),
 
