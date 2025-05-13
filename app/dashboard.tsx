@@ -101,9 +101,9 @@ const DashboardScreen: React.FC = () => {
   }
 
   useEffect(() => {
-    // console.log(JSON.stringify(data) + "dash data");
+    // console.log(JSON.stringify(data) + "dash data bf");
     resetData();
-    // console.log(JSON.stringify(data) + "dash data");
+    // console.log(JSON.stringify(data) + "dash data  af");
     if (user?.id) {
       fetchDashboardData(user?.id);
     }

@@ -68,6 +68,14 @@ export default function LandOwnership() {
       },
     }));
   };
+const calculateTotalArea = (rainfed, tankfed, well) => {
+  const r = parseFloat(rainfed) || 0;
+  const t = parseFloat(tankfed) || 0;
+  const w = parseFloat(well) || 0;
+
+  const total = (r + t + w).toFixed(2); // Rounded to 2 decimal places
+  updateField("totalArea", total.toString());
+};
 
   const toggleCheckbox = (field: string, value: string) => {
     setForm((prev) => ({
@@ -172,62 +180,57 @@ export default function LandOwnership() {
         </>
       )}
 
-      <Text style={styles.question}>25. Irrigated Lands (ha):</Text>
-      <Text>Rainfed:</Text>
-      <TextInput
-        value={form.irrigatedLand.rainfed}
-        onChangeText={(text) =>{ 
-          updateNestedField("irrigatedLand", "rainfed", text)
-          const rainfed = form.irrigatedLand.rainfed || "0";
-          const irrigatedLandcombined = `${rainfed},${form.irrigatedLand.tankfed},${form.irrigatedLand.wellIrrigated}`;
-          
-          updateField("irrigatedLandCombined", irrigatedLandcombined);
-        }}
-        style={styles.input}
-        keyboardType="numeric"
-      />
-      <Text>Tankfed:</Text>
-      <TextInput
-        value={form.irrigatedLand.tankfed}
-        onChangeText={(text) =>
-          {updateNestedField("irrigatedLand", "tankfed", text)
-            const tank = form.irrigatedLand.tankfed || "0";
-            const irrigatedLandcombined = `${form.irrigatedLand.rainfed},${tank},${form.irrigatedLand.wellIrrigated}`;
-            
-            updateField("irrigatedLandCombined", irrigatedLandcombined);
-
-          }}
-        style={styles.input}
-        keyboardType="numeric"
-      />
-      <Text>Well Irrigated:</Text>
-      <TextInput
-        value={form.irrigatedLand.wellIrrigated}
-        onChangeText={(text) => {updateNestedField("irrigatedLand", "wellIrrigated", text)
-
-          const well = form.irrigatedLand.wellIrrigated || "0";
-          const irrigatedLandcombined = `${form.irrigatedLand.rainfed},${form.irrigatedLand.tankfed},${well}`;
-          
-          updateField("irrigatedLandCombined", irrigatedLandcombined);
-        }}
-        style={styles.input}
-        keyboardType="numeric"
-      />
-
-      <Text style={styles.question}>26. Patta Number:</Text>
+       <Text style={styles.question}>24 1/2. Patta Number:</Text>
       <TextInput
         value={form.pattaNumber}
         onChangeText={(text) => updateField("pattaNumber", text)}
         style={styles.input}
       />
 
-      <Text style={styles.question}>27. Total Area (ha):</Text>
-      <TextInput
-        value={form.totalArea}
-        onChangeText={(text) => updateField("totalArea", text)}
-        style={styles.input}
-        keyboardType="numeric"
-      />
+<Text style={styles.question}>25. Irrigated Lands (ha):</Text>
+<Text>Rainfed:</Text>
+<TextInput
+  value={form.irrigatedLand.rainfed}
+  onChangeText={(text) => {
+    updateNestedField("irrigatedLand", "rainfed", text);
+    calculateTotalArea(text, form.irrigatedLand.tankfed, form.irrigatedLand.wellIrrigated);
+  }}
+  style={styles.input}
+  keyboardType="numeric"
+/>
+
+<Text>Tankfed:</Text>
+<TextInput
+  value={form.irrigatedLand.tankfed}
+  onChangeText={(text) => {
+    updateNestedField("irrigatedLand", "tankfed", text);
+    calculateTotalArea(form.irrigatedLand.rainfed, text, form.irrigatedLand.wellIrrigated);
+  }}
+  style={styles.input}
+  keyboardType="numeric"
+/>
+
+<Text>Well Irrigated:</Text>
+<TextInput
+  value={form.irrigatedLand.wellIrrigated}
+  onChangeText={(text) => {
+    updateNestedField("irrigatedLand", "wellIrrigated", text);
+    calculateTotalArea(form.irrigatedLand.rainfed, form.irrigatedLand.tankfed, text);
+  }}
+  style={styles.input}
+  keyboardType="numeric"
+/>
+
+
+    
+
+      <Text style={styles.question}>27. Total Irrigated lands (ha):</Text>
+<TextInput
+  value={form.totalArea}
+  editable={false}
+  style={styles.input}
+  keyboardType="numeric"
+/>
       <Text style={styles.question}>27-28. Taluk:</Text>
       <TextInput
         value={form.taluk}

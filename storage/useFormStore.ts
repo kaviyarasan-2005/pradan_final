@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 
 interface FormData {
+  draft_id : string;
   id?: string;
   submittedAt?: string;
   date?: string;

@@ -48,11 +48,10 @@ const canEdit = () => {
     if (submitting) return; 
     try {
       setSubmitting(true);
-      const userStatus = data.bankDetails?.formStatus || "Not Filled";
-      const fundStatus = data.bankDetails?.fundStatus || "Not Filled";
-      setData("formType", "POND");
-      setData("formStatus", userStatus);
-      setData("fundStatus",fundStatus);
+      // const userStatus = data.bankDetails?.formStatus || "Not Filled";
+      // const fundStatus = data.bankDetails?.fundStatus || "Not Filled";
+      // setData("formType", 1);
+     
   
       await new Promise((resolve) => setTimeout(resolve, 50));
       //console.log(data);

@@ -137,7 +137,7 @@ export default function BankDetails() {
           const localFileName = `${FileSystem.documentDirectory}${file.fileName || `${field}.jpg`}`;
 
           console.log(file);
-          // uploadDocument(file,field);
+          uploadDocument(file,field);
           //console.log("Uploaded filename:", uploaded_filename);
 
           // Move the file to the local storage directory
@@ -265,7 +265,9 @@ export default function BankDetails() {
       <Text style={styles.question}>48. IFSC:</Text>
       <TextInput
         value={form.ifscCode}
-        onChangeText={(text) => updateField("ifscCode", text)}
+        onChangeText={(text) => {
+         const filteredText = text.replace(/[^0-9]/g, '').slice(0, 11);
+          updateField("ifscCode", filteredText)}}
         style={styles.input}
         autoCapitalize="characters"
       />

@@ -18,7 +18,7 @@ export default function LandDevelopment() {
       date:"",//cd
       sfNumber: "",//cd
       soilTypeCombined: [],//cd
-      landBenefit: "",//cd
+      landBenefit: "400",//cd
       workType: [],//cd
       workTypeText: "",//no
       proposalArea: "",//cd
@@ -158,13 +158,13 @@ const totalestimation =(feild : any,value : any) =>{
       <Text style={styles.question}>32. Soil Type:</Text>
       {renderCheckboxGroup("soilTypeCombined", ["Red Soil", "Black Cotton", "Sandy Loam", "Laterite"])}
 
-      <Text style={styles.question}>33. Land to benefit (ha):</Text>
+      {/* <Text style={styles.question}>33. Land to benefit (ha):</Text>
       <TextInput
         value={form.landBenefit}
         onChangeText={(text) => updateField("landBenefit", text)}
         style={styles.input}
         keyboardType="numeric"
-      />
+      /> */}
 
       <Text style={styles.question}>36. Date of Inspection:</Text>
            <TextInput

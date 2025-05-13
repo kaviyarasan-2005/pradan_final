@@ -96,7 +96,7 @@ const {setData,data,resetData} = useFormStore();
     console.log(JSON.stringify(fetchedData) + " " + item.form_type);
 
     // Set all keys of fetchedData into the form store using setData
-      setData("basicDetails", fetchedData.basicDetails);
+    setData("basicDetails", fetchedData.basicDetails);
     setData("landOwnership", fetchedData.landOwnership);
     setData("landDevelopment", fetchedData.landDevelopment);
     setData("bankDetails", fetchedData.bankDetails);

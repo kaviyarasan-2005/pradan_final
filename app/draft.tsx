@@ -21,6 +21,7 @@ export default function DraftsScreen() {
     setData("landDevelopment", item.landDevelopment);
     setData("bankDetails", item.bankDetails);
     setData("id", item.id);
+    setData("formType",item.formType)
     // setData("form_type", item.formType);
     // setData("formStatus", item.formStatus);
     // setData("fundStatus", item.fundStatus);
@@ -30,7 +31,7 @@ export default function DraftsScreen() {
       2: "/pondform/Preview",
       3: "/plantationform/Preview",
     };
-      console.log(item.formType + "  name  " + JSON.stringify(item));
+      console.log(item.formType + "  name  ");
     router.push({
       
       pathname: pathMap[item.formType],//
@@ -55,7 +56,7 @@ export default function DraftsScreen() {
 
       <FlatList
         data={drafts}
-        // keyExtractor={(item) => item.id}
+        // keyExtractor={(item) => item.draft_id}
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => openDraft(item)}
@@ -70,6 +71,9 @@ export default function DraftsScreen() {
           >
             <Text style={{ fontSize: 16 }}>
               {item.basicDetails?.name?.trim() || "Unnamed Draft"}
+            </Text>
+              <Text style={{ fontSize: 16 }}>
+              {item.basicDetails?.draft_id?.trim() || " id"}
             </Text>
             {item.savedAt && (
               <Text style={{ color: 'gray', fontSize: 12 }}>

@@ -17,7 +17,7 @@ export default function BasicDetails() {
     frompond?: string;
     fromplantation?: string;
   }>();
-  const { data, submittedForms, setData } = useFormStore();
+  const { data, submittedForms, setData,resetData } = useFormStore();
 const {user} = useUserStore();
   const [form, setForm] = useState(
     data.basicDetails || {
@@ -68,53 +68,7 @@ const {user} = useUserStore();
   }
 }, [id]);
 
-useEffect(() => {
-  // When data.basicDetails is updated, sync it to local state
-  if (data.basicDetails) {
-    setForm((prev) => ({
-      ...{
-        name: "",
-        age: "",
-        mobile: "",
-        district: "",
-        hamlet: "",
-        panchayat: "",
-        block: "",
-        idCardType: "",
-        idCardNumber: "",
-        othercard: "",
-        gender: "",
-        fatherSpouse: "",
-        householdType: "",
-        adults: "",
-        children: "",
-        occupation: { agriculture: "", business: "", other: "" },
-        specialCategory: "",
-        specialCategoryNumber: "0",
-        caste: "",
-        houseOwnership: "",
-        houseType: "",
-        drinkingWater: [],
-        potability: [],
-        domesticWater: [],
-        toiletAvailability: "",
-        toiletCondition: "",
-        education: "",
-        hhcombined: "",
-        occupationCombined: "",
-        drinkingWaterCombined: [],
-        potabilityCombined: [],
-        domesticWaterCombined: [],
-      },
-      ...data.basicDetails,
-      occupation: {
-        agriculture: data.basicDetails.occupation?.agriculture || "",
-        business: data.basicDetails.occupation?.business || "",
-        other: data.basicDetails.occupation?.other || "",
-      },
-    }));
-  }
-}, [data.basicDetails]);
+
 
   const updateField = (field: string, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));

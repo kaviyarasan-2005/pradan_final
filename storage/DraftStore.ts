@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 
 interface DraftData {
-  id?: string;
+  draft_id?: string;
   savedAt?: string;
   date?: string;
   basicDetails?: any;
@@ -14,6 +14,7 @@ interface DraftData {
 
 interface DraftStore {
   drafts: DraftData[];
+// setdraftData: (section: keyof FormData, value: any) => void;
   loadDrafts: () => Promise<void>;
   saveDraft: (draft: DraftData) => Promise<void>;
   deleteDraft: (id: string) => Promise<void>;
@@ -32,7 +33,7 @@ export const useDraftStore = create<DraftStore>((set, get)  => ({
       console.error("Failed to load drafts", error);
     }
   },
-
+ 
   saveDraft: async (draft) => {
     const currentDrafts = get().drafts;
 
