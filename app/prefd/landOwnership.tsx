@@ -256,7 +256,7 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
   <Checkbox.Item
     key={season}
     label={season}
-    status={form.cropSeason?.includes(season) ? "checked" : "unchecked"}
+    status={form.cropSeasonCombined?.includes(season) ? "checked" : "unchecked"}
     onPress={() => {
       const newSelection = form.cropSeason?.includes(season)
         ? form.cropSeason.filter((s: string) => s !== season)
