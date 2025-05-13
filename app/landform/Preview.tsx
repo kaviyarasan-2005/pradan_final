@@ -60,12 +60,12 @@ const canEdit = () => {
 
 useEffect(() => {
   if(fromsubmit == "true" ){
- set2NestedData("basicDetails","occupation","agriculture",12);
+    set2NestedData("basicDetails","occupation","agriculture",12);
     set2NestedData("basicDetails","occupation","business",12);
     set2NestedData("basicDetails","occupation","other",12);
     setNestedData("basicDetails","adults",12);
     setNestedData("basicDetails","children",12);
-   
+    
   }
   const draftId = generateDraftId();
   setData("draft_id", draftId);
@@ -242,14 +242,14 @@ const handleSubmit = async () => {
         { label: "23. Land Ownership", value: selectedForm.landOwnership?.landOwnershipType },
         { label: "24. Well for Irrigation", value: selectedForm.landOwnership?.hasWell },
         { label: "    Area Irrigated (ha)", value: selectedForm.landOwnership?.areaIrrigated },
-        { label: "25. Irrigated Lands (ha) (rainfed , tankfed , wellIrrigated)", value: selectedForm.landOwnership?.irrigatedLandCombined },
+        { label: "25. Irrigated Lands (ha) (rainfed , tankfed , wellIrrigated)", value: selectedForm.landOwnership?.irrigatedLand },
         { label: "26. Patta Number", value: selectedForm.landOwnership?.pattaNumber },
         { label: "27. Total Area (ha)", value: selectedForm.landOwnership?.totalArea },
         { label: "27-28. Taluk", value: selectedForm.landOwnership?.taluk },
         { label: "27-28. Firka", value: selectedForm.landOwnership?.firka},
         { label: "28. Revenue Village", value: selectedForm.landOwnership?.revenueVillage },
         { label: "29. Crop Season", value: selectedForm.landOwnership?.cropSeasonCombined },
-        { label: "30. LiveStocks (goat , Sheep , Milch Animals ,  Draught Animals , Poultry , Others)", value: selectedForm.landOwnership?.livestockCombined },
+        { label: "30. LiveStocks (goat , Sheep , Milch Animals ,  Draught Animals , Poultry , Others)", value: selectedForm.landOwnership?.livestock},
         // { label: " Goat", value: selectedForm.landOwnership?.livestock?.goat || "0" },
         // { label: "    Sheep", value: selectedForm.landOwnership?.livestock?.sheep || "0" },
         // { label: "    Milch Animals :", value: selectedForm.landOwnership?.livestock?.milchAnimals || "0" },
