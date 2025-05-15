@@ -270,7 +270,7 @@ export default function BankDetails() {
       <TextInput
         value={form.ifscCode}
         onChangeText={(text) => {
-         const filteredText = text.replace(/[^0-9]/g, '').slice(0, 11);
+        const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').slice(0, 11);
           updateField("ifscCode", filteredText)}}
         style={styles.input}
         autoCapitalize="characters"

@@ -1,10 +1,12 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import * as Animatable from 'react-native-animatable';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Button, Checkbox, IconButton, RadioButton } from "react-native-paper";
 import { useFormStore } from "../../storage/useFormStore";
 import { useUserStore } from "../../storage/userDatastore";
-
+  const { width, height } = Dimensions.get('window'); 
 export default function BasicDetails() {
   const router = useRouter();
   const { id, fromPreview, returnTo, returnsubmit, fromsubmit,fromland,fromplantation,frompond } = useLocalSearchParams<{
@@ -28,7 +30,7 @@ const {user} = useUserStore();
       hamlet: "",
       panchayat: "",
       block: "",
-      idCardType: "",//cd
+      idCardType: "Aadhar",//cd
       idCardNumber: "",//cd
       othercard:"", //no
       gender: "",
@@ -165,27 +167,30 @@ const {user} = useUserStore();
 
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-       
-    <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
-
-
-<Text style={styles.title}>
+    <KeyboardAwareScrollView style={styles.container}>
+    <ScrollView contentContainerStyle={styles.inner}>
+ <Animatable.View animation="fadeInUp" duration={600}> 
+  <Text style={styles.heading_land}>
   {fromland === "true"
-    ? "Land Form"
+    ? "LAND REDEVELOPMENT FORM"
     : frompond === "true"
-    ? "Pond Form"
+    ? "POND REDEVELOPMENT FORM"
     : fromplantation === "true"
-    ? "Plantation Form"
+    ? "PLANTATION REDEVELOPMENT FORM"
     : "Form"}
 </Text>
-      <Text style={styles.subtitle}>Basic Details</Text>
+    <View style={styles.headingContainer}>
+                           <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
+                        
+                        <Text style={styles.heading}>Basic Details</Text>
+                      </View>
       
 
 
       {/* Inputs */}
-      <Text style={styles.question}>1. Name of Farmer:</Text>
+      <Text style={styles.label}>1. Name of Farmer</Text>
       <TextInput
+      placeholder="Enter name" placeholderTextColor="#888"
         value={form.name}
         onChangeText={(text) => {
           const filteredText = text.replace(/[^A-Za-z\s]/g, '');
@@ -193,8 +198,9 @@ const {user} = useUserStore();
         }}
         style={styles.input}
       />
-    <Text style={styles.question}>2. Age:</Text>
+    <Text style={styles.label}>2. Age</Text>
 <TextInput
+placeholder="Enter Age" placeholderTextColor="#888"
   value={form.age}
   onChangeText={(text) => {
     const filteredText = text.replace(/[^0-9]/g, '');
@@ -213,9 +219,10 @@ const {user} = useUserStore();
   <Text style={{ color: 'red', fontSize: 12 }}>Age cannot exceed 150</Text>
 )}
 
-     <Text style={styles.question}>3. Mobile Number:</Text>
+            <Text style={styles.label}>3. Mobile Number</Text>
      <TextInput
       value={form.mobile}
+      placeholder="Enter mobile" placeholderTextColor="#888"
       onChangeText={(text) => {
       const filteredText = text.replace(/[^0-9]/g, '').slice(0, 10);
       updateField("mobile", filteredText);
@@ -231,8 +238,9 @@ const {user} = useUserStore();
   <Text style={{ color: 'red', fontSize: 12 }}>Mobile number must be exactly 10 digits</Text>
 )}
 
-      <Text style={styles.question}>4. District:</Text>
+      <Text style={styles.label}>4. District</Text>
       <TextInput
+      placeholder="Enter District" placeholderTextColor="#888"
         value={form.district}
         onChangeText={(text) => {
           const filteredText = text.replace(/[^A-Za-z\s]/g, '');
@@ -240,8 +248,9 @@ const {user} = useUserStore();
         }}
         style={styles.input}
       />
-       <Text style={styles.question}>5. Block:</Text>
+       <Text style={styles.label}>5. Block</Text>
       <TextInput
+       placeholder="Enter Block" placeholderTextColor="#888"
         value={form.block}
         onChangeText={(text) => {
           const filteredText = text.replace(/[^A-Za-z\s]/g, '');
@@ -249,16 +258,17 @@ const {user} = useUserStore();
         }}
         style={styles.input}
       />
-      <Text style={styles.question}>6. Panchayat:</Text>
+     <Text style={styles.label}>6. Panchayat</Text>
       <TextInput
         value={form.panchayat}
+         placeholder="Enter Panchayat" placeholderTextColor="#888"
         onChangeText={(text) => {
           const filteredText = text.replace(/[^A-Za-z\s]/g, '');
           updateField("panchayat", filteredText);
         }}
         style={styles.input}
       />
-      <Text style={styles.question}>7. Hamlet:</Text>
+      <Text style={styles.question}>7. Hamlet</Text>
       <TextInput
         value={form.hamlet}
         onChangeText={(text) => {
@@ -554,15 +564,39 @@ const {user} = useUserStore();
 <Button mode="contained" onPress={handleNext} style={styles.button}>
   {fromPreview ? "Preview" : "Next"}
 </Button>
+</Animatable.View>
     </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    paddingBottom: 40,
-  },
+      flex: 1,
+      backgroundColor: '#F1F7ED',
+    },
+    inner: {
+      padding: width * 0.05, // 5% of screen width
+      paddingBottom: height * 0.03,
+    },
+    heading_land: {
+      fontSize: width * 0.06,
+      fontWeight: 'bold',
+      color: '#0B8B42',
+      marginBottom: height * 0.02,
+      textAlign: 'center',
+    },
+    headingContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: height * 0.02,
+    },
+    heading: {
+      fontSize: width * 0.05,
+      fontWeight: 'bold',
+      color: '#0B8B42',
+      marginBottom: height * 0.005,
+    },
   title: {
     fontSize: 24,
     fontWeight: "bold",
@@ -575,17 +609,27 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   question: {
-    fontWeight: "bold",
-    marginTop: 10,
-    marginBottom: 5,
+    fontSize: width * 0.035,
+      marginVertical: height * 0.01,
+      color: '#333',
+      fontWeight: '600',
   },
+  label: {
+      fontSize: width * 0.035,
+      marginVertical: height * 0.01,
+      color: '#333',
+      fontWeight: '600',
+    },
   input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    marginBottom: 10,
-    borderRadius: 5,
-  },
+      borderWidth: 1,
+      borderColor: '#A5D6A7',
+      borderRadius: width * 0.025,
+      paddingHorizontal: width * 0.035,
+      paddingVertical: height * 0.015,
+      backgroundColor: '#E8F5E9',
+      color: '#333',
+      fontSize: width * 0.035,
+    },
   button: {
     marginTop: 30,
   },

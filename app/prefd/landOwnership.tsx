@@ -14,7 +14,7 @@ export default function LandOwnership() {
       landOwnershipType: "",//cd
       hasWell: "",//cd
       areaIrrigated: "",//cd
-      irrigatedLand: {//no
+      irrigatedLand:{//no
         rainfed: "",//no
         tankfed: "",//no
         wellIrrigated: "",//no
@@ -40,7 +40,14 @@ export default function LandOwnership() {
     }
   );
       useEffect(() => {
-        calculateTotalArea(data.landOwnership.irrigatedLand.rainfed, data.landOwnership.irrigatedLand.tankfed,data.landOwnership.irrigatedLand.wellIrrigated);
+          if (data.landOwnership && data.landOwnership.irrigatedLand) {
+    calculateTotalArea(
+      data.landOwnership.irrigatedLand.rainfed,
+      data.landOwnership.irrigatedLand.tankfed,
+      data.landOwnership.irrigatedLand.wellIrrigated
+    );
+  }
+        // calculateTotalArea(data.landOwnership.irrigatedLand.rainfed, data.landOwnership.irrigatedLand.tankfed,data.landOwnership.irrigatedLand.wellIrrigated);
         if (id && fromPreview === "true") {
           // Load the form by ID and update current working data
           const selected = submittedForms.find((form) => form.id === id);
@@ -70,10 +77,9 @@ export default function LandOwnership() {
     }));
   };
 const calculateTotalArea = (rainfed, tankfed, well) => {
-  const r = parseFloat(rainfed) || 0;
-  const t = parseFloat(tankfed) || 0;
-  const w = parseFloat(well) || 0;
-
+ const r = parseFloat(rainfed ?? "0");
+  const t = parseFloat(tankfed ?? "0");
+  const w = parseFloat(well ?? "0");
   const total = (r + t + w).toFixed(2); // Rounded to 2 decimal places
   updateField("totalArea", total.toString());
 };
@@ -205,7 +211,7 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
   value={String(form.irrigatedLand.tankfed)}
   onChangeText={(text) => {
     updateNestedField("irrigatedLand", "tankfed", text);
-    
+     calculateTotalArea( form.irrigatedLand.rainfed, text,form.irrigatedLand.wellIrrigated);
   }}
   style={styles.input}
   keyboardType="numeric"
@@ -215,6 +221,7 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
 <TextInput
   onChangeText={(text) => {
     updateNestedField("irrigatedLand", "wellIrrigated", text);
+    calculateTotalArea( form.irrigatedLand.rainfed, form.irrigatedLand.tankfed,text,);
   }}
    value={String(form.irrigatedLand.wellIrrigated)}
   style={styles.input}
