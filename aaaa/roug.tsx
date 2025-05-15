@@ -1,7 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
+import * as DocumentPicker from 'expo-document-picker';
+import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  Alert,
   Dimensions,
   ScrollView,
   StyleSheet,
@@ -10,192 +14,173 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import * as Animatable from 'react-native-animatable';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const { width, height } = Dimensions.get('window');
 
-const CheckboxOption = ({ options, values, onToggle }) => (
-  <View style={styles.checkboxGroup}>
-    {options.map((opt) => (
-      <TouchableOpacity key={opt} style={styles.checkboxOption} onPress={() => onToggle(opt)}>
-        <Ionicons
-          name={values.includes(opt) ? 'checkbox' : 'square-outline'}
-          size={width * .05}
-          color="#0B8B42"
-        />
-        <Text style={styles.radioText}>{opt}</Text>
-      </TouchableOpacity>
-    ))}
-  </View>
-);
+export default function BankDetailsForm() {
+  const [accountHolder, setAccountHolder] = useState('');
+  const [accountNumber, setAccountNumber] = useState('');
+  const [bankName, setBankName] = useState('');
+  const [branch, setBranch] = useState('');
+  const [ifsc, setIFSC] = useState('');
+  const [contribution, setContribution] = useState('');
 
-export default function LandDevelopmentScreen() {
-  const [sfNumber, setSfNumber] = useState('');
-  const [latitude, setLatitude] = useState('');
-  const [longitude, setLongitude] = useState('');
-  const [soilType, setSoilType] = useState([]);
-  const [landBenefit, setLandBenefit] = useState('');
-  const [dateInspection, setDateInspection] = useState('');
-  const [typeOfWork, setTypeOfWork] = useState([]);
-  const [areaBenefited, setAreaBenefited] = useState('');
-  const [otherWorks, setOtherWorks] = useState('');
-  const [pradanContribution, setPradanContribution] = useState('');
-  const [farmerContribution, setFarmerContribution] = useState('');
-  const [totalEstimate, setTotalEstimate] = useState('');
-  const [otherTypeOfWork, setOtherTypeOfWork] = useState('');
+  const [files, setFiles] = useState({
+    patta: null,
+    idCard: null,
+    fmb: null,
+    photo: null,
+    passbook: null,
+    geoTagged: null, // Added for geo-tagged photo
+  });
 
-  
+  const handleFilePick = async (field) => {
+    const result = await DocumentPicker.getDocumentAsync({ type: '/' });
+    if (result?.assets && result.assets.length > 0 && result.assets[0].uri) {
+      setFiles((prev) => ({ ...prev, [field]: result.assets[0] }));
+    }
+  };
 
-  const handleToggle = (option, state, setState) => {
-    if (state.includes(option)) {
-      setState(state.filter((item) => item !== option));
-    } else {
-      setState([...state, option]);
+  const handleGeoTaggedPhotoPick = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    const { status: locationStatus } = await Location.requestForegroundPermissionsAsync();
+
+    if (status !== 'granted' || locationStatus !== 'granted') {
+      Alert.alert('Permissions required', 'Camera and location permissions are needed.');
+      return;
+    }
+
+    const imageResult = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      quality: 0.7,
+    });
+
+    if (!imageResult.canceled && imageResult.assets.length > 0) {
+      const location = await Location.getCurrentPositionAsync({});
+      const { uri } = imageResult.assets[0];
+      setFiles((prev) => ({
+        ...prev,
+        geoTagged: {
+          uri,
+          location: {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          },
+        },
+      }));
     }
   };
 
   return (
     <KeyboardAwareScrollView style={styles.container}>
       <ScrollView contentContainerStyle={styles.inner}>
-        {/* Land Development Form Heading */}
-        <Text style={styles.heading_land}>LAND REDEVELOPMENT FORM</Text>
+        <Animatable.View animation="fadeInUp" duration={600}>
+          <Text style={styles.heading_land}>LAND REDEVELOPMENT FORM</Text>
+          <View style={styles.header}>
+            <TouchableOpacity
+              onPress={() => {
+                router.push('/Land_Form/land_develop_act');
+              }}
+              style={styles.backButton}
+            >
+              <Ionicons name="arrow-back" size={width * .06} color="#0B8B42" />
+            </TouchableOpacity>
+            <Text style={styles.heading}>Bank Details</Text>
+          </View>
 
-        {/* Back Arrow and Heading Container */}
-        <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={() => router.push("/Land_Form/lnd_own")} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={width * .06} color="#0B8B42" />
+          <Text style={styles.label}>45. Name of Account Holder</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter name"
+            placeholderTextColor="#888"
+            value={accountHolder}
+            onChangeText={setAccountHolder}
+          />
+
+          <Text style={styles.label}>46. Account Number</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter account number"
+            placeholderTextColor="#888"
+            keyboardType="numeric"
+            value={accountNumber}
+            onChangeText={setAccountNumber}
+          />
+
+          <Text style={styles.label}>47. Name of the Bank</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter bank name"
+            placeholderTextColor="#888"
+            value={bankName}
+            onChangeText={setBankName}
+          />
+
+          <Text style={styles.label}>48. Branch</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter branch name"
+            placeholderTextColor="#888"
+            value={branch}
+            onChangeText={setBranch}
+          />
+
+          <Text style={styles.label}>49. IFSC</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter IFSC code"
+            placeholderTextColor="#888"
+            value={ifsc}
+            onChangeText={setIFSC}
+          />
+
+          <Text style={styles.label}>50. Farmer has agreed for the work, and his contribution</Text>
+          <View style={styles.radioGroup}>
+            {['Yes', 'No'].map((option) => (
+              <TouchableOpacity
+                key={option}
+                style={styles.radioOption}
+                onPress={() => setContribution(option)}
+              >
+                <Ionicons
+                  name={contribution === option ? 'radio-button-on' : 'radio-button-off'}
+                  size={width * .05}
+                  color="#0B8B42"
+                />
+                <Text style={styles.radioText}>{option}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <Text style={styles.label}>51. Files submitted:</Text>
+          <View style={styles.uploadGroup}>
+            {[{ label: 'Patta', key: 'patta', onPress: () => handleFilePick('patta') },
+              { label: 'ID Card', key: 'idCard', onPress: () => handleFilePick('idCard') },
+              { label: 'FMB', key: 'fmb', onPress: () => handleFilePick('fmb') },
+              { label: 'Photo of Farmer', key: 'photo', onPress: () => handleFilePick('photo') },
+              { label: 'Bank Passbook', key: 'passbook', onPress: () => handleFilePick('passbook') },
+              { label: 'Geo-tagged Photo', key: 'geoTagged', onPress: handleGeoTaggedPhotoPick }
+            ].map(({ label, key, onPress }) => (
+              <TouchableOpacity key={key} style={styles.uploadBox} onPress={onPress}>
+                <Ionicons
+                  name={files[key] ? 'document-attach' : 'cloud-upload-outline'}
+                  size={width * .05}
+                  color="#0B8B42"
+                />
+                <Text style={styles.uploadLabel}>{label}</Text>
+                <Text style={styles.uploadStatus}>
+                  {files[key] ? (key === 'geoTagged' ? `Lat: ${files[key].location.latitude.toFixed(2)}` : 'Uploaded') : 'Tap to Upload'}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <TouchableOpacity style={styles.nextBtn} onPress={() => { router.push('/Land_Form/preview'); }}>
+            <Text style={styles.nextBtnText}>PREVIEW</Text>
           </TouchableOpacity>
-          <Text style={styles.heading}>Land Development Activity</Text>
-        </View>
-
-        {/* Form fields */}
-        <Text style={styles.label}>35. S.F. No. of the land to be developed</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter S.F. Number"
-          placeholderTextColor="#888"
-          value={sfNumber}
-          onChangeText={setSfNumber}
-        />
-
-        <Text style={styles.label}>35.a) Latitude and Longitude</Text>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <TextInput
-            style={[styles.input, { flex: 1, marginRight: 5 }]}
-            placeholder="Latitude"
-            placeholderTextColor="#888"
-            value={latitude}
-            onChangeText={setLatitude}
-            keyboardType="numeric"
-          />
-          <TextInput
-            style={[styles.input, { flex: 1, marginLeft: 5 }]}
-            placeholder="Longitude"
-            placeholderTextColor="#888"
-            value={longitude}
-            onChangeText={setLongitude}
-            keyboardType="numeric"
-          />
-        </View>
-
-        <Text style={styles.label}>36. Soil Type</Text>
-        <CheckboxOption
-          options={['Red Soil', 'Black Cotton', 'Sandy Loam', 'Laterite']}
-          values={soilType}
-          onToggle={(opt) => handleToggle(opt, soilType, setSoilType)}
-        />
-
-        <Text style={styles.label}>37. Land to benefit (ha)</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter land area"
-          placeholderTextColor="#888"
-          value={landBenefit}
-          onChangeText={setLandBenefit}
-          keyboardType="numeric"
-        />
-
-        <Text style={styles.label}>38. Date of Inspection</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter date"
-          placeholderTextColor="#888"
-          value={dateInspection}
-          onChangeText={setDateInspection}
-        />
-
-        <Text style={styles.label}>39. Type of work proposed</Text>
-        <CheckboxOption
-          options={['Prosopis removal', 'Redevelopment of eroded lands', 'Silt application', 'Other']}
-          values={typeOfWork}
-          onToggle={(opt) => handleToggle(opt, typeOfWork, setTypeOfWork)}
-        />
-{typeOfWork.includes('Other') && (
-  <>
-    <Text style={styles.subheading}>Other Type of Work:</Text>
-    <TextInput
-      style={styles.input}
-      placeholder="Specify other type of work"
-      placeholderTextColor="#888"
-      value={otherTypeOfWork}
-      onChangeText={setOtherTypeOfWork}
-    />
-  </>
-)}
-
-
-        <Text style={styles.label}>40. Area benefited by proposed works (ha)</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter area"
-          placeholderTextColor="#888"
-          value={areaBenefited}
-          onChangeText={setAreaBenefited}
-          keyboardType="numeric"
-        />
-
-        <Text style={styles.label}>41. Any other works proposed</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter details"
-          placeholderTextColor="#888"
-          value={otherWorks}
-          onChangeText={setOtherWorks}
-        />
-
-        <Text style={styles.label}>42. PRADAN Contribution</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter amount"
-          placeholderTextColor="#888"
-          value={pradanContribution}
-          onChangeText={setPradanContribution}
-          keyboardType="numeric"
-        />
-
-        <Text style={styles.label}>43. Farmer Contribution</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter amount"
-          placeholderTextColor="#888"
-          value={farmerContribution}
-          onChangeText={setFarmerContribution}
-          keyboardType="numeric"
-        />
-
-        <Text style={styles.label}>44. Total Estimate Amount</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter amount"
-          placeholderTextColor="#888"
-          value={totalEstimate}
-          onChangeText={setTotalEstimate}
-          keyboardType="numeric"
-        />
-
-        <TouchableOpacity style={styles.nextBtn} onPress={() => router.push('/Land_Form/bank_details')}>
-          <Text style={styles.nextBtnText}>NEXT</Text>
-        </TouchableOpacity>
+        </Animatable.View>
       </ScrollView>
     </KeyboardAwareScrollView>
   );
@@ -207,36 +192,34 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F7ED',
   },
   inner: {
-    paddingTop: height * 0.025,
-    paddingHorizontal: width * 0.05,
+    padding: width * 0.05,
     paddingBottom: height * 0.025,
   },
-  heading_land: {
-    fontSize: width * 0.055, // ~22 on 400px screen
-    fontWeight: 'bold',
-    color: '#0B8B42',
-    marginBottom: height * 0.012,
-    textAlign: 'center',
-  },
-  headerContainer: {
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: height * 0.025,
   },
   backButton: {
-    zIndex: 10,
+    marginRight: width * 0.025,
   },
   heading: {
     fontSize: width * 0.05,
     fontWeight: 'bold',
     color: '#0B8B42',
-    marginLeft: width * 0.025,
   },
   label: {
     fontSize: width * 0.035,
     marginVertical: height * 0.01,
     color: '#333',
     fontWeight: '600',
+  },
+  heading_land: {
+    fontSize: width * 0.055,
+    fontWeight: 'bold',
+    color: '#0B8B42',
+    marginBottom: height * 0.025,
+    textAlign: 'center',
   },
   input: {
     borderWidth: 1,
@@ -249,12 +232,12 @@ const styles = StyleSheet.create({
     fontSize: width * 0.035,
     marginBottom: height * 0.015,
   },
-  checkboxGroup: {
+  radioGroup: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginBottom: height * 0.015,
   },
-  checkboxOption: {
+  radioOption: {
     flexDirection: 'row',
     alignItems: 'center',
     marginRight: width * 0.04,
@@ -264,6 +247,33 @@ const styles = StyleSheet.create({
     marginLeft: width * 0.015,
     fontSize: width * 0.035,
     color: '#333',
+  },
+  uploadGroup: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  uploadBox: {
+    width: '48%',
+    borderWidth: 1,
+    borderColor: '#A5D6A7',
+    borderRadius: width * 0.025,
+    padding: width * 0.03,
+    marginBottom: height * 0.02,
+    backgroundColor: '#E8F5E9',
+    alignItems: 'center',
+  },
+  uploadLabel: {
+    fontSize: width * 0.035,
+    fontWeight: '600',
+    marginTop: height * 0.01,
+    color: '#333',
+  },
+  uploadStatus: {
+    fontSize: width * 0.03,
+    color: '#777',
+    marginTop: height * 0.005,
+    textAlign: 'center',
   },
   nextBtn: {
     backgroundColor: '#134e13',
@@ -278,12 +288,4 @@ const styles = StyleSheet.create({
     fontSize: width * 0.04,
     fontWeight: '600',
   },
-  subheading: {
-    color: '#333',
-    fontSize: width * 0.035,
-    fontWeight: 'bold',
-    marginBottom: 6,
-    marginTop: 12,
-  },
-  
 });
