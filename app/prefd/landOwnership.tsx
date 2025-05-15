@@ -1,9 +1,9 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Dimensions, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import * as Animatable from 'react-native-animatable';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Button, Checkbox, IconButton, RadioButton } from "react-native-paper";
+import { Checkbox, IconButton, RadioButton } from "react-native-paper";
 import { useFormStore } from "../../storage/useFormStore";
  const { width, height } = Dimensions.get('window');
 export default function LandOwnership() {
@@ -373,7 +373,7 @@ placeholderTextColor="#888"
    <View style={styles.inputHalfWrapper}>
       <Text style={styles.subLabel}>Draught Animals</Text>
 <TextInput
-  placeholder="Draught Animals"
+  placeholder="Draught"
   value={String(form.livestock.draught_animals)}
   onChangeText={(text) => {updateNestedField("livestock","draught_animals",text)
     const draught_animals= form.livestock.draught_animals ||"0";
@@ -413,9 +413,14 @@ placeholderTextColor="#888"
 />
 </View>
 </View>
-     <Button mode="contained" onPress={handleNext} style={styles.button}>
+  <TouchableOpacity
+            style={styles.nextBtn}
+           onPress={() =>handleNext() }>
+            <Text style={styles.nextBtnText}>{fromPreview ? "Preview" : "Next"}</Text>
+          </TouchableOpacity>
+     {/* <Button mode="contained" onPress={handleNext} style={styles.button}>
      {fromPreview ? "Preview" : "Next"}
-     </Button>
+     </Button> */}
       </Animatable.View>
     </ScrollView>
     </KeyboardAwareScrollView>

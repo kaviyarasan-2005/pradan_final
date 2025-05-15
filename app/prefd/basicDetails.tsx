@@ -1,9 +1,9 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Dimensions, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import * as Animatable from 'react-native-animatable';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Button, Checkbox, IconButton, RadioButton } from "react-native-paper";
+import { Checkbox, IconButton, RadioButton } from "react-native-paper";
 import { useFormStore } from "../../storage/useFormStore";
 import { useUserStore } from "../../storage/userDatastore";
   const { width, height } = Dimensions.get('window'); 
@@ -623,10 +623,15 @@ placeholder="Enter Age" placeholderTextColor="#888"
   <RadioButton.Item label="University" value="University" />
 </RadioButton.Group>
 
+  <TouchableOpacity style={styles.nextBtn}
+                          onPress={() => handleNext()}>
 
-<Button mode="contained" onPress={handleNext} style={styles.button}>
+              <Text style={styles.nextBtnText}> {fromPreview ? "Preview" : "Next"}</Text>
+              
+            </TouchableOpacity>
+{/* <Button mode="contained" onPress={handleNext} style={styles.nextBtn}>
   {fromPreview ? "Preview" : "Next"}
-</Button>
+</Button> */}
 </Animatable.View>
     </ScrollView>
     </KeyboardAwareScrollView>
