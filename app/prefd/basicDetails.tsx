@@ -137,7 +137,7 @@ const {user} = useUserStore();
   };
 
   const renderCheckboxGroup = (
-    
+    // styles={styles.checkboxGroup},
     field: string,
     options: string[],
     isSingle: boolean = false
@@ -147,6 +147,7 @@ const {user} = useUserStore();
       
       <Checkbox.Item
         key={item}
+        // style={styles.checkboxOption}
         label={item}
         status={
           isSingle
@@ -268,8 +269,9 @@ placeholder="Enter Age" placeholderTextColor="#888"
         }}
         style={styles.input}
       />
-      <Text style={styles.question}>7. Hamlet</Text>
+      <Text style={styles.label}>7.Hamlet </Text>
       <TextInput
+      placeholder="Enter Hamlet" placeholderTextColor="#888"
         value={form.hamlet}
         onChangeText={(text) => {
           const filteredText = text.replace(/[^A-Za-z\s]/g, '');
@@ -277,7 +279,7 @@ placeholder="Enter Age" placeholderTextColor="#888"
         }}
         style={styles.input}
       />
-<Text style={styles.question}>8. Identity Card:</Text>
+{/* <Text style={styles.question}>8. Identity Card:</Text>
 <RadioButton.Group
   onValueChange={(value) => updateField("idCardType", value)}
   value={form.idCardType}
@@ -294,11 +296,12 @@ placeholder="Enter Age" placeholderTextColor="#888"
     style={styles.input}
     placeholder="Specify Identity Card"
   />
-)}
+)} */}
 
-<Text style={styles.question}>9. ID Card Number:</Text>
+<Text style={styles.question}>9. Aadhar Card Number:</Text>
 <TextInput
   value={form.idCardNumber}
+  placeholder="Enter ID No." placeholderTextColor="#888"
   onChangeText={(text) => {
     let filteredText = text;
 
@@ -335,7 +338,7 @@ placeholder="Enter Age" placeholderTextColor="#888"
 
       <Text style={styles.question}>11. Father / Spouse Name:</Text>
       <TextInput
-        value={form.fatherSpouse}
+        value={form.input}
         onChangeText={(text) => updateField("fatherSpouse", text)}
          placeholder="Enter Name"
         style={styles.input}
@@ -349,10 +352,58 @@ placeholder="Enter Age" placeholderTextColor="#888"
   <RadioButton.Item label="Nuclear" value="Nuclear" />
   <RadioButton.Item label="Joint" value="Joint" />
 </RadioButton.Group>
-<Text style={styles.question}>13. Household Members:</Text>
 
+            <Text style={styles.label}>13. Household Members</Text>
+<View style={styles.row}>
+  <View style={styles.inputHalfWrapper}>
+    <Text style={styles.subLabel}>Adults</Text>
+    <TextInput style={styles.inputHalf} 
+     value={String(form.adults)}
+    onChangeText={(text) => {
+    // Allow only numbers, less than 50
+    let filteredText = text.replace(/[^0-9]/g, '');
+    if (parseInt(filteredText) > 50) filteredText = '50';
+    
+    // Update both fields and store them in a single variable
+    const updatedAdults = filteredText;
+    const updatedChildren = form.children; // or get children value here
+    
+    // Combine both values and update a single field
+    const hhcombined = `${updatedAdults},${updatedChildren}`;
+    updateField("hhcombined", hhcombined); // Save combined value in a single field
+    updateField("adults", updatedAdults); // Optionally, keep adults separate
+  }}
+    keyboardType="numeric" placeholder="0" placeholderTextColor="#888" />
+  </View>
+  <View style={styles.inputHalfWrapper}>
+    <Text style={styles.subLabel}>Children</Text>
+    <TextInput style={styles.inputHalf} 
+    value={String(form.children)}
+     onChangeText={(text) => {
+    let filteredText = text.replace(/[^0-9]/g, '');
+    if (parseInt(filteredText) > 50) filteredText = '50';
+    
+    // Update both fields and store them in a single variable
+    const updatedChildren = filteredText;
+    const updatedAdults = form.adults; // or get adults value here
+    
+    // Combine both values and update a single field
+    const hhcombined = `${updatedAdults},${updatedChildren}`;
+    // Save combined value in a single field
+    updateField("children", updatedChildren); // Optionally, keep children separate
+     updateField("hhcombined", hhcombined);
+  }}
+    keyboardType="numeric" placeholder="0" placeholderTextColor="#888" />
+  </View>
+</View>
+{/* 
+<Text style={styles.label}>13. Household Members:</Text>
+<View style={styles.row}></View>
+<Text style={styles.subLabel}>Adults</Text>
 <TextInput
+ style={styles.inputHalf} 
   value={String(form.adults)}
+  
   onChangeText={(text) => {
     // Allow only numbers, less than 50
     let filteredText = text.replace(/[^0-9]/g, '');
@@ -367,11 +418,11 @@ placeholder="Enter Age" placeholderTextColor="#888"
     updateField("hhcombined", hhcombined); // Save combined value in a single field
     updateField("adults", updatedAdults); // Optionally, keep adults separate
   }}
-  style={styles.input}
+  
   placeholder="Adults"
   keyboardType="numeric"
 />
-
+<Text style={styles.subLabel}>Children</Text>
 <TextInput
   value={String(form.children)}
   onChangeText={(text) => {
@@ -391,11 +442,13 @@ placeholder="Enter Age" placeholderTextColor="#888"
   style={styles.input}
   placeholder="Children"
   keyboardType="numeric"
-/>
+/> */}
 
 
 <Text style={styles.question}>14. Occupation of Household Members (No. of persons):</Text>
-
+<View style={styles.irrigationRow}>
+  <View style={styles.inputIrrigationWrapper}>
+    <Text style={styles.subLabel}>Agriculture</Text>
 <TextInput
   value={String(form.occupation.agriculture)}
   onChangeText={(text) => {
@@ -413,9 +466,13 @@ placeholder="Enter Age" placeholderTextColor="#888"
       borderWidth: 1,
     },
   ]}
+  placeholderTextColor="#888"
   placeholder="Agriculture"
   keyboardType="numeric"
 />
+</View>
+ <View style={styles.inputIrrigationWrapper}>
+    <Text style={styles.subLabel}>Business</Text>
 <TextInput
   value={String(form.occupation.business)}
   onChangeText={(text) => {
@@ -434,12 +491,15 @@ placeholder="Enter Age" placeholderTextColor="#888"
       borderWidth: 1,
     },
   ]}
+  placeholderTextColor="#888"
   placeholder="Business"
   keyboardType="numeric"
 />
-
+</View>
+ <View style={styles.inputIrrigationWrapper}>
+    <Text style={styles.subLabel}>Others</Text>
 <TextInput
-  value={String(form.occupation.other)|| "0"}
+  value={String(form.occupation.other)}
   onChangeText={(text) => {
     updateNestedField("occupation","other",text);
     const updatedOther = text;
@@ -449,6 +509,7 @@ placeholder="Enter Age" placeholderTextColor="#888"
     const occupationCombined = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
     updateField("occupationCombined" , occupationCombined);
   }}
+  placeholderTextColor="#888"
   style={[
     styles.input,
     form.occupation.other !== '' && parseInt(form.occupation.other) > 50 && {
@@ -459,6 +520,8 @@ placeholder="Enter Age" placeholderTextColor="#888"
   placeholder="Other"
   keyboardType="numeric"
 />
+</View>
+</View>
 <Text style={styles.question}>15. Special Category:</Text>
 <Checkbox.Item
   label="Disabled"
@@ -614,11 +677,26 @@ const styles = StyleSheet.create({
       color: '#333',
       fontWeight: '600',
   },
+   checkboxGroup: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+    },
+    checkboxOption: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginRight: width * 0.04,
+      marginBottom: height * 0.01,
+    },
   label: {
       fontSize: width * 0.035,
       marginVertical: height * 0.01,
       color: '#333',
       fontWeight: '600',
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: width * 0.025,
     },
   input: {
       borderWidth: 1,
@@ -633,4 +711,138 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 30,
   },
+    //  container: {
+    //   flex: 1,
+    //   backgroundColor: '#F1F7ED',
+    // },
+    // inner: {
+    //   padding: width * 0.05, // 5% of screen width
+    //   paddingBottom: height * 0.03,
+    // },
+    // heading_land: {
+    //   fontSize: width * 0.06,
+    //   fontWeight: 'bold',
+    //   color: '#0B8B42',
+    //   marginBottom: height * 0.02,
+    //   textAlign: 'center',
+    // },
+    // headingContainer: {
+    //   flexDirection: 'row',
+    //   alignItems: 'center',
+    //   marginBottom: height * 0.02,
+    // },
+    // heading: {
+    //   fontSize: width * 0.05,
+    //   fontWeight: 'bold',
+    //   color: '#0B8B42',
+    //   marginBottom: height * 0.005,
+    // },
+    // label: {
+    //   fontSize: width * 0.035,
+    //   marginVertical: height * 0.01,
+    //   color: '#333',
+    //   fontWeight: '600',
+    // },
+    // input: {
+    //   borderWidth: 1,
+    //   borderColor: '#A5D6A7',
+    //   borderRadius: width * 0.025,
+    //   paddingHorizontal: width * 0.035,
+    //   paddingVertical: height * 0.015,
+    //   backgroundColor: '#E8F5E9',
+    //   color: '#333',
+    //   fontSize: width * 0.035,
+    // },
+    inputHalf: {
+      flex: 1,
+      borderWidth: 1,
+      borderColor: '#A5D6A7',
+      borderRadius: width * 0.025,
+      paddingHorizontal: width * 0.035,
+      paddingVertical: height * 0.015,
+      backgroundColor: '#E8F5E9',
+      color: '#333',
+      fontSize: width * 0.035,
+      marginRight: width * 0.025,
+    },
+    // row: {
+    //   flexDirection: 'row',
+    //   alignItems: 'center',
+    //   gap: width * 0.025,
+    // },
+    radioGroup: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginBottom: height * 0.01,
+    },
+    radioOption: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginRight: width * 0.04,
+      marginBottom: height * 0.01,
+    },
+    radioText: {
+      marginLeft: width * 0.02,
+      fontSize: width * 0.035,
+      color: '#333',
+    },
+    // checkboxGroup: {
+    //   flexDirection: 'row',
+    //   flexWrap: 'wrap',
+    // },
+    // checkboxOption: {
+    //   flexDirection: 'row',
+    //   alignItems: 'center',
+    //   marginRight: width * 0.04,
+    //   marginBottom: height * 0.01,
+    // },
+    nextBtn: {
+      backgroundColor: '#134e13',
+      paddingVertical: height * 0.018,
+      borderRadius: width * 0.025,
+      alignItems: 'center',
+      marginTop: height * 0.03,
+    },
+    nextBtnText: {
+      color: '#fff',
+      fontSize: width * 0.04,
+      fontWeight: '600',
+    },
+    dropdown: {
+      borderColor: '#A5D6A7',
+      borderRadius: width * 0.025,
+      marginBottom: height * 0.015,
+      backgroundColor: '#E8F5E9',
+    },
+    dropdownContainer: {
+      borderColor: '#A5D6A7',
+      backgroundColor: '#E8F5E9',
+      borderRadius: width * 0.025,
+    },
+    irrigationRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: height * 0.015,
+    },
+    irrigationInput: {
+      flex: 1,
+      marginRight: width * 0.02,
+    },
+    subLabel: {
+      fontSize: width * 0.033,  // ~13px on typical 390px width
+      color: '#555',
+      marginBottom: height * 0.005,
+      fontWeight: '500',
+    },
+    
+    inputHalfWrapper: {
+      flex: 1,
+      marginRight: width * 0.02,
+    },
+    
+    inputIrrigationWrapper: {
+      flex: 1,
+      marginHorizontal: width * 0.01,
+    },
+    
 });
