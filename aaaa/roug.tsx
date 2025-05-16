@@ -1,291 +1,424 @@
 import { Ionicons } from '@expo/vector-icons';
-import * as DocumentPicker from 'expo-document-picker';
-import * as ImagePicker from 'expo-image-picker';
-import * as Location from 'expo-location';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
-import {
-  Alert,
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import * as Animatable from 'react-native-animatable';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import React from 'react';
+import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
+const scaleFont = size => size * (width / 375); // 375 is a base width (like iPhone X)
 
-export default function BankDetailsForm() {
-  const [accountHolder, setAccountHolder] = useState('');
-  const [accountNumber, setAccountNumber] = useState('');
-  const [bankName, setBankName] = useState('');
-  const [branch, setBranch] = useState('');
-  const [ifsc, setIFSC] = useState('');
-  const [contribution, setContribution] = useState('');
 
-  const [files, setFiles] = useState({
-    patta: null,
-    idCard: null,
-    fmb: null,
-    photo: null,
-    passbook: null,
-    geoTagged: null, // Added for geo-tagged photo
-  });
-
-  const handleFilePick = async (field) => {
-    const result = await DocumentPicker.getDocumentAsync({ type: '/' });
-    if (result?.assets && result.assets.length > 0 && result.assets[0].uri) {
-      setFiles((prev) => ({ ...prev, [field]: result.assets[0] }));
-    }
-  };
-
-  const handleGeoTaggedPhotoPick = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    const { status: locationStatus } = await Location.requestForegroundPermissionsAsync();
-
-    if (status !== 'granted' || locationStatus !== 'granted') {
-      Alert.alert('Permissions required', 'Camera and location permissions are needed.');
-      return;
-    }
-
-    const imageResult = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      quality: 0.7,
-    });
-
-    if (!imageResult.canceled && imageResult.assets.length > 0) {
-      const location = await Location.getCurrentPositionAsync({});
-      const { uri } = imageResult.assets[0];
-      setFiles((prev) => ({
-        ...prev,
-        geoTagged: {
-          uri,
-          location: {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          },
-        },
-      }));
-    }
-  };
+export default function PreviewPage() {
+  const renderField = (label, value) => (
+    <View style={styles.item} key={label}>
+      <Text style={styles.label}>{label}</Text>
+      <Text style={styles.value}>{value || 'N/A'}</Text>
+    </View>
+  );
 
   return (
-    <KeyboardAwareScrollView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.inner}>
-        <Animatable.View animation="fadeInUp" duration={600}>
-          <Text style={styles.heading_land}>LAND REDEVELOPMENT FORM</Text>
-          <View style={styles.header}>
-            <TouchableOpacity
-              onPress={() => {
-                router.push('/Land_Form/land_develop_act');
-              }}
-              style={styles.backButton}
-            >
-              <Ionicons name="arrow-back" size={width * .06} color="#0B8B42" />
-            </TouchableOpacity>
-            <Text style={styles.heading}>Bank Details</Text>
-          </View>
+    <ScrollView style={styles.container}>
+      {/* Basic Details */}
+      <View style={styles.headerContainer}>
+  <TouchableOpacity onPress={() => router.push("/Land_Form/bank_details")}>
+    <Ionicons name="arrow-back" size={width * 0.06} color="#0B8B42" style={styles.backArrow} />
+  </TouchableOpacity>
+  <Text style={styles.heading_land}>LAND REDEVELOPMENT FORM</Text>
+</View>
 
-          <Text style={styles.label}>45. Name of Account Holder</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter name"
-            placeholderTextColor="#888"
-            value={accountHolder}
-            onChangeText={setAccountHolder}
-          />
+      
+      <View style={styles.card}>
+        <Text style={styles.pageTitle}>Preview</Text>
+        <Text style={styles.sectionTitle}>Basic Details</Text>
+        <View style={styles.imageContainer}>
+  <Image
+    source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYr59QqXDLWbSy6A1b0wOP-sxDEFvHLyB-LA&s' }} // Replace this with your image URI or local image
+    style={styles.photo}
+    resizeMode="cover"
+  />
+  {/* <Text style={styles.photoLabel}>Photo of the Farmer</Text> */}
+</View>
 
-          <Text style={styles.label}>46. Account Number</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter account number"
-            placeholderTextColor="#888"
-            keyboardType="numeric"
-            value={accountNumber}
-            onChangeText={setAccountNumber}
-          />
 
-          <Text style={styles.label}>47. Name of the Bank</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter bank name"
-            placeholderTextColor="#888"
-            value={bankName}
-            onChangeText={setBankName}
-          />
+        {renderField('1. Name of Farmer', '')}
+        {renderField('2. Age', '')}
+        {renderField('3. Mobile Number', '')}
+        {renderField('4. District', '')}
+        {renderField('5. Block', '')}
+        {renderField('6. Panchayat', '')}
+        {renderField('7. Hamlet', '')}
+        {renderField('8. Identity Card Type', '')}
+        {renderField('9. ID Card Number', '')}
+        {renderField('10. Gender', '')}
+        {renderField('11. Father / Spouse Name', '')}
+        {renderField('12. Household Type', '')}
 
-          <Text style={styles.label}>48. Branch</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter branch name"
-            placeholderTextColor="#888"
-            value={branch}
-            onChangeText={setBranch}
-          />
+        <View style={styles.item}>
+          <Text style={styles.label}>13. Household Members</Text>
+          <Text style={styles.subLabel}>Adults:</Text>
+          <Text style={styles.value}></Text>
+          <Text style={styles.subLabel}>Children:</Text>
+          <Text style={styles.value}></Text>
+        </View>
 
-          <Text style={styles.label}>49. IFSC</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter IFSC code"
-            placeholderTextColor="#888"
-            value={ifsc}
-            onChangeText={setIFSC}
-          />
+        <View style={styles.item}>
+          <Text style={styles.label}>14. Occupation</Text>
+          <Text style={styles.subLabel}>Agriculture:</Text>
+          <Text style={styles.value}></Text>
+          <Text style={styles.subLabel}>Buisness:</Text>
+          <Text style={styles.value}></Text>
+          <Text style={styles.subLabel}>Others:</Text>
+          <Text style={styles.value}></Text>
+        </View>
 
-          <Text style={styles.label}>50. Farmer has agreed for the work, and his contribution</Text>
-          <View style={styles.radioGroup}>
-            {['Yes', 'No'].map((option) => (
-              <TouchableOpacity
-                key={option}
-                style={styles.radioOption}
-                onPress={() => setContribution(option)}
-              >
-                <Ionicons
-                  name={contribution === option ? 'radio-button-on' : 'radio-button-off'}
-                  size={width * .05}
-                  color="#0B8B42"
-                />
-                <Text style={styles.radioText}>{option}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+        {renderField('15. Special Category', '')}
+        {renderField('Disabled Members', '')}
+        {renderField('16. Caste', '')}
+        {renderField('17. House Ownership', '')}
+        {renderField('18. House Type', '')}
+        {renderField('19. Drinking Water Source', '')}
+        {renderField('20. Water Potability', '')}
+        {renderField('21. Domestic Water Source', '')}
+        {renderField('22. Toilet Available?', '')}
+        {renderField('23. Toilet Condition', '')}
+        {renderField('24. Education Level of Householder', '')}
 
-          <Text style={styles.label}>51. Files submitted:</Text>
-          <View style={styles.uploadGroup}>
-            {[{ label: 'Patta', key: 'patta', onPress: () => handleFilePick('patta') },
-              { label: 'ID Card', key: 'idCard', onPress: () => handleFilePick('idCard') },
-              { label: 'FMB', key: 'fmb', onPress: () => handleFilePick('fmb') },
-              { label: 'Photo of Farmer', key: 'photo', onPress: () => handleFilePick('photo') },
-              { label: 'Bank Passbook', key: 'passbook', onPress: () => handleFilePick('passbook') },
-              { label: 'Geo-tagged Photo', key: 'geoTagged', onPress: handleGeoTaggedPhotoPick }
-            ].map(({ label, key, onPress }) => (
-              <TouchableOpacity key={key} style={styles.uploadBox} onPress={onPress}>
-                <Ionicons
-                  name={files[key] ? 'document-attach' : 'cloud-upload-outline'}
-                  size={width * .05}
-                  color="#0B8B42"
-                />
-                <Text style={styles.uploadLabel}>{label}</Text>
-                <Text style={styles.uploadStatus}>
-                  {files[key] ? (key === 'geoTagged' ? `Lat: ${files[key].location.latitude.toFixed(2)}` : 'Uploaded') : 'Tap to Upload'}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <TouchableOpacity style={styles.nextBtn} onPress={() => { router.push('/Land_Form/preview'); }}>
-            <Text style={styles.nextBtnText}>PREVIEW</Text>
+        <View style={styles.editButtonContainer}>
+          <TouchableOpacity style={styles.editBtn}onPress={() => {
+                                                        router.push('/Land_Form/Basic details');
+                                                      }}>
+            <Ionicons name="create-outline" size={ width * 0.06} color="#0B8B42" />
+            <Text style={styles.editText}>Edit</Text>
           </TouchableOpacity>
-        </Animatable.View>
-      </ScrollView>
-    </KeyboardAwareScrollView>
+        </View>
+      </View>
+
+      {/* Land Ownership & Livestock Details */}
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>Land Ownership & Livestock Details</Text>
+
+        {renderField('25. Land Ownership', '')}
+        {renderField('26. Well for Irrigation', '')}
+        <View style={styles.item}>
+          <Text style={styles.label}>27. Irrigated Lands (ha)</Text>
+          <Text style={styles.subLabel}>Rainfed:</Text>
+          <Text style={styles.value}></Text>
+          <Text style={styles.subLabel}>Tankfed:</Text>
+          <Text style={styles.value}></Text>
+          <Text style={styles.subLabel}>Well irrigated:</Text>
+          <Text style={styles.value}></Text>
+        </View>
+        {renderField('28. Patta Number', '')}
+        {renderField('29. Total Area (ha)', '')}
+        {renderField('30. Taluk', '')}
+        {renderField('31. Firka', '')}
+        {renderField('32. Revenue Village', '')}
+        {renderField('33. Crop Season', '')}
+        <View style={styles.item}>
+          <Text style={styles.label}>35. Livestock at Home (ha)</Text>
+          <Text style={styles.subLabel}>Goat:</Text>
+          <Text style={styles.value}></Text>
+          <Text style={styles.subLabel}>Sheep:</Text>
+          <Text style={styles.value}></Text>
+          <Text style={styles.subLabel}>Milch Animals:</Text>
+          <Text style={styles.value}></Text>
+          <Text style={styles.subLabel}>Drought Animals:</Text>
+          <Text style={styles.value}></Text>
+          <Text style={styles.subLabel}>Poultry:</Text>
+          <Text style={styles.value}></Text>
+          <Text style={styles.subLabel}>Others:</Text>
+          <Text style={styles.value}></Text>
+        </View>
+
+        <View style={styles.editButtonContainer}>
+          <TouchableOpacity style={styles.editBtn}onPress={() => {
+                                                        router.push('/Land_Form/lnd_own');
+                                                      }}>
+            <Ionicons name="create-outline" size={ width * 0.05} color="#0B8B42" />
+            <Text style={styles.editText}>Edit</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Land Development Activity */}
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>Land Development Activity</Text>
+
+        {renderField('31. S.F. No. of the land to be developed', '')}
+        <View style={styles.item}>
+          <Text style={styles.label}>35.a) Latitude and Longitude</Text>
+          <Text style={styles.subLabel}>Latitude:</Text>
+          <Text style={styles.value}></Text>
+          <Text style={styles.subLabel}>Longitude:</Text>
+          <Text style={styles.value}></Text>
+        </View>
+        {renderField('36. Soil Type', '')}
+        {renderField('37. Land to benefit (ha)', '')}
+        {renderField('38. Date of Inspection', '')}
+        {renderField('39. Type of work proposed', '')}
+        {renderField('40. Area benefited by proposed works (ha)', '')}
+        {renderField('41. Any other works proposed', '')}
+        {renderField('42. PRADAN Contribution', '')}
+        {renderField('43. Farmer Contribution', '')}
+        {renderField('44. Total Estimate Amount', '')}
+
+        <View style={styles.editButtonContainer}>
+          <TouchableOpacity style={styles.editBtn}onPress={() => {
+                                                        router.push('/Land_Form/land_develop_act');
+                                                      }}>
+            <Ionicons name="create-outline" size={ width * 0.05} color="#0B8B42" />
+            <Text style={styles.editText}>Edit</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Bank Details */}
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>Bank Details</Text>
+
+        {renderField('45. Name of Account Holder', '')}
+        {renderField('46. Account Number', '')}
+        {renderField('47. Name of the Bank', '')}
+        {renderField('48. Branch', '')}
+        {renderField('49. IFSC', '')}
+        {renderField('50. Farmer has agreed for the work, and his contribution', '')}
+
+        {/* Field 50: Files submitted */}
+        <View style={styles.item}>
+          <Text style={styles.label}>51. Files submitted:</Text>
+          {[
+            'Patta',
+            'ID Card',
+            'FMB',
+            'Photo of Farmer',
+            'Bank Passbook',
+            'Geo-tagged Photo',
+          ].map((file, index) => (
+            <View key={index} style={styles.fileRow}>
+              <View style={styles.fileLeft}>
+              <Ionicons name="document-text-outline" size={ width * 0.06} color="#2E7D32" />
+                <Text style={styles.fileName}>{file}</Text>
+              </View>
+              <View style={styles.fileRight}>
+                <Text style={styles.statusText}>Uploaded</Text>
+                <Ionicons name="eye-outline" size={ width * 0.05} color="#388E3C" style={{ marginLeft: 10 }} />
+              </View>
+            </View>
+          ))}
+        </View>
+
+        <View style={styles.editButtonContainer}>
+          <TouchableOpacity style={styles.editBtn}onPress={() => {
+                                                        router.push('/Land_Form/bank_details');
+                                                      }}>
+            <Ionicons name="create-outline" size={ width * 0.05} color="#0B8B42" />
+            <Text style={styles.editText}>Edit</Text>
+          </TouchableOpacity>
+        </View>
+      </View><View style={styles.submitContainer}>
+  <TouchableOpacity style={styles.draftBtn} onPress={() => {
+    router.push("/draft_page");
+  }}>
+    <Ionicons name="save-outline" size={width * 0.06} color="#fff" />
+    <Text style={styles.draftText}>Save Draft</Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity style={styles.submitBtn} onPress={() => {
+    router.push("/dashboard");
+  }}>
+    <Ionicons name="checkmark-circle-outline" size={width * 0.06} color="#fff" />
+    <Text style={styles.submitText}>Submit</Text>
+  </TouchableOpacity>
+</View>
+
+
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#F1F7ED',
+    flex: 1,
   },
-  inner: {
-    padding: width * 0.05,
-    paddingBottom: height * 0.025,
+  card: {
+    margin: width * 0.05, // 5% of screen width
+    backgroundColor: '#E8F5E9',
+    borderRadius: 16,
+    padding: width * 0.06, // 6% of screen width
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 4,
   },
-  header: {
-    flexDirection: 'row',
+  imageContainer: {
+    position: 'absolute',
+    top: height * 0.03,     // Adjust vertical offset
+    right: width * 0.05,    // Align to right with some margin
     alignItems: 'center',
-    marginBottom: height * 0.025,
+    zIndex: 10,             // Ensure it stays on top
   },
-  backButton: {
-    marginRight: width * 0.025,
+  photo: {
+    width: width * 0.3,     // 30% of screen width
+    height: width * 0.3,
+    borderRadius: width * 0.02,
+    borderWidth: 2,
+    borderColor: '#4CAF50',
   },
-  heading: {
-    fontSize: width * 0.05,
+  photoLabel: {
+    marginTop: height * 0.02,
+    fontSize: width * 0.04,
+    color: '#388E3C',
+    fontWeight: '600',
+  },
+  pageTitle: {
+    fontSize: width * 0.06, // 6% of screen width
     fontWeight: 'bold',
     color: '#0B8B42',
+    marginBottom: height * 0.02, // 2% of screen height
+    textAlign: 'left',
+    letterSpacing: 1,
+  },
+  sectionTitle: {
+    fontSize: width * 0.05, // 5% of screen width
+    fontWeight: '600',
+    color: '#4CAF50',
+    marginBottom: height * 0.03, // 3% of screen height
+    textAlign: 'left',
+  },
+  item: {
+    marginBottom: height * 0.02, // 2% of screen height
+    borderBottomWidth: 1,
+    borderBottomColor: '#C8E6C9',
+    paddingBottom: height * 0.01, // 1% of screen height
   },
   label: {
-    fontSize: width * 0.035,
-    marginVertical: height * 0.01,
-    color: '#333',
+    color: '#0B8B42',
+    fontSize: width * 0.04, // 4% of screen width
+    fontWeight: '700',
+  },
+  subLabel: {
+    color: '#388E3C',
+    fontSize: width * 0.035, // 3.5% of screen width
     fontWeight: '600',
+    marginTop: height * 0.01, // 1% of screen height
+  },
+  value: {
+    fontSize: width * 0.04, // 4% of screen width
+    color: '#444',
+    marginTop: height * 0.01, // 1% of screen height
+    fontWeight: '500',
+  },
+  editButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: height * 0.05, // 5% of screen height
   },
   heading_land: {
-    fontSize: width * 0.055,
+    fontSize: width * 0.055, // 5.5% of screen width
     fontWeight: 'bold',
     color: '#0B8B42',
-    marginBottom: height * 0.025,
+    marginBottom: height * 0.02, // 2% of screen height
+    marginTop: height * 0.03, // 3% of screen height
     textAlign: 'center',
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#A5D6A7',
-    borderRadius: width * 0.025,
-    paddingHorizontal: width * 0.035,
-    paddingVertical: height * 0.015,
-    backgroundColor: '#E8F5E9',
-    color: '#333',
-    fontSize: width * 0.035,
-    marginBottom: height * 0.015,
-  },
-  radioGroup: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: height * 0.015,
-  },
-  radioOption: {
+  editBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: width * 0.04,
-    marginBottom: height * 0.01,
+    paddingVertical: height * 0.02, // 2% of screen height
+    paddingHorizontal: width * 0.04, // 4% of screen width
+    backgroundColor: '#DFF5E3',
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#134e13',
   },
-  radioText: {
-    marginLeft: width * 0.015,
-    fontSize: width * 0.035,
-    color: '#333',
+  editText: {
+    marginLeft: width * 0.02, // 2% of screen width
+    color: '#134e13',
+    fontWeight: '600',
+    fontSize: width * 0.04, // 4% of screen width
   },
-  uploadGroup: {
+  fileRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'space-between',
-  },
-  uploadBox: {
-    width: '48%',
+    alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#A5D6A7',
-    borderRadius: width * 0.025,
-    padding: width * 0.03,
-    marginBottom: height * 0.02,
-    backgroundColor: '#E8F5E9',
+    borderColor: '#C8E6C9',
+    borderRadius: 10,
+    paddingVertical: height * 0.02, // 2% of screen height
+    paddingHorizontal: width * 0.04, // 4% of screen width
+    marginTop: height * 0.02, // 2% of screen height
+    backgroundColor: '#F1F8E9',
+  },
+  fileLeft: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
-  uploadLabel: {
-    fontSize: width * 0.035,
+  fileName: {
+    marginLeft: width * 0.02, // 2% of screen width
+    fontSize: width * 0.04, // 4% of screen width
+    color: '#2E7D32',
     fontWeight: '600',
-    marginTop: height * 0.01,
-    color: '#333',
   },
-  uploadStatus: {
-    fontSize: width * 0.03,
-    color: '#777',
-    marginTop: height * 0.005,
-    textAlign: 'center',
-  },
-  nextBtn: {
-    backgroundColor: '#134e13',
-    paddingVertical: height * 0.018,
-    borderRadius: width * 0.025,
+  fileRight: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: height * 0.025,
-    marginBottom: height * 0.025,
   },
-  nextBtnText: {
+  statusText: {
+    color: '#4CAF50',
+    fontWeight: '600',
+    fontSize: width * 0.035, // 3.5% of screen width
+  },
+  submitContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginBottom: height * 0.05,
+    marginHorizontal: width * 0.05,
+  },
+  submitBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#0B8B42',
+    paddingVertical: height * 0.015,
+    paddingHorizontal: width * 0.08,
+    borderRadius: 30,
+  },
+  submitText: {
     color: '#fff',
-    fontSize: width * 0.04,
-    fontWeight: '600',
+    fontSize: scaleFont(16),
+    fontWeight: 'bold',
+    marginLeft: 8,
   },
+  draftBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFA500',
+    paddingVertical: height * 0.015,
+    paddingHorizontal: width * 0.08,
+    borderRadius: 30,
+  },
+ 
+draftText: {
+  color: '#fff',
+  fontSize: scaleFont(16),
+  fontWeight: 'bold',
+  marginLeft: 8,
+},
+headerContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingVertical: height * 0.0,    // ~1.5% of screen height
+  paddingHorizontal: width * 0.04,   // ~4% of screen width
+},
+
+backArrow: {
+  marginRight: width * 0.025,        // ~2.5% of screen width
+  paddingTop: height * 0.01,         // ~1% of screen height
+},
+
+
+
+  
+  
 });
