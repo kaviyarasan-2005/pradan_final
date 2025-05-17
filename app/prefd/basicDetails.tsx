@@ -60,6 +60,9 @@ const {user} = useUserStore();
   );
   
   useEffect(() => {
+    if(fromPreview == "true"){
+        updateField("idCardType","Aadhar");
+    }
   setData("user_id", user.id);
   if ((id && fromPreview === "true") || (id && fromsubmit === "true")) {
     const selected = submittedForms.find((form) => form.id === id);

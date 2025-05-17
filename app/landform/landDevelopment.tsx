@@ -1,12 +1,11 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Dimensions, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
   Checkbox,
   IconButton,
   Text,
-  TextInput
 } from "react-native-paper";
 import { useFormStore } from "../../storage/useFormStore";
 
@@ -309,17 +308,17 @@ const styles = StyleSheet.create({
     color: '#333',
     fontWeight: "bold",
   },
-  input: {
-    height: 10,
-    borderWidth: 1,
-    borderColor: '#A5D6A7',
-    borderRadius: width * 0.025,
-    paddingHorizontal: width * 0.035,
-    paddingVertical: height * 0.015,
-    backgroundColor: '#E8F5E9',
-    color: '#333',
-    fontSize: width * 0.035,
-    marginBottom: height * 0.015,
+input: {
+  height: height * 0.06, // Around 6% of screen height, better for touch usability
+  borderWidth: 1,
+  borderColor: '#A5D6A7',
+  borderRadius: width * 0.025,
+  paddingHorizontal: width * 0.035,
+  paddingVertical: height * 0.015,
+  backgroundColor: '#E8F5E9',
+  color: '#333',
+  fontSize: width * 0.035,
+  marginBottom: height * 0.015,
   },
   checkboxGroup: {
     flexDirection: 'row',

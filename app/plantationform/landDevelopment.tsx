@@ -1,12 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Dimensions, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
   Checkbox,
-  Text,
-  TextInput
+  Text
 } from "react-native-paper";
 import { useFormStore } from "../../storage/useFormStore";
 const { width, height } = Dimensions.get('window');
@@ -344,6 +343,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   input: {
+     height: height * 0.06,
     borderWidth: 1,
     borderColor: '#A5D6A7',
     borderRadius: width * 0.025,
