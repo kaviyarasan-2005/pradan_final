@@ -25,18 +25,22 @@ export default function PreviewPage() {
   <Text style={styles.heading_land}>LAND REDEVELOPMENT FORM</Text>
 </View>
 
+                 <View style={styles.imageContainer}>
+                <Image
+                  source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYr59QqXDLWbSy6A1b0wOP-sxDEFvHLyB-LA&s' }}
+                  style={styles.photo}
+                  resizeMode="cover"
+                />
+              </View>
+
       
       <View style={styles.card}>
         <Text style={styles.pageTitle}>Preview</Text>
+
+
+
         <Text style={styles.sectionTitle}>Basic Details</Text>
-        <View style={styles.imageContainer}>
-  <Image
-    source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYr59QqXDLWbSy6A1b0wOP-sxDEFvHLyB-LA&s' }} // Replace this with your image URI or local image
-    style={styles.photo}
-    resizeMode="cover"
-  />
-  {/* <Text style={styles.photoLabel}>Photo of the Farmer</Text> */}
-</View>
+
 
 
         {renderField('1. Name of Farmer', '')}
@@ -108,7 +112,7 @@ export default function PreviewPage() {
           <Text style={styles.value}></Text>
         </View>
         {renderField('28. Patta Number', '')}
-        {renderField('29. Total Area (ha)', '')}
+        {renderField('29. Total Land Holding', '')}
         {renderField('30. Taluk', '')}
         {renderField('31. Firka', '')}
         {renderField('32. Revenue Village', '')}
@@ -152,14 +156,13 @@ export default function PreviewPage() {
           <Text style={styles.value}></Text>
         </View>
         {renderField('36. Soil Type', '')}
-        {renderField('37. Land to benefit (ha)', '')}
         {renderField('38. Date of Inspection', '')}
         {renderField('39. Type of work proposed', '')}
         {renderField('40. Area benefited by proposed works (ha)', '')}
         {renderField('41. Any other works proposed', '')}
-        {renderField('42. PRADAN Contribution', '')}
-        {renderField('43. Farmer Contribution', '')}
-        {renderField('44. Total Estimate Amount', '')}
+        {renderField('42. PRADAN contribution (in Rs)', '')}
+        {renderField('43. Farmer contribution (in Rs)', '')}
+        {renderField('44. Total Estimate Amount (in Rs)', '')}
 
         <View style={styles.editButtonContainer}>
           <TouchableOpacity style={styles.editBtn}onPress={() => {
@@ -253,8 +256,8 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     position: 'absolute',
-    top: height * 0.03,     // Adjust vertical offset
-    right: width * 0.05,    // Align to right with some margin
+    top: height * 0.13,     // Adjust vertical offset
+    right: width * 0.09,    // Align to right with some margin
     alignItems: 'center',
     zIndex: 10,             // Ensure it stays on top
   },

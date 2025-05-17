@@ -1,13 +1,15 @@
+import { Ionicons } from '@expo/vector-icons';
 import axios from "axios";
 import Constants from "expo-constants";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { Alert, Image, ScrollView, StyleSheet, View } from "react-native";
-import { Button, Card, Divider, IconButton, Text } from "react-native-paper";
+import { Alert, Dimensions, Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Card, Divider, Text } from "react-native-paper";
 import { useDraftStore } from "../../storage/DraftStore";
 import { useFormStore } from "../../storage/useFormStore";
 const url = Constants.expoConfig.extra.API_URL;
-
+const { width, height } = Dimensions.get('window');
+const scaleFont = size => size * (width / 375);
 export default function   Preview() {
   const router = useRouter();
   const { id,fromsubmit,returnsubmit,fromPreview} = useLocalSearchParams<{ id?: string , returnsubmit?: string,fromsubmit?: string, fromPreview?:string;}>();
@@ -18,7 +20,6 @@ const isSubmittedPreview = !!id;
 const selectedForm = React.useMemo(() => {
   if (fromsubmit) {
 
-   
     // console.log(JSON.stringify(data) + "inside");
     return data; // Always use updated data when fromsubmit
   }
@@ -117,7 +118,7 @@ const handleSubmit = async () => {
   
   const renderSection = (title: string, fields: any[], editRoute: string) => (
     <Card style={styles.card}>
-      <Card.Title title={title} />
+      <Card.Title title={title} style={styles.heading_land}/>
       <Card.Content>
         {fields.map((field, index) => (
           <View key={index} style={styles.fieldContainer}>
@@ -128,7 +129,7 @@ const handleSubmit = async () => {
                   return (
                     <View key={idx} style={styles.fileRow}>
                       <Text style={styles.value}>{item.label}</Text>
-                      <Button
+                      {/* <Button
                         mode="text"
                         onPress={() =>
                           router.push({pathname: "/pdfViewer",params: { uri: item.uri },})
@@ -136,7 +137,7 @@ const handleSubmit = async () => {
                         compact
                       >
                         View
-                      </Button>
+                      </Button> */}
                     </View>
                   );
                 } else if (typeof item === "object") {
@@ -167,7 +168,25 @@ const handleSubmit = async () => {
       {canEdit() && (
   <Card style={styles.card}>
     <Card.Actions>
-      <Button
+      <TouchableOpacity style={styles.editBtn}
+       onPress={() =>
+          router.push({
+            pathname: editRoute,
+            params: {
+              id: id,
+              fromPreview: "true",
+              returnTo: "/landform/Preview",
+              fromsubmit: fromsubmit,
+              returnsubmit: returnsubmit,
+              fromedit:"true",
+            },
+          })
+        }
+    >
+                  <Ionicons name="create-outline" size={ width * 0.06} color="#0B8B42" />
+                  <Text style={styles.editText}>Edit</Text>
+                </TouchableOpacity>
+      {/* <Button
         mode="outlined"
         onPress={() =>
           router.push({
@@ -184,17 +203,16 @@ const handleSubmit = async () => {
         }
       >
         Edit
-      </Button>
+      </Button> */}
     </Card.Actions>
   </Card>
 )}
-
     </Card>
   );
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <IconButton
+      {/* <IconButton
      icon="arrow-left"
      size={24}
      style={styles.backButton}
@@ -205,9 +223,20 @@ const handleSubmit = async () => {
       router.back(); // Go back normally
     }
   }}
-/>
-      <Text style={styles.title}>Land Form</Text>
-      <View style={styles.farmerPhotoContainer}>
+/> */}
+      <View style={styles.headerContainer}>
+  <TouchableOpacity  onPress={() => {
+    if (fromsubmit) {
+      router.push(returnsubmit); // Go back to total submitted page
+    } else {
+      router.back(); // Go back normally
+    }
+  }}>
+    <Ionicons name="arrow-back" size={width * 0.06} color="#0B8B42" style={styles.backArrow} />
+  </TouchableOpacity>
+  <Text style={styles.heading_land}>LAND REDEVELOPMENT FORM</Text>
+</View>
+      <View style={styles.imageContainer}>
         {selectedForm?.bankDetails?.submittedFiles?.farmerPhoto?.uri ? (
           <Image
             source={{ uri: selectedForm.bankDetails.submittedFiles.farmerPhoto.uri }}
@@ -236,7 +265,10 @@ const handleSubmit = async () => {
         // { label: "11. Household Members - Adults , childern", value: selectedForm.basicDetails?.hhcombined},
         { label: "11. Household Members - Adults", value: selectedForm.basicDetails?.adults },
         { label: "    Household Members - Children", value: selectedForm.basicDetails?.children },
-        { label: "12. Occupation of Household Members (Agriculture , Business , Others)", value: selectedForm.basicDetails?.occupation},
+        { label: "12. Occupation of Household Members "},
+           { label: "Agriculture", value: selectedForm.basicDetails?.occupation.agriculture },
+           { label: "Business", value: selectedForm.basicDetails?.occupation.business },
+           { label: "Others", value: selectedForm.basicDetails?.occupation.other },
         { label: "13. Special Category", value: selectedForm.basicDetails?.specialCategory ? "Yes" : "No" },
         { label: "    Special Category Number", value: selectedForm.basicDetails?.specialCategoryNumber },
         { label: "14. Caste", value: selectedForm.basicDetails?.caste },
@@ -254,20 +286,23 @@ const handleSubmit = async () => {
         { label: "23. Land Ownership", value: selectedForm.landOwnership?.landOwnershipType },
         { label: "24. Well for Irrigation", value: selectedForm.landOwnership?.hasWell },
         { label: "    Area Irrigated (ha)", value: selectedForm.landOwnership?.areaIrrigated },
-        { label: "25. Irrigated Lands (ha) (rainfed , tankfed , wellIrrigated)", value: selectedForm.landOwnership?.irrigatedLand},
+        { label: "25. Irrigated Lands (ha)"},
+         { label: "Rainfed", value: selectedForm.landOwnership?.rainfed},
+          { label: "Tankfed", value: selectedForm.landOwnership?.tankfed },
+           { label: "Well irrigated", value: selectedForm.landOwnership?.wellIrrigated },
         { label: "26. Patta Number", value: selectedForm.landOwnership?.pattaNumber },
         { label: "27. Total Area (ha)", value: selectedForm.landOwnership?.totalArea },
         { label: "27-28. Taluk", value: selectedForm.landOwnership?.taluk },
         { label: "27-28. Firka", value: selectedForm.landOwnership?.firka},
         { label: "28. Revenue Village", value: selectedForm.landOwnership?.revenueVillage },
         { label: "29. Crop Season", value: selectedForm.landOwnership?.cropSeasonCombined },
-        { label: "30. LiveStocks (goat , Sheep , Milch Animals ,  Draught Animals , Poultry , Others)", value: selectedForm.landOwnership?.livestock},
-        // { label: " Goat", value: selectedForm.landOwnership?.livestock?.goat || "0" },
-        // { label: "    Sheep", value: selectedForm.landOwnership?.livestock?.sheep || "0" },
-        // { label: "    Milch Animals :", value: selectedForm.landOwnership?.livestock?.milchAnimals || "0" },
-        // { label: "    Draught Animals :", value: selectedForm.landOwnership?.livestock?.draught_animals || "0" },
-        // { label: "    Poultry :", value: selectedForm.landOwnership?.livestock?.poultry || "0" },
-        // { label: "    Others :", value: selectedForm.landOwnership?.livestock?.others || "0" },
+        { label: "30. LiveStocks"},
+        { label: " Goat", value: selectedForm.landOwnership?.livestock?.goat || "0" },
+        { label: "    Sheep", value: selectedForm.landOwnership?.livestock?.sheep || "0" },
+        { label: "    Milch Animals :", value: selectedForm.landOwnership?.livestock?.milchAnimals || "0" },
+        { label: "    Draught Animals :", value: selectedForm.landOwnership?.livestock?.draught_animals || "0" },
+        { label: "    Poultry :", value: selectedForm.landOwnership?.livestock?.poultry || "0" },
+        { label: "    Others :", value: selectedForm.landOwnership?.livestock?.others || "0" },
          ], "/prefd/landOwnership")}
 
       {renderSection("Land Development Details", [
@@ -310,8 +345,23 @@ const handleSubmit = async () => {
 
 {!isSubmittedPreview && (
   <>
+      <TouchableOpacity style={styles.draftBtn} onPress={async () => {
+        try {
+          
+          // setData("fundStatus",data.bankDetails?.fundStatus)
+          await new Promise((res) => setTimeout(res, 50));
+          useDraftStore.getState().saveDraft(data);
+          Alert.alert("Saved", "Form saved as draft successfully!");
+          router.push("/dashboard");
+        } catch (err) {
+          Alert.alert("Error", "Failed to save draft. Please try again.");
+        }
+      }}>
+        <Ionicons name="save-outline" size={width * 0.06} color="#fff" />
+        <Text style={styles.draftText}>Save Draft</Text>
+      </TouchableOpacity>
     
-    <Button
+    {/* <Button
       mode="outlined"
       onPress={async () => {
         try {
@@ -328,29 +378,31 @@ const handleSubmit = async () => {
       style={{ marginTop: 10 }}
       >
       Save as Draft
-    </Button>
+    </Button> */}
 </> 
  ) 
 } 
-    <Button
+ <TouchableOpacity style={styles.submitBtn} onPress={() => {
+   handleSubmit()
+  }}>
+    <Ionicons name="checkmark-circle-outline" size={width * 0.06} color="#fff" />
+    <Text style={styles.submitText}>Submit</Text>
+  </TouchableOpacity>
+    {/* <Button
       mode="contained"
       onPress={handleSubmit}
       style={[styles.submitButton, { marginTop: 10 }]}
 >
       Submit
-    </Button>
-
-
+    </Button> */}
     </ScrollView>
   );
 }
-
-
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    paddingTop: 50,
-  },
+  // container: {
+  //   padding: 20,
+  //   paddingTop: 50,
+  // },
   farmerPhoto: {
     width: 170,
     height: 180,
@@ -374,7 +426,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     zIndex: 2,
   },
-  
   noPhotoText: {
     fontSize: 12,
     color: "#888",
@@ -386,18 +437,18 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
-  card: {
-    marginBottom: 20,
-  },
+  // card: {
+  //   marginBottom: 20,
+  // },
   fieldContainer: {
     marginBottom: 10,
   },
-  label: {
-    fontWeight: "bold",
-  },
-  value: {
-    marginLeft: 10,
-  },
+  // label: {
+  //   fontWeight: "bold",
+  // },
+  // value: {
+  //   marginLeft: 10,
+  // },
   divider: {
     marginVertical: 5,
   },
@@ -410,10 +461,191 @@ const styles = StyleSheet.create({
     left: 10,
     zIndex: 1,
   },
-  fileRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 4,
+  // fileRow: {
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  //   justifyContent: "space-between",
+  //   marginBottom: 4,
+  // },
+  container: {
+    backgroundColor: '#F1F7ED',
+    // flex: 1,
   },
+  card: {
+    margin: width * 0.05, // 5% of screen width
+    backgroundColor: '#E8F5E9',
+    borderRadius: 16,
+    padding: width * 0.06, // 6% of screen width
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 4,
+  },
+ imageContainer: {
+    position: 'absolute',
+    top: height * 0.03,     // Adjust vertical offset
+    right: width * 0.05,    // Align to right with some margin
+    alignItems: 'center',
+    zIndex: 10,             // Ensure it stays on top
+  },
+ photo: {
+    width: width * 0.3,     // 30% of screen width
+    height: width * 0.3,
+    borderRadius: width * 0.02,
+    borderWidth: 2,
+    borderColor: '#4CAF50',
+  },
+  photoLabel: {
+    marginTop: height * 0.02,
+    fontSize: width * 0.04,
+    color: '#388E3C',
+    fontWeight: '600',
+  },
+  pageTitle: {
+    fontSize: width * 0.06, // 6% of screen width
+    fontWeight: 'bold',
+    color: '#0B8B42',
+    marginBottom: height * 0.02, // 2% of screen height
+    textAlign: 'left',
+    letterSpacing: 1,
+  },
+  sectionTitle: {
+    fontSize: width * 0.05, // 5% of screen width
+    fontWeight: '600',
+    color: '#4CAF50',
+    marginBottom: height * 0.03, // 3% of screen height
+    textAlign: 'left',
+  },
+  item: {
+    marginBottom: height * 0.02, // 2% of screen height
+    borderBottomWidth: 1,
+    borderBottomColor: '#C8E6C9',
+    paddingBottom: height * 0.01, // 1% of screen height
+  },
+  label: {
+    color: '#0B8B42',
+    fontSize: width * 0.04, // 4% of screen width
+    fontWeight: '700',
+  },
+  subLabel: {
+    color: '#388E3C',
+    fontSize: width * 0.035, // 3.5% of screen width
+    fontWeight: '600',
+    marginTop: height * 0.01, // 1% of screen height
+  },
+  value: {
+    fontSize: width * 0.04, // 4% of screen width
+    color: '#444',
+    marginTop: height * 0.01, // 1% of screen height
+    fontWeight: '500',
+  },
+  editButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: height * 0.05, // 5% of screen height
+  },
+  heading_land: {
+    fontSize: width * 0.055, // 5.5% of screen width
+    fontWeight: 'bold',
+    color: '#0B8B42',
+    marginBottom: height * 0.02, // 2% of screen height
+    marginTop: height * 0.03, // 3% of screen height
+    textAlign: 'center',
+  },
+  editBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: height * 0.02, // 2% of screen height
+    paddingHorizontal: width * 0.04, // 4% of screen width
+    backgroundColor: '#DFF5E3',
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#134e13',
+  },
+  editText: {
+    marginLeft: width * 0.02, // 2% of screen width
+    color: '#134e13',
+    fontWeight: '600',
+    fontSize: width * 0.04, // 4% of screen width
+  },
+  fileRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#C8E6C9',
+    borderRadius: 10,
+    paddingVertical: height * 0.02, // 2% of screen height
+    paddingHorizontal: width * 0.04, // 4% of screen width
+    marginTop: height * 0.02, // 2% of screen height
+    backgroundColor: '#F1F8E9',
+  },
+  fileLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  fileName: {
+    marginLeft: width * 0.02, // 2% of screen width
+    fontSize: width * 0.04, // 4% of screen width
+    color: '#2E7D32',
+    fontWeight: '600',
+  },
+  fileRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  statusText: {
+    color: '#4CAF50',
+    fontWeight: '600',
+    fontSize: width * 0.035, // 3.5% of screen width
+  },
+  submitContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginBottom: height * 0.05,
+    marginHorizontal: width * 0.05,
+  },
+  submitBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#0B8B42',
+    paddingVertical: height * 0.015,
+    paddingHorizontal: width * 0.08,
+    borderRadius: 30,
+  },
+  submitText: {
+    color: '#fff',
+    fontSize: scaleFont(16),
+    fontWeight: 'bold',
+    marginLeft: 8,
+  },
+  draftBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFA500',
+    paddingVertical: height * 0.015,
+    paddingHorizontal: width * 0.08,
+    borderRadius: 30,
+  },
+ 
+draftText: {
+  color: '#fff',
+  fontSize: scaleFont(16),
+  fontWeight: 'bold',
+  marginLeft: 8,
+},
+headerContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingVertical: height * 0.0,    // ~1.5% of screen height
+  paddingHorizontal: width * 0.04,   // ~4% of screen width
+},
+
+backArrow: {
+  marginRight: width * 0.025,        // ~2.5% of screen width
+  paddingTop: height * 0.01,         // ~1% of screen height
+},
+
 });
