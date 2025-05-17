@@ -207,7 +207,7 @@ const handleCardPress = async (item) => {
           <TextInput placeholder="Block" value={block} onChangeText={setBlock} style={styles.dropdown} />
           <TextInput placeholder="Hamlet" value={hamlet} onChangeText={setHamlet} style={styles.dropdown} />
 
-          <Text style={styles.filterLabel}>Form Type</Text>
+          <Text style={styles.filterSection}>Form Type</Text>
             <DropDownPicker
         open={typeopen}
         value={formType}
@@ -215,12 +215,13 @@ const handleCardPress = async (item) => {
         setOpen={settypeOpen}
         setValue={setFormType}
         setItems={setformtypefilter}
+        style={styles.dropdown}
         placeholder="Select Form Type"
-        style={{ borderColor: '#ccc' }}
+        dropDownContainerStyle={{ borderColor: '#1B5E20' }}
       />
 
 
-          <Text style={styles.filterLabel}>Gender</Text>
+          <Text style={styles.filterSection}>Gender</Text>
            <DropDownPicker
       open={open}
       value={gender}
@@ -229,15 +230,18 @@ const handleCardPress = async (item) => {
       setValue={setGender}
       setItems={setgenderfilter}
       placeholder="Select Gender"
-      style={{ zIndex: 1000 }} // If overlapping issues occur
+      style={styles.dropdown}
+      dropDownContainerStyle={{ borderColor: '#1B5E20' }}
+      // style={{ zIndex: 1000 }} // If overlapping issues occur
     />
-
+        <View style={styles.dateContainer}>
           <TouchableOpacity onPress={() => setStartDatePickerVisible(true)} style={styles.dateButton}>
-         <Text>{startDate ? `Start Date: ${startDate.toLocaleDateString()}` : "Start Date"}</Text>
+         <Text style={styles.dateText}>{startDate ? `Start Date: ${startDate.toLocaleDateString()}` : "Start Date"}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setEndDatePickerVisible(true)} style={styles.dateButton}>
-            <Text>{endDate ? `End Date: ${endDate.toLocaleDateString()}` : "End Date"}</Text>
+            <Text style={styles.dateText}>{endDate ? `End Date: ${endDate.toLocaleDateString()}` : "End Date"}</Text>
           </TouchableOpacity> 
+          </View>
 
           {/* Display the selected date range */}
           {startDate && endDate && (
@@ -519,9 +523,11 @@ const styles = StyleSheet.create({
     gap: height * 0.01,
   },
   dropdown: {
-    borderColor: '#ccc',
+ borderColor: '#1B5E20',
     marginBottom: height * 0.01,
     zIndex: 1000,
+    borderWidth: 1,
+    borderRadius: width * 0.02,
   },
   dateContainer: {
     flexDirection: 'row',
