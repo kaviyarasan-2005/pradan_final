@@ -77,9 +77,7 @@ export default function BankDetails() {
     const secureName = [...randomBytes].map((b) => b.toString(16).padStart(2, '0')).join('') + `.${ext}`;
     console.log(secureName);
 
-    const uploadURL = await axios.get(`${url}/api/files/getUploadurl`,{params: {
-      fileName: secureName,
-    }});
+    const uploadURL = await axios.get(`${url}/api/files/getUploadurl`,{params: {fileName: secureName,}});
     console.log("Upload URL (Frontend):",uploadURL.data);
     //const formData = new FormData();  
     // formData.append("file", {
@@ -111,6 +109,7 @@ export default function BankDetails() {
       [field]: {
         ...(prev.submittedFiles?.[field] || {}),
         name: secureName,
+        name2: file.name, 
       },
     },
   }));
@@ -303,7 +302,7 @@ export default function BankDetails() {
 
     {!fromPreview && (
   <>
-    <Text style={styles.question}>50. Upload Documents:</Text>
+    <Text style={styles.label}>50. Upload Documents:</Text>
        <View style={styles.uploadGroup}>
     {[
       { label: "Patta", key: "patta", type: "pdf" },
@@ -313,28 +312,27 @@ export default function BankDetails() {
       { label: "Bank Passbook", key: "bankPassbook", type: "pdf" },
       { label: "Geo Tag", key: "geoTag", type: "image" },
     ].map((file) => (
-      <React.Fragment key={file.key}>
-       <TouchableOpacity
-  onPress={() => handleUpload(file.key, file.type)}
-  style={styles.uploadBox}
->
-  <Ionicons
-    name={form.submittedFiles[file.key]?.name ? 'checkmark-done' : 'document-attach'}
-    size={width * 0.05}
-    color="#0B8B42"
-  />
-  <Text style={styles.uploadLabel}>
-    {form.submittedFiles[file.key]?.name || file.label}
-  </Text>
-</TouchableOpacity>
+<React.Fragment key={file.key}>
+  <TouchableOpacity
+    onPress={() => handleUpload(file.key, file.type)}
+    style={styles.uploadBox}
+  >
+    <Ionicons
+      name={file.label ? 'document-attach' : 'cloud-upload-outline'}
+      size={width * 0.05}
+      color="#0B8B42"
+    />
+    <Text style={styles.uploadLabel}>{file.label}</Text>
+
+    {form.submittedFiles[file.key]?.name && (
+      <Text style={styles.uploadStatus}>
+        Uploaded: {form.submittedFiles[file.key].name2}
+      </Text>
+    )}
+  </TouchableOpacity>
+</React.Fragment>
 
 
-        {/* {form.submittedFiles[file.key]?.name && (
-          <Text style={styles.uploadStatus}>
-            Uploaded: {form.submittedFiles[file.key].name}
-          </Text>
-        )} */}
-      </React.Fragment>
     ))}
     </View>
   </>
@@ -492,12 +490,17 @@ const styles = StyleSheet.create({
     marginTop: height * 0.01,
     color: '#333',
   },
-  uploadStatus: {
-    fontSize: width * 0.03,
-    color: '#777',
-    marginTop: height * 0.005,
-    textAlign: 'center',
-  },
+uploadStatus: {
+  fontSize: width * 0.03,
+  color: '#777',
+  marginTop: height * 0.005,
+  textAlign: 'center',
+  width: width * 0.4,     // Limit width to half screen
+  alignSelf: 'center',
+  flexWrap: 'wrap',
+},
+
+
   nextBtn: {
     backgroundColor: '#134e13',
     paddingVertical: height * 0.018,
