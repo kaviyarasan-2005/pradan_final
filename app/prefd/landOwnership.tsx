@@ -212,7 +212,10 @@ placeholderTextColor="#888"
   value={String(form.irrigatedLand.rainfed)}
   onChangeText={(text) => {
     updateNestedField("irrigatedLand", "rainfed", text);
-    calculateTotalArea(text, form.irrigatedLand.tankfed, form.irrigatedLand.wellIrrigated);
+     calculateTotalArea(text, form.irrigatedLand.tankfed, form.irrigatedLand.wellIrrigated);
+    const Irrigatedcombined = `${form.irrigatedLand.rainfed},${form.irrigatedLand.tankfed},${form.irrigatedLand.wellIrrigated}`
+    updateField("irrigatedLandCombined",Irrigatedcombined);
+   
   }}
   style={styles.input}
   keyboardType="numeric"
@@ -227,6 +230,7 @@ placeholder="0"
   onChangeText={(text) => {
     updateNestedField("irrigatedLand", "tankfed", text);
      calculateTotalArea( form.irrigatedLand.rainfed, text,form.irrigatedLand.wellIrrigated);
+         const Irrigatedcombined = `${form.irrigatedLand.rainfed},${form.irrigatedLand.tankfed},${form.irrigatedLand.wellIrrigated}`
   }}
   style={styles.input}
   keyboardType="numeric"
@@ -240,6 +244,8 @@ placeholderTextColor="#888"
   onChangeText={(text) => {
     updateNestedField("irrigatedLand", "wellIrrigated", text);
     calculateTotalArea( form.irrigatedLand.rainfed, form.irrigatedLand.tankfed,text,);
+        const Irrigatedcombined = `${form.irrigatedLand.rainfed},${form.irrigatedLand.tankfed},${form.irrigatedLand.wellIrrigated}`
+    updateField("irrigatedLandCombined",Irrigatedcombined);
   }}
    value={String(form.irrigatedLand.wellIrrigated)}
   style={styles.input}

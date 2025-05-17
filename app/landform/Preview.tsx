@@ -19,6 +19,7 @@ const isSubmittedPreview = !!id;
 
 const selectedForm = React.useMemo(() => {
   if (fromsubmit) {
+
     // console.log(JSON.stringify(data) + "inside");
     return data; // Always use updated data when fromsubmit
   }
@@ -81,7 +82,6 @@ if(data.basicDetails.specialCategoryNumber >0){
     set2NestedData("landOwnership","livestock","draught_animals",livestockarray[3]);
     set2NestedData("landOwnership","livestock","poultry",livestockarray[4]);
     set2NestedData("landOwnership","livestock","others",livestockarray[5]);
-
     // setData("basicDetails",data.basicDetails);
     // setData("bankDetails",data.bankDetails)
     // setData("landDevelopment",data.landDevelopment);
@@ -118,18 +118,28 @@ const handleSubmit = async () => {
   
   const renderSection = (title: string, fields: any[], editRoute: string) => (
     <Card style={styles.card}>
-      <Card.Title title={title} style={styles.heading_land}/>
+<Card.Title title={title} titleStyle={styles.sectionTitle} />
       <Card.Content>
-        {fields.map((field, index) => (
-          <View key={index} style={styles.fieldContainer}>
-            <Text style={styles.label}>{field.label}</Text>
-            {Array.isArray(field.value) ? (
-              field.value.map((item, idx) => {
-                if (typeof item === "object" && item?.label && item?.uri) {
-                  return (
-                    <View key={idx} style={styles.fileRow}>
-                      <Text style={styles.value}>{item.label}</Text>
-                      {/* <Button
+        {fields.map((field, index) => {
+  const nextField = fields[index + 1];
+  const isNextSubLabel = nextField && nextField.subLabel && !nextField.label;
+
+  return (
+    <View key={index} style={styles.fieldContainer}>
+      {/* Show label if exists */}
+      {field.label && <Text style={styles.label}>{field.label}</Text>}
+
+      {/* Show subLabel if exists */}
+      {field.subLabel && <Text style={styles.subLabel}>{field.subLabel}</Text>}
+
+      {/* Render value(s) */}
+      {Array.isArray(field.value) ? (
+        field.value.map((item, idx) => {
+          if (typeof item === "object" && item?.label && item?.uri) {
+            return (
+              <View key={idx} style={styles.fileRow}>
+                <Text style={styles.value}>{item.label}</Text>
+                 {/* <Button
                         mode="text"
                         onPress={() =>
                           router.push({pathname: "/pdfViewer",params: { uri: item.uri },})
@@ -138,35 +148,46 @@ const handleSubmit = async () => {
                       >
                         View
                       </Button> */}
-                    </View>
-                  );
-                } else if (typeof item === "object") {
-                  return (
-                    <Text key={idx} style={styles.value}>
-                      {JSON.stringify(item)}
-                    </Text>
-                  );
-                } else {
-                  return (
-                    <Text key={idx} style={styles.value}>
-                      {item}
-                    </Text>
-                  );
-                }
-              })
-            ) : typeof field.value === "object" && field.value !== null ? (
-              Object.entries(field.value).map(([key, val], idx) => (
-                <Text key={idx} style={styles.value}>{`${key}: ${val}`}</Text>
-              ))
-            ) : (
-              <Text style={styles.value}>{field.value}</Text>
-            )}
-            <Divider style={styles.divider} />
-          </View>
-        ))}
+              </View>
+            );
+          } else if (typeof item === "object") {
+            return (
+              <Text key={idx} style={styles.value}>
+                {JSON.stringify(item)}
+              </Text>
+            );
+          } else {
+            return (
+              <Text key={idx} style={styles.value}>
+                {item}
+              </Text>
+            );
+          }
+        })
+      ) : typeof field.value === "object" && field.value !== null ? (
+        Object.entries(field.value).map(([key, val], idx) => (
+          <Text key={idx} style={styles.subLabel}>
+  <Text style = {styles.subLabel}>{key}: </Text>
+  <Text style={styles.value}>{val}</Text>
+</Text>
+        ))
+      ) : (
+        <Text style={styles.value}>{field.value}</Text>
+      )}
+
+      {/* Divider logic:
+          - If field has label AND subLabel, no divider here (between them)
+          - If subLabel and next field is subLabel too, no divider yet
+          - Otherwise show divider */}
+      {!(field.label && field.subLabel) && !isNextSubLabel && <Divider style={styles.divider} />}
+    </View>
+  );
+})}
+
+
       </Card.Content>
       {canEdit() && (
-  <Card style={styles.card}>
+            <View style={styles.editButtonContainer}>
     <Card.Actions>
       <TouchableOpacity style={styles.editBtn}
        onPress={() =>
@@ -205,7 +226,7 @@ const handleSubmit = async () => {
         Edit
       </Button> */}
     </Card.Actions>
-  </Card>
+    </View>
 )}
     </Card>
   );
@@ -237,16 +258,17 @@ const handleSubmit = async () => {
   <Text style={styles.heading_land}>LAND REDEVELOPMENT FORM</Text>
 </View>
       <View style={styles.imageContainer}>
-        {selectedForm?.bankDetails?.submittedFiles?.farmerPhoto?.uri ? (
-          <Image
-            source={{ uri: selectedForm.bankDetails.submittedFiles.farmerPhoto.uri }}
-            style={styles.farmerPhoto}
-            resizeMode="cover"
-          />
-        ) : (
-          <Text style={styles.noPhotoText}>Add a farmer photo</Text>
-        )}
-      </View>
+  {selectedForm?.bankDetails?.submittedFiles?.farmerPhoto?.uri ? (
+    <Image
+      source={{ uri: selectedForm.bankDetails.submittedFiles.farmerPhoto.uri }}
+      style={styles.photo}
+      resizeMode="cover"
+    />
+  ) : (
+    <Text style={styles.noPhotoText}>Add a farmer photo</Text>
+  )}
+</View>
+
       {renderSection("Basic Details", [
          {label : "Date",value: selectedForm.landDevelopment?.date},
         {label : "ID",value: id},
@@ -262,15 +284,15 @@ const handleSubmit = async () => {
         { label: "8. Gender", value: selectedForm.basicDetails?.gender},
         { label: "9. Father / Spouse Name", value: selectedForm.basicDetails?.fatherSpouse },
         { label: "10. Type of Household", value: selectedForm.basicDetails?.householdType },
-        // { label: "11. Household Members - Adults , childern", value: selectedForm.basicDetails?.hhcombined},
-        { label: "11. Household Members - Adults", value: selectedForm.basicDetails?.adults },
-        { label: "    Household Members - Children", value: selectedForm.basicDetails?.children },
-        { label: "12. Occupation of Household Members ", value: selectedForm.basicDetails?.occupation},
-          //  { label: "Agriculture", value: selectedForm.basicDetails?.occupation.agriculture },
-          //  { label: "Business", value: selectedForm.basicDetails?.occupation.business },
-          //  { label: "Others", value: selectedForm.basicDetails?.occupation.other },
+        { label: "11. Household Members"},
+        { subLabel: "Adults", value: selectedForm.basicDetails?.adults },
+        { subLabel: "Children", value: selectedForm.basicDetails?.children },
+        { label: "12. Occupation of Household Members ",value: selectedForm.basicDetails?.occupation},
+          //  { subLabel: "Agriculture", value: selectedForm.basicDetails?.occupation.agriculture },
+          //  { subLabel: "Business", value: selectedForm.basicDetails?.occupation.business },
+          //  { subLabel: "Others", value: selectedForm.basicDetails?.occupation.other },
         { label: "13. Special Category", value: selectedForm.basicDetails?.specialCategory ? "Yes" : "No" },
-        { label: "    Special Category Number", value: selectedForm.basicDetails?.specialCategoryNumber },
+        { subLabel: "Special Category Number", value: selectedForm.basicDetails?.specialCategoryNumber },
         { label: "14. Caste", value: selectedForm.basicDetails?.caste },
         { label: "15. House Ownership", value: selectedForm.basicDetails?.houseOwnership },
         { label: "16. Type of House", value: selectedForm.basicDetails?.houseType },
@@ -285,30 +307,31 @@ const handleSubmit = async () => {
       {renderSection("Land Ownership & Livestock", [
         { label: "23. Land Ownership", value: selectedForm.landOwnership?.landOwnershipType },
         { label: "24. Well for Irrigation", value: selectedForm.landOwnership?.hasWell },
-        { label: "    Area Irrigated (ha)", value: selectedForm.landOwnership?.areaIrrigated },
+        { subLabel: "Area Irrigated (ha)", value: selectedForm.landOwnership?.areaIrrigated },
         { label: "25. Irrigated Lands (ha)",value: selectedForm.landOwnership?.irrigatedLand},
-        //  { label: "Rainfed", value: selectedForm.landOwnership?.irrigatedLand.rainfed},
-        //   { label: "Tankfed", value: selectedForm.landOwnership?.irrigatedLand.tankfed },
-        //    { label: "Well irrigated", value: selectedForm.landOwnership?.irrigatedLand.wellIrrigated },
+        //  { subLabel: "Rainfed", value: selectedForm.landOwnership?.rainfed},
+        //   { subLabel: "Tankfed", value: selectedForm.landOwnership?.tankfed },
+        //    { subLabel: "Well irrigated", value: selectedForm.landOwnership?.wellIrrigated },
         { label: "26. Patta Number", value: selectedForm.landOwnership?.pattaNumber },
         { label: "27. Total Area (ha)", value: selectedForm.landOwnership?.totalArea },
         { label: "27-28. Taluk", value: selectedForm.landOwnership?.taluk },
         { label: "27-28. Firka", value: selectedForm.landOwnership?.firka},
         { label: "28. Revenue Village", value: selectedForm.landOwnership?.revenueVillage },
         { label: "29. Crop Season", value: selectedForm.landOwnership?.cropSeasonCombined },
-        { label: "30. LiveStocks", value: selectedForm.landOwnership?.livestock},
-        // { label: " Goat", value: selectedForm.landOwnership?.livestock?.goat || "0" },
-        // { label: "    Sheep", value: selectedForm.landOwnership?.livestock?.sheep || "0" },
-        // { label: "    Milch Animals :", value: selectedForm.landOwnership?.livestock?.milchAnimals || "0" },
-        // { label: "    Draught Animals :", value: selectedForm.landOwnership?.livestock?.draught_animals || "0" },
-        // { label: "    Poultry :", value: selectedForm.landOwnership?.livestock?.poultry || "0" },
-        // { label: "    Others :", value: selectedForm.landOwnership?.livestock?.others || "0" },
+        { label: "30. LiveStocks",value : selectedForm.landOwnership?.livestock},
+        // { subLabel: " Goat", value: selectedForm.landOwnership?.livestock?.goat || "0" },
+        // { subLabel: " Sheep", value: selectedForm.landOwnership?.livestock?.sheep || "0" },
+        // { subLabel: " Milch Animals :", value: selectedForm.landOwnership?.livestock?.milchAnimals || "0" },
+        // { subLabel: " Draught Animals :", value: selectedForm.landOwnership?.livestock?.draught_animals || "0" },
+        // { subLabel: " Poultry :", value: selectedForm.landOwnership?.livestock?.poultry || "0" },
+        // { subLabel: " Others :", value: selectedForm.landOwnership?.livestock?.others || "0" },
          ], "/prefd/landOwnership")}
 
       {renderSection("Land Development Details", [
         { label: "31. S.F. No.", value: selectedForm.landDevelopment?.sfNumber },
-        { label: "31.a) Latitude", value: selectedForm.landDevelopment?.latitude },
-        { label: "      Longitude", value: selectedForm.landDevelopment?.longitude },
+        { label: "31.a) Latitude & Longitude"},
+        { subLabel: "Latitude", value: selectedForm.landDevelopment?.latitude },
+        { subLabel: "Longitude", value: selectedForm.landDevelopment?.longitude },
         { label: "32. Soil Type", value: selectedForm.landDevelopment?.soilTypeCombined },
         { label: "33. Land to benefit (ha)", value: selectedForm.landDevelopment?.landBenefit },
         { label: "36. Date of Inspection", value: selectedForm.landDevelopment?.date},
@@ -344,29 +367,12 @@ const handleSubmit = async () => {
       ], "/prefd/bankDetails")}
 
 {!isSubmittedPreview && (
-  <>
-      <TouchableOpacity style={styles.draftBtn} onPress={async () => {
-        try {
-          
-          // setData("fundStatus",data.bankDetails?.fundStatus)
-          await new Promise((res) => setTimeout(res, 50));
-          useDraftStore.getState().saveDraft(data);
-          Alert.alert("Saved", "Form saved as draft successfully!");
-          router.push("/dashboard");
-        } catch (err) {
-          Alert.alert("Error", "Failed to save draft. Please try again.");
-        }
-      }}>
-        <Ionicons name="save-outline" size={width * 0.06} color="#fff" />
-        <Text style={styles.draftText}>Save Draft</Text>
-      </TouchableOpacity>
-    
-    {/* <Button
-      mode="outlined"
+  <View style={styles.submitContainer}>
+    {/* Save Draft Button */}
+    <TouchableOpacity
+      style={styles.draftBtn}
       onPress={async () => {
         try {
-          
-          // setData("fundStatus",data.bankDetails?.fundStatus)
           await new Promise((res) => setTimeout(res, 50));
           useDraftStore.getState().saveDraft(data);
           Alert.alert("Saved", "Form saved as draft successfully!");
@@ -375,101 +381,54 @@ const handleSubmit = async () => {
           Alert.alert("Error", "Failed to save draft. Please try again.");
         }
       }}
-      style={{ marginTop: 10 }}
-      >
-      Save as Draft
-    </Button> */}
-</> 
- ) 
-} 
- <TouchableOpacity style={styles.submitBtn} onPress={() => {
-   handleSubmit()
-  }}>
-    <Ionicons name="checkmark-circle-outline" size={width * 0.06} color="#fff" />
-    <Text style={styles.submitText}>Submit</Text>
-  </TouchableOpacity>
-    {/* <Button
+    >
+      <Ionicons name="save-outline" size={width * 0.06} color="#fff" />
+      <Text style={styles.draftText}>Save Draft</Text>
+    </TouchableOpacity>
+
+    {/* Submit Button */}
+    <TouchableOpacity
+      style={styles.submitButton}
+      onPress={() => {
+        handleSubmit();
+      }}
+    >
+      <Ionicons name="checkmark-circle-outline" size={width * 0.06} color="#fff" />
+      <Text style={styles.submitText}>Submit</Text>
+    </TouchableOpacity>
+  </View>
+)}
+  {/* <Button
       mode="contained"
       onPress={handleSubmit}
       style={[styles.submitButton, { marginTop: 10 }]}
 >
       Submit
     </Button> */}
+
     </ScrollView>
   );
 }
 const styles = StyleSheet.create({
-  // container: {
-  //   padding: 20,
-  //   paddingTop: 50,
-  // },
-  farmerPhoto: {
-    width: 170,
-    height: 180,
-    position: "absolute",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    zIndex: 2,
-  },
-  farmerPhotoContainer: {
-    position: "absolute",
-    top: 80,
-    right: 30,
-    width: 170,
-    height: 180,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    backgroundColor: "#f2f2f2",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 2,
-  },
-  noPhotoText: {
-    fontSize: 12,
-    color: "#888",
-    textAlign: "center",
-    paddingHorizontal: 8,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  // card: {
-  //   marginBottom: 20,
-  // },
-  fieldContainer: {
-    marginBottom: 10,
-  },
-  // label: {
-  //   fontWeight: "bold",
-  // },
-  // value: {
-  //   marginLeft: 10,
-  // },
-  divider: {
-    marginVertical: 5,
-  },
-  submitButton: {
-    marginTop: 20,
-  },
-  backButton: {
-    position: "absolute",
-    top: 10,
-    left: 10,
-    zIndex: 1,
-  },
-  // fileRow: {
-  //   flexDirection: "row",
-  //   alignItems: "center",
-  //   justifyContent: "space-between",
-  //   marginBottom: 4,
-  // },
   container: {
     backgroundColor: '#F1F7ED',
     // flex: 1,
+  },
+
+noPhotoText: {
+  fontSize: 12,
+  color: '#999',
+  textAlign: 'center',
+  paddingHorizontal: 5,
+},
+
+  title: {
+     fontSize: width * 0.06, // 6% of screen width
+    fontWeight: 'bold',
+    color: '#0B8B42',
+    marginBottom: height * 0.02, // 2% of screen height
+    textAlign: 'left',
+    letterSpacing: 1,
   },
   card: {
     margin: width * 0.05, // 5% of screen width
@@ -482,13 +441,40 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 4,
   },
- imageContainer: {
-    position: 'absolute',
-    top: height * 0.03,     // Adjust vertical offset
-    right: width * 0.05,    // Align to right with some margin
-    alignItems: 'center',
-    zIndex: 10,             // Ensure it stays on top
+  fieldContainer: {
+    marginBottom: 10,
   },
+  divider: {
+    marginVertical: 5,
+  },
+  submitButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#0B8B42',
+    paddingVertical: height * 0.015,
+    paddingHorizontal: width * 0.08,
+    borderRadius: 30,
+  },
+  backButton: {
+  marginRight: width * 0.025,        // ~2.5% of screen width
+
+  },
+
+imageContainer: {
+  position: 'absolute',
+  top: height * 0.13,
+  right: width * 0.09,
+  width: width * 0.3,        // Same as image width
+  height: width * 0.3,       // Same as image height
+  borderWidth: 2,
+  borderColor: '#4CAF50',
+  borderRadius: width * 0.02,
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: '#fff',   // Optional: to show a white frame
+  zIndex: 10,
+},
+
  photo: {
     width: width * 0.3,     // 30% of screen width
     height: width * 0.3,
@@ -512,7 +498,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: width * 0.05, // 5% of screen width
-    fontWeight: '600',
+    fontWeight: '800',
     color: '#4CAF50',
     marginBottom: height * 0.03, // 3% of screen height
     textAlign: 'left',
@@ -531,7 +517,7 @@ const styles = StyleSheet.create({
   subLabel: {
     color: '#388E3C',
     fontSize: width * 0.035, // 3.5% of screen width
-    fontWeight: '600',
+    fontWeight: '800',
     marginTop: height * 0.01, // 1% of screen height
   },
   value: {
