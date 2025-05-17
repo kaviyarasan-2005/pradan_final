@@ -175,7 +175,7 @@ const handleCardPress = async (item) => {
      <View style={styles.container}>
       <View >
        <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backIcon}>
+        <TouchableOpacity onPress={() => router.push('/dashboard')} style={styles.backIcon}>
           <Ionicons name="arrow-back" size={width * .06} color="#1B5E20" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Form Submissions</Text>
