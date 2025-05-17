@@ -12,7 +12,6 @@ import {
   View,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { Button } from 'react-native-paper';
 
 
 const { height, width } = Dimensions.get('window');
@@ -186,9 +185,9 @@ return (
         placeholderTextColor="#aaa"
       />
     </View>
-    <Button mode="contained" onPress={handleSearch} style={styles.searchButton}>
+    {/* <Button mode="contained" onPress={handleSearch} style={styles.searchButton}>
       Search
-    </Button>
+    </Button> */}
     <Text style={{ textAlign: 'center', marginVertical: 10 }}>
       {mockData.length > 0 ? `${mockData.length} forms found` : 'No forms found'}
     </Text>
