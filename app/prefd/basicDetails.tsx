@@ -1,9 +1,10 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import * as Animatable from 'react-native-animatable';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Checkbox, IconButton, RadioButton } from "react-native-paper";
+import { Checkbox, RadioButton } from "react-native-paper";
 import { useFormStore } from "../../storage/useFormStore";
 import { useUserStore } from "../../storage/userDatastore";
   const { width, height } = Dimensions.get('window'); 
@@ -147,7 +148,7 @@ const {user} = useUserStore();
       
       <Checkbox.Item
         key={item}
-        // style={styles.checkboxOption}
+        style={styles.checkboxOption}
         label={item}
         status={
           isSingle
@@ -181,8 +182,10 @@ const {user} = useUserStore();
     : "Form"}
 </Text>
     <View style={styles.headingContainer}>
-                           <IconButton icon="arrow-left" size={24} onPress={() => router.back()} />
-                        
+                           {/* <IconButton icon="arrow-left" size={24} onPress={() => router.back()} /> */}
+                         <TouchableOpacity onPress={() => router.back()}>
+                          <Ionicons name="arrow-back" size={width * .06} color="#0B8B42" />
+                        </TouchableOpacity>
                         <Text style={styles.heading}>Basic Details</Text>
                       </View>
       
@@ -326,14 +329,16 @@ placeholder="Enter Age" placeholderTextColor="#888"
 
 
 <Text style={styles.question}>10. Gender:</Text>
-<RadioButton.Group
+<View  style={styles.radioGroup}>
+  <RadioButton.Group
   onValueChange={(value) => updateField("gender", value)}
   value={form.gender}
 >
-  <RadioButton.Item label="Male" value="Male" />
-  <RadioButton.Item label="Female" value="Female" />
-  <RadioButton.Item label="Transgender" value="Transgender" />
+  <RadioButton.Item   style={styles.radioOption} label="Male" value="Male" />
+  <RadioButton.Item   style={styles.radioOption} label="Female" value="Female" />
+  <RadioButton.Item   style={styles.radioOption} label="Transgender" value="Transgender" />
 </RadioButton.Group>
+</View>
 
 
       <Text style={styles.question}>11. Father / Spouse Name:</Text>
