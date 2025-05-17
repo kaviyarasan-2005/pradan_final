@@ -19,7 +19,6 @@ const isSubmittedPreview = !!id;
 
 const selectedForm = React.useMemo(() => {
   if (fromsubmit) {
-
     // console.log(JSON.stringify(data) + "inside");
     return data; // Always use updated data when fromsubmit
   }
@@ -82,6 +81,7 @@ if(data.basicDetails.specialCategoryNumber >0){
     set2NestedData("landOwnership","livestock","draught_animals",livestockarray[3]);
     set2NestedData("landOwnership","livestock","poultry",livestockarray[4]);
     set2NestedData("landOwnership","livestock","others",livestockarray[5]);
+
     // setData("basicDetails",data.basicDetails);
     // setData("bankDetails",data.bankDetails)
     // setData("landDevelopment",data.landDevelopment);
@@ -265,10 +265,10 @@ const handleSubmit = async () => {
         // { label: "11. Household Members - Adults , childern", value: selectedForm.basicDetails?.hhcombined},
         { label: "11. Household Members - Adults", value: selectedForm.basicDetails?.adults },
         { label: "    Household Members - Children", value: selectedForm.basicDetails?.children },
-        { label: "12. Occupation of Household Members "},
-           { label: "Agriculture", value: selectedForm.basicDetails?.occupation.agriculture },
-           { label: "Business", value: selectedForm.basicDetails?.occupation.business },
-           { label: "Others", value: selectedForm.basicDetails?.occupation.other },
+        { label: "12. Occupation of Household Members ", value: selectedForm.basicDetails?.occupation},
+          //  { label: "Agriculture", value: selectedForm.basicDetails?.occupation.agriculture },
+          //  { label: "Business", value: selectedForm.basicDetails?.occupation.business },
+          //  { label: "Others", value: selectedForm.basicDetails?.occupation.other },
         { label: "13. Special Category", value: selectedForm.basicDetails?.specialCategory ? "Yes" : "No" },
         { label: "    Special Category Number", value: selectedForm.basicDetails?.specialCategoryNumber },
         { label: "14. Caste", value: selectedForm.basicDetails?.caste },
@@ -286,23 +286,23 @@ const handleSubmit = async () => {
         { label: "23. Land Ownership", value: selectedForm.landOwnership?.landOwnershipType },
         { label: "24. Well for Irrigation", value: selectedForm.landOwnership?.hasWell },
         { label: "    Area Irrigated (ha)", value: selectedForm.landOwnership?.areaIrrigated },
-        { label: "25. Irrigated Lands (ha)"},
-         { label: "Rainfed", value: selectedForm.landOwnership?.rainfed},
-          { label: "Tankfed", value: selectedForm.landOwnership?.tankfed },
-           { label: "Well irrigated", value: selectedForm.landOwnership?.wellIrrigated },
+        { label: "25. Irrigated Lands (ha)",value: selectedForm.landOwnership?.irrigatedLand},
+        //  { label: "Rainfed", value: selectedForm.landOwnership?.irrigatedLand.rainfed},
+        //   { label: "Tankfed", value: selectedForm.landOwnership?.irrigatedLand.tankfed },
+        //    { label: "Well irrigated", value: selectedForm.landOwnership?.irrigatedLand.wellIrrigated },
         { label: "26. Patta Number", value: selectedForm.landOwnership?.pattaNumber },
         { label: "27. Total Area (ha)", value: selectedForm.landOwnership?.totalArea },
         { label: "27-28. Taluk", value: selectedForm.landOwnership?.taluk },
         { label: "27-28. Firka", value: selectedForm.landOwnership?.firka},
         { label: "28. Revenue Village", value: selectedForm.landOwnership?.revenueVillage },
         { label: "29. Crop Season", value: selectedForm.landOwnership?.cropSeasonCombined },
-        { label: "30. LiveStocks"},
-        { label: " Goat", value: selectedForm.landOwnership?.livestock?.goat || "0" },
-        { label: "    Sheep", value: selectedForm.landOwnership?.livestock?.sheep || "0" },
-        { label: "    Milch Animals :", value: selectedForm.landOwnership?.livestock?.milchAnimals || "0" },
-        { label: "    Draught Animals :", value: selectedForm.landOwnership?.livestock?.draught_animals || "0" },
-        { label: "    Poultry :", value: selectedForm.landOwnership?.livestock?.poultry || "0" },
-        { label: "    Others :", value: selectedForm.landOwnership?.livestock?.others || "0" },
+        { label: "30. LiveStocks", value: selectedForm.landOwnership?.livestock},
+        // { label: " Goat", value: selectedForm.landOwnership?.livestock?.goat || "0" },
+        // { label: "    Sheep", value: selectedForm.landOwnership?.livestock?.sheep || "0" },
+        // { label: "    Milch Animals :", value: selectedForm.landOwnership?.livestock?.milchAnimals || "0" },
+        // { label: "    Draught Animals :", value: selectedForm.landOwnership?.livestock?.draught_animals || "0" },
+        // { label: "    Poultry :", value: selectedForm.landOwnership?.livestock?.poultry || "0" },
+        // { label: "    Others :", value: selectedForm.landOwnership?.livestock?.others || "0" },
          ], "/prefd/landOwnership")}
 
       {renderSection("Land Development Details", [
