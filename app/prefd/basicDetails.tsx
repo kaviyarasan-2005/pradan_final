@@ -151,7 +151,7 @@ const {user} = useUserStore();
       
       <Checkbox.Item
         key={item}
-        style={styles.checkboxOption}
+        // style={styles.checkboxOption}
         label={item}
         status={
           isSingle
@@ -332,16 +332,16 @@ placeholder="Enter Age" placeholderTextColor="#888"
 
 
 <Text style={styles.question}>10. Gender:</Text>
-<View  style={styles.radioGroup}>
+{/* <View  style={styles.radioGroup}> */}
   <RadioButton.Group
   onValueChange={(value) => updateField("gender", value)}
   value={form.gender}
 >
-  <RadioButton.Item   style={styles.radioOption} label="Male" value="Male" />
-  <RadioButton.Item   style={styles.radioOption} label="Female" value="Female" />
-  <RadioButton.Item   style={styles.radioOption} label="Transgender" value="Transgender" />
+  <RadioButton.Item    label="Male" value="Male" />
+  <RadioButton.Item    label="Female" value="Female" />
+  <RadioButton.Item   label="Transgender" value="Transgender" />
 </RadioButton.Group>
-</View>
+{/* </View> */}
 
 
       <Text style={styles.question}>11. Father / Spouse Name:</Text>
