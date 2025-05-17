@@ -265,8 +265,8 @@ export default function BankDetails() {
       <Text style={styles.label}>47. Name of the Bank</Text>
       <TextInput
         value={form.bankName}
-         placeholder="Enter bank name"
-            placeholderTextColor="#888"
+        placeholder="Enter bank name"
+        placeholderTextColor="#888"
         onChangeText={(text) => updateField("bankName", text)}
         style={styles.input}
       />
@@ -358,10 +358,10 @@ const styles = StyleSheet.create({
   //   padding: 20,
   //   paddingBottom: 40,
   // },
-  backButton: {
-    alignSelf: "flex-start",
-    marginBottom: 10,
-  },
+  // backButton: {
+  //   alignSelf: "flex-start",
+  //   marginBottom: 10,
+  // },
   title: {
     fontSize: 24,
     fontWeight: "bold",
@@ -378,13 +378,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 5,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    marginBottom: 10,
-    borderRadius: 5,
-  },
+  // input: {
+  //   borderWidth: 1,
+  //   borderColor: "#ccc",
+  //   padding: 10,
+  //   marginBottom: 10,
+  //   borderRadius: 5,
+  // },
   uploadButton: {
     marginTop: 8,
     marginBottom: 4,
