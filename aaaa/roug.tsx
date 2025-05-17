@@ -20,7 +20,7 @@ const CheckboxOption = ({ options, values, onToggle }) => (
       <TouchableOpacity key={opt} style={styles.checkboxOption} onPress={() => onToggle(opt)}>
         <Ionicons
           name={values.includes(opt) ? 'checkbox' : 'square-outline'}
-          size={width * .05}
+          size={width * .05 }
           color="#0B8B42"
         />
         <Text style={styles.radioText}>{opt}</Text>
@@ -42,6 +42,8 @@ export default function LandDevelopmentScreen() {
   const [pradanContribution, setPradanContribution] = useState('');
   const [farmerContribution, setFarmerContribution] = useState('');
   const [totalEstimate, setTotalEstimate] = useState('');
+  const [identityType, setIdentityType] = useState([]);
+const [otherIdentity, setOtherIdentity] = useState('');
 
   const handleToggle = (option, state, setState) => {
     if (state.includes(option)) {
@@ -50,19 +52,18 @@ export default function LandDevelopmentScreen() {
       setState([...state, option]);
     }
   };
-
   return (
     <KeyboardAwareScrollView style={styles.container}>
       <ScrollView contentContainerStyle={styles.inner}>
         {/* Land Development Form Heading */}
-        <Text style={styles.heading_land}>FARM POND FORM</Text>
+        <Text style={styles.heading_land}>PLANTATION FORM</Text>
 
         {/* Back Arrow and Heading Container */}
         <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={() => router.push("/pond_form/lnd_own")} style={styles.backButton}>
+          <TouchableOpacity onPress={() => router.push("/plantation_form/lnd_own")} style={styles.backButton}>
             <Ionicons name="arrow-back" size={width * .06} color="#0B8B42" />
           </TouchableOpacity>
-          <Text style={styles.heading}>Design of Farm Pond</Text>
+          <Text style={styles.heading}>Proposed Work by the Farmer</Text>
         </View>
 
         {/* Form fields */}
@@ -95,13 +96,14 @@ export default function LandDevelopmentScreen() {
           />
         </View>
 
-
         <Text style={styles.label}>36. Soil Type</Text>
         <CheckboxOption
           options={['Red Soil', 'Black Cotton', 'Sandy Loam', 'Laterite']}
           values={soilType}
           onToggle={(opt) => handleToggle(opt, soilType, setSoilType)}
         />
+
+
 
         <Text style={styles.label}>38. Date of Inspection</Text>
         <TextInput
@@ -112,44 +114,23 @@ export default function LandDevelopmentScreen() {
           onChangeText={setDateInspection}
         />
 
-<Text style={styles.label}>39. Area benifited by proposed works(ha)</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter land area"
-          placeholderTextColor="#888"
-          value={landBenefit}
-          onChangeText={setLandBenefit}
-          keyboardType="numeric"
-        />
+<Text style={styles.label}>8. Identity Card</Text>
+<CheckboxOption
+  options={['Mango', 'Guava', 'Lemon', 'Others']}
+  values={identityType}
+  onToggle={(option) => handleToggle(option, identityType, setIdentityType)}
+/>
+{identityType.includes('Others') && (
+  <TextInput
+    style={styles.input}
+    placeholder="Specify other plantation"
+    placeholderTextColor="#888"
+    value={otherIdentity}
+    onChangeText={setOtherIdentity}
+  />
+)}
 
-        <Text style={styles.label}>40. Length in meter</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter length"
-          placeholderTextColor="#888"
-          value={landBenefit}
-          onChangeText={setLandBenefit}
-          keyboardType="numeric"
-        />
-        <Text style={styles.label}>41. Breadth in meter</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter breadth"
-          placeholderTextColor="#888"
-          value={landBenefit}
-          onChangeText={setLandBenefit}
-          keyboardType="numeric"
-        />
-        <Text style={styles.label}>42. Depth in meter</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter depth"
-          placeholderTextColor="#888"
-          value={landBenefit}
-          onChangeText={setLandBenefit}
-          keyboardType="numeric"
-        />
-        <Text style={styles.label}>43.Volume of Excavation</Text>
+        <Text style={styles.label}>40. Area benefited by proposed works (ha)</Text>
         <TextInput
           style={styles.input}
           placeholder="Enter area"
@@ -159,8 +140,16 @@ export default function LandDevelopmentScreen() {
           keyboardType="numeric"
         />
 
+        <Text style={styles.label}>41. Any other works proposed</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter details"
+          placeholderTextColor="#888"
+          value={otherWorks}
+          onChangeText={setOtherWorks}
+        />
 
-        <Text style={styles.label}>44. PRADAN contribution (in Rs)</Text>
+        <Text style={styles.label}>42. PRADAN contribution (in Rs)</Text>
         <TextInput
           style={styles.input}
           placeholder="Enter amount"
@@ -170,7 +159,7 @@ export default function LandDevelopmentScreen() {
           keyboardType="numeric"
         />
 
-        <Text style={styles.label}>45. Farmer contribution (in Rs)</Text>
+        <Text style={styles.label}>43. Farmer contribution (in Rs)</Text>
         <TextInput
           style={styles.input}
           placeholder="Enter amount"
@@ -180,7 +169,7 @@ export default function LandDevelopmentScreen() {
           keyboardType="numeric"
         />
 
-        <Text style={styles.label}>46. Total Estimate Amount (in Rs)</Text>
+        <Text style={styles.label}>44. Total Estimate Amount (in Rs)</Text>
         <TextInput
           style={styles.input}
           placeholder="Enter amount"
@@ -190,7 +179,7 @@ export default function LandDevelopmentScreen() {
           keyboardType="numeric"
         />
 
-        <TouchableOpacity style={styles.nextBtn} onPress={() => router.push('/pond_form/bank_details')}>
+        <TouchableOpacity style={styles.nextBtn} onPress={() => router.push('./bank_details')}>
           <Text style={styles.nextBtnText}>NEXT</Text>
         </TouchableOpacity>
       </ScrollView>
