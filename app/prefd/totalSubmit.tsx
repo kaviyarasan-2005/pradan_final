@@ -319,141 +319,9 @@ const handleCardPress = async (item) => {
   );
 };
 const styles = StyleSheet.create({
-  // container: {
-  //   padding: 16,
-  //   paddingTop: 40,
-  //   backgroundColor: "#fff",
-  // },
-  // header: {
-  //   flexDirection: "row",
-  //   alignItems: "center",
-  //   justifyContent: "space-between",
-  //   marginBottom: 10,
-  // },
-  icon: {
-    padding: 6,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#1B5E20",
-  },
-  // searchContainer: {
-  //   flexDirection: "row",
-  //   alignItems: "center",
-  //   borderWidth: 1,
-  //   borderColor: "#ccc",
-  //   borderRadius: 8,
-  //   paddingHorizontal: 10,
-  //   marginVertical: 12,
-  // },
-  // searchIcon: {
-  //   marginRight: 8,
-  // },
-  // searchInput: {
-  //   flex: 1,
-  //   paddingVertical: 8,
-  //   color: "#333",
-  //   marginBottom: 10,
-  //   borderBottomWidth: 0.5,
-  //   borderColor: "#ccc",
-  // },
-  filtersBox: {
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: "#F0F4C3",
-    marginBottom: 14,
-  },
-  filterLabel: {
-    fontWeight: "bold",
-    marginTop: 6,
-    color: "#1B5E20",
-  },
-  noDataText: {
-    fontSize: 16,
-    color: "#777",
-    textAlign: "center",
-    marginTop: 20,
-  },
-  // card: {
-  //   backgroundColor: "#f5f5f5",
-  //   borderRadius: 10,
-  //   padding: 16,
-  //   marginBottom: 14,
-  //   elevation: 2,
-  // },
-  // cardHeader: {
-  //   flexDirection: "row",
-  //   justifyContent: "space-between",
-  //   marginBottom: 8,
-  // },
-  // name: {
-  //   fontSize: 16,
-  //   fontWeight: "bold",
-  //   color: "#1B5E20",
-  // },
-  // statusBadge: {
-  //   paddingVertical: 4,
-  //   paddingHorizontal: 8,
-  //   borderRadius: 4,
-  // },
-  // statusText: {
-  //   fontSize: 12,
-  //   fontWeight: "bold",
-  // },
-  // label: {
-  //   fontSize: 14,
-  //   color: "#555",
-  //   marginTop: 4,
-  // },
-  // value: {
-  //   fontSize: 14,
-  //   color: "#333",
-  // },
-  // bioContainer: {
-  //   marginTop: 12,
-  // },
-  // bioTitle: {
-  //   fontSize: 14,
-  //   color: "#555",
-  // },
-  // bioContent: {
-  //   fontSize: 14,
-  //   color: "#333",
-  // },
-  deleteButton: {
-    marginTop: 12,
-    padding: 10,
-    backgroundColor: "#E57373",
-    borderRadius: 6,
-    alignItems: "center",
-  },
-  deleteButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  // resetButton: {
-  //   marginTop: 12,
-  //   padding: 10,
-  //   backgroundColor: "#81C784",
-  //   borderRadius: 6,
-  //   alignItems: "center",
-  // },
-  // dateButton: {
-  //   padding: 12,
-  //   marginVertical: 8,
-  //   backgroundColor: "#E8F5E9",
-  //   borderRadius: 6,
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  // },
-  dateRangeText: {
-    fontSize: 14,
-    color: "#388E3C",
-    marginTop: 8,
-  },
   container: {
-    padding: width * 0.04,
+    paddingLeft: width * 0.02,
+    paddingRight: width * .02,
     backgroundColor: '#fff',
   },
   header: {
@@ -523,7 +391,7 @@ const styles = StyleSheet.create({
     gap: height * 0.01,
   },
   dropdown: {
- borderColor: '#1B5E20',
+    borderColor: '#1B5E20',
     marginBottom: height * 0.01,
     zIndex: 1000,
     borderWidth: 1,
@@ -536,7 +404,6 @@ const styles = StyleSheet.create({
     paddingTop:width * 0.01,
   },
   dateButton: {
-
     padding: height * 0.015,
     borderWidth: 1,
     borderColor: '#1B5E20',
@@ -624,5 +491,4 @@ const styles = StyleSheet.create({
     lineHeight: height * 0.028,
   },
 });
-
 export default TotalSubmit;

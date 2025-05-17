@@ -314,22 +314,26 @@ export default function BankDetails() {
       { label: "Geo Tag", key: "geoTag", type: "image" },
     ].map((file) => (
       <React.Fragment key={file.key}>
-        <TouchableOpacity
-          onPress={() => handleUpload(file.key, file.type)}
-          style={styles.uploadBox}
-        >
-             <Ionicons
-                            name={file.label? 'document-attach' : 'cloud-upload-outline'}
-                            size={width * .05}
-                            color="#0B8B42"
-                          />
-         <Text style={styles.uploadLabel}>{file.label}</Text>
-        </TouchableOpacity>
-        {form.submittedFiles[file.key]?.name && (
+       <TouchableOpacity
+  onPress={() => handleUpload(file.key, file.type)}
+  style={styles.uploadBox}
+>
+  <Ionicons
+    name={form.submittedFiles[file.key]?.name ? 'checkmark-done' : 'document-attach'}
+    size={width * 0.05}
+    color="#0B8B42"
+  />
+  <Text style={styles.uploadLabel}>
+    {form.submittedFiles[file.key]?.name || file.label}
+  </Text>
+</TouchableOpacity>
+
+
+        {/* {form.submittedFiles[file.key]?.name && (
           <Text style={styles.uploadStatus}>
             Uploaded: {form.submittedFiles[file.key].name}
           </Text>
-        )}
+        )} */}
       </React.Fragment>
     ))}
     </View>
