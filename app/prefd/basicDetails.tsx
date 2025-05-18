@@ -619,8 +619,8 @@ placeholder="Enter Age" placeholderTextColor="#888"
   onValueChange={(value) => updateField("toiletCondition", value)}
   value={form.toiletCondition}
 >
-  <RadioButton.Item label="Yes" value="yes" />
-  <RadioButton.Item label="No" value="no" />
+  <RadioButton.Item label="Working" value="yes" />
+  <RadioButton.Item label="Not Working" value="no" />
 </RadioButton.Group>
       <Text style={styles.question}>23. Education of Householder:</Text>
 <RadioButton.Group
