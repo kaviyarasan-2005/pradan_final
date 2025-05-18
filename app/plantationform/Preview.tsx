@@ -368,9 +368,9 @@ const handleSubmit = async () => {
         },
       ], "/prefd/bankDetails")}
 
-{!isSubmittedPreview && (
+
   <View style={styles.submitContainer}>
-    {/* Save Draft Button */}
+    {!isSubmittedPreview && (
     <TouchableOpacity
       style={styles.draftBtn}
       onPress={async () => {
@@ -387,7 +387,7 @@ const handleSubmit = async () => {
       <Ionicons name="save-outline" size={width * 0.06} color="#fff" />
       <Text style={styles.draftText}>Save Draft</Text>
     </TouchableOpacity>
-
+)}
     {/* Submit Button */}
     <TouchableOpacity
       style={styles.submitButton}
@@ -399,7 +399,7 @@ const handleSubmit = async () => {
       <Text style={styles.submitText}>Submit</Text>
     </TouchableOpacity>
   </View>
-)}
+
   {/* <Button
       mode="contained"
       onPress={handleSubmit}
