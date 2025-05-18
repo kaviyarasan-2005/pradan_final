@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
     marginTop: height * 0.03,
     backgroundColor: '#1B5E20',
     borderRadius: width * 0.025,
-    paddingVertical: height * 0.01,
+    paddingVertical: height * 0.02,
     alignItems: 'center',
   },
   logoutButtonText: {
