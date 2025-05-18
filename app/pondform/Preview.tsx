@@ -270,7 +270,7 @@ const handleSubmit = async () => {
 </View>
 
       {renderSection("Basic Details", [
-         {label : "Date",value: selectedForm.landDevelopment?.date},
+        //  {label : "Date",value: selectedForm.landDevelopment?.date},
         {label : "ID",value: id},
         { label: "1. Name of Farmer", value: selectedForm.basicDetails?.name},
         { label: "1-2. Age", value: selectedForm.basicDetails?.age},
