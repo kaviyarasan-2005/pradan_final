@@ -231,6 +231,7 @@ placeholder="0"
     updateNestedField("irrigatedLand", "tankfed", text);
      calculateTotalArea( form.irrigatedLand.rainfed, text,form.irrigatedLand.wellIrrigated);
          const Irrigatedcombined = `${form.irrigatedLand.rainfed},${form.irrigatedLand.tankfed},${form.irrigatedLand.wellIrrigated}`
+         updateField("irrigatedLandCombined",Irrigatedcombined);
   }}
   style={styles.input}
   keyboardType="numeric"
@@ -259,7 +260,7 @@ placeholderTextColor="#888"
 <TextInput
   value={form.totalArea}
   editable={false}
-   placeholder="Enter total area"
+   placeholder="0"
   placeholderTextColor="#888"
   style={styles.input}
   keyboardType="numeric"
