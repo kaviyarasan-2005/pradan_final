@@ -62,7 +62,7 @@ const canEdit = () => {
 };
 
 useEffect(() => {  
-  setData("user_id",user.user_id);
+  setData("user_id",user.id);
   if(fromsubmit == "true" && fromPreview != "true"){
 const occupationarray = data.basicDetails.occupationCombined.split(',');
 if(data.basicDetails.specialCategoryNumber >0){

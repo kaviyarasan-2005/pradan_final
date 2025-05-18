@@ -161,7 +161,7 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
       <IconButton icon="arrow-left" size={width * .06} onPress={() => router.back()} />
       <Text style={styles.heading}>Land Ownership & Livestock</Text>
 </View>
-      <Text style={styles.question}>23. Land Ownership:</Text>
+      <Text style={styles.question}>24. Land Ownership:</Text>
 <RadioButton.Group
   onValueChange={(value) => updateField("landOwnershipType", value)}
   value={form.landOwnershipType}
@@ -171,7 +171,7 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
 </RadioButton.Group>
 
 
-<Text style={styles.question}>24. Well for Irrigation:</Text>
+<Text style={styles.question}>25. Well for Irrigation:</Text>
 <RadioButton.Group
   onValueChange={(value) => updateField("hasWell", value)}
   value={form.hasWell}
@@ -193,7 +193,7 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
         </>
       )}
 
-       <Text style={styles.label}>24. Patta Number</Text>
+       <Text style={styles.label}>26. Patta Number</Text>
       <TextInput
         placeholder="Enter patta number"
         placeholderTextColor="#888"
@@ -255,7 +255,7 @@ placeholderTextColor="#888"
 </View>
 
     
- <Text style={styles.label}>29. Total Area (ha)</Text>
+ <Text style={styles.label}>28. Total Area (ha)</Text>
 <TextInput
   value={form.totalArea}
   editable={false}
@@ -264,7 +264,7 @@ placeholderTextColor="#888"
   style={styles.input}
   keyboardType="numeric"
 />
-     <Text style={styles.label}>30. Taluk</Text>
+     <Text style={styles.label}>29. Taluk</Text>
       <View style={{ zIndex: 1000, marginBottom: 10 }}>
       <TextInput
         value={form.taluk}
@@ -274,7 +274,7 @@ placeholderTextColor="#888"
         style={styles.input}
       />
       </View>
-      <Text style={styles.label}>31. Firka</Text>
+      <Text style={styles.label}>30s. Firka</Text>
                 <View style={{ zIndex: 1000, marginBottom: 10 }}>
       <TextInput
         value={form.firka}
@@ -284,7 +284,7 @@ placeholderTextColor="#888"
         style={styles.input}
       />
 </View>
-    <Text style={styles.label}>32. Revenue Village</Text>
+    <Text style={styles.label}>31. Revenue Village</Text>
               <View style={{ zIndex: 1000, marginBottom: 10 }}>
       <TextInput
         value={form.revenueVillage}
@@ -295,7 +295,7 @@ placeholderTextColor="#888"
       />
       </View>
 
-<Text style={styles.question}>29. Crop Season (Choose all that apply):</Text>
+<Text style={styles.question}>32. Crop Season (Choose all that apply):</Text>
 {["Kharif", "Rabi", "Other"].map((season) => (
   <Checkbox.Item
     key={season}
@@ -325,7 +325,7 @@ placeholderTextColor="#888"
 )}
 
 
-  <Text style={styles.label}>34. Livestock at Home</Text>
+  <Text style={styles.label}>33. Livestock at Home</Text>
 <View style={styles.row}>
   <View style={styles.inputHalfWrapper}>
       <Text style={styles.subLabel}>Goat</Text>

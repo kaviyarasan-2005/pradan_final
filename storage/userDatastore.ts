@@ -1,8 +1,8 @@
 import { create } from "zustand";
 
 interface userData {
-  user_id?: number;
-  //id?:number;
+  // user_id?: number;
+  id?:number;
   name?: string;
   username?: string;
   role?: string;

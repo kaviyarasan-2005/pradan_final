@@ -18,7 +18,6 @@ export default function   Preview() {
   const {drafts,saveDraft} = useDraftStore();
 const isSubmittedPreview = !!id;
 const {user} = useUserStore();
-
 const selectedForm = React.useMemo(() => {
   if (fromsubmit) {
 
@@ -62,7 +61,7 @@ const canEdit = () => {
 };
 
 useEffect(() => {  
-  setData("user_id",user.user_id);
+  setData("user_id",user.id);
   if(fromsubmit == "true" && fromPreview != "true"){
 const occupationarray = data.basicDetails.occupationCombined.split(',');
 if(data.basicDetails.specialCategoryNumber >0){
