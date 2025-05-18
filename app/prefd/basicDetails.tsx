@@ -37,8 +37,8 @@ const {user} = useUserStore();
       gender: "",
       fatherSpouse: "",//cd
       householdType: "",//cd
-      adults: "",//no
-      children: "",//no
+      adults: "0",//no
+      children: "0",//no
       occupation: { agriculture: "0", business: "0", other: "0" },//no
       specialCategory: "",//no
       specialCategoryNumber: "0",//cd
