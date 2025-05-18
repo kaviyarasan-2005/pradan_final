@@ -109,7 +109,7 @@ export default function BankDetails() {
       [field]: {
         ...(prev.submittedFiles?.[field] || {}),
         name: secureName,
-        name2: file.name, 
+        name2: file.name,
       },
     },
   }));
