@@ -71,9 +71,9 @@ if(data.basicDetails.specialCategoryNumber >0){
     set2NestedData("basicDetails","occupation","agriculture",occupationarray[0]);
     set2NestedData("basicDetails","occupation","business",occupationarray[1]);
     set2NestedData("basicDetails","occupation","other",occupationarray[2]);
-// const Householdarray = data.basicDetails.hhcombined.split(',');
-    setNestedData("basicDetails","adults",1);
-    setNestedData("basicDetails","children",1);
+const Householdarray = data.basicDetails.hhcombined.split(',');
+    setNestedData("basicDetails","adults",Householdarray[0]);
+    setNestedData("basicDetails","children",Householdarray[1]);
     const Irrigationarray = data.landOwnership.irrigatedLandCombined.split(',');
     set2NestedData("landOwnership","irrigatedLand","rainfed",Irrigationarray[0]);
     set2NestedData("landOwnership","irrigatedLand","tankfed",Irrigationarray[1]);

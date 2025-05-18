@@ -17,9 +17,9 @@ export default function LandOwnership() {
       hasWell: "",//cd
       areaIrrigated: "",//cd
       irrigatedLand:{//no
-        rainfed: "",//no
-        tankfed: "",//no
-        wellIrrigated: "",//no
+        rainfed: "0",//no
+        tankfed: "0",//no
+        wellIrrigated: "0",//no
       },
       pattaNumber: "",//cd
       totalArea: "",//cd
@@ -29,12 +29,12 @@ export default function LandOwnership() {
       cropSeason: "",//no
       cropSeasonOther: "",//no
       livestock: {//no
-        goat:"",
-        sheep:"",
-        milchAnimals:"",
-        draught_animals:"",
-        poultry:"",
-        others:"",
+        goat:"0",
+        sheep:"0",
+        milchAnimals:"0",
+        draught_animals:"0",
+        poultry:"0",
+        others:"0",
       },//no
       irrigatedLandCombined:"",//cd
       cropSeasonCombined: "",//cd
@@ -401,7 +401,7 @@ placeholderTextColor="#888"
     const livestockCombinedField = `${form.livestock.goat},${form.livestock.sheep},${form.livestock.milchAnimals},${form.livestock.draught_animals},${poultry},${form.livestock.others}`;
     updateField("livestockCombined",livestockCombinedField);
   }}
-  // keyboardType="numeric"
+  keyboardType="numeric"
   style={styles.input}
 />
 </View>

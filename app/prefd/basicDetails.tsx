@@ -39,7 +39,7 @@ const {user} = useUserStore();
       householdType: "",//cd
       adults: "",//no
       children: "",//no
-      occupation: { agriculture: "", business: "", other: "" },//no
+      occupation: { agriculture: "0", business: "0", other: "0" },//no
       specialCategory: "",//no
       specialCategoryNumber: "0",//cd
       caste: "",
@@ -307,27 +307,28 @@ placeholder="Enter Age" placeholderTextColor="#888"
 <Text style={styles.question}>8. Aadhar Card Number:</Text>
 <TextInput
   value={form.idCardNumber}
-  placeholder="Enter ID No." placeholderTextColor="#888"
+  placeholder="Aadhar No." placeholderTextColor="#888"
   onChangeText={(text) => {
     let filteredText = text;
 
-    if (form.idCardType === "Aadhar") {
+    // if (form.idCardType === "Aadhar") {
       
       filteredText = text.replace(/[^0-9]/g, '').slice(0, 12);
-    } else if (form.idCardType === "EPIC" || form.idCardType === "Driving License") {
-      filteredText = text.replace(/[^a-zA-Z0-9]/g, '');
-    } 
+    // } else if (form.idCardType === "EPIC" || form.idCardType === "Driving License") {
+    //   filteredText = text.replace(/[^a-zA-Z0-9]/g, '');
+    // } 
     hand();
     updateField("idCardNumber", filteredText);
   }}
+  keyboardType="numeric" 
   style={styles.input}
-  placeholder={
-    form.idCardType === "Aadhar"
-      ? "Enter 12-digit Aadhar number"
-      : form.idCardType === "EPIC" || form.idCardType === "Driving License"
-      ? "Enter ID card number"
-      : "Enter ID card number"
-  }
+  // placeholder={
+  //   form.idCardType === "Aadhar"
+  //     ? "Enter 12-digit Aadhar number"
+  //     : form.idCardType === "EPIC" || form.idCardType === "Driving License"
+  //     ? "Enter ID card number"
+  //     : "Enter ID card number"
+  // }
 />
 
 
