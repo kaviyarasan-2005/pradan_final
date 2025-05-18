@@ -346,7 +346,7 @@ placeholder="Enter Age" placeholderTextColor="#888"
 
       <Text style={styles.question}>11. Father / Spouse Name:</Text>
       <TextInput
-        value={form.input}
+        value={form.fatherSpouse}
         onChangeText={(text) => updateField("fatherSpouse", text)}
          placeholder="Enter Name"
         style={styles.input}
@@ -475,7 +475,7 @@ placeholder="Enter Age" placeholderTextColor="#888"
     },
   ]}
   placeholderTextColor="#888"
-  placeholder="Agriculture"
+  placeholder="0"
   keyboardType="numeric"
 />
 </View>
@@ -500,7 +500,7 @@ placeholder="Enter Age" placeholderTextColor="#888"
     },
   ]}
   placeholderTextColor="#888"
-  placeholder="Business"
+  placeholder="0"
   keyboardType="numeric"
 />
 </View>
@@ -525,7 +525,7 @@ placeholder="Enter Age" placeholderTextColor="#888"
       borderWidth: 1,
     },
   ]}
-  placeholder="Other"
+  placeholder="0"
   keyboardType="numeric"
 />
 </View>
