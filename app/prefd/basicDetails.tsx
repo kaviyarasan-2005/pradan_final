@@ -539,6 +539,7 @@ placeholder="Enter Age" placeholderTextColor="#888"
 />
 {form.specialCategory && (
   <>
+  <Text style={styles.question}>No of Persons Disabled</Text>
     <TextInput
       value={form.specialCategoryNumber}
       onChangeText={(text) => {
