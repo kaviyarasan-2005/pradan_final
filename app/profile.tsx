@@ -1,15 +1,24 @@
-import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
-import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useRef, useState } from "react";
+import { Alert, Dimensions, Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Card,
+  Divider,
+  IconButton,
+  Text,
+  TextInput,
+} from 'react-native-paper';
 import { useUserStore } from "../storage/userDatastore";
 
 const url = Constants.expoConfig.extra.API_URL;
+const { width, height } = Dimensions.get('window');
 
 export default function Profile() {
+
+  const scrollRef = useRef(null);
   const router = useRouter();
   const { user, logout } = useUserStore();
   //const navigation = useNavigation();
@@ -26,11 +35,13 @@ export default function Profile() {
   
     if (oldPassword !== storedPassword) {
       Alert.alert("Error", "Old password is incorrect.");
+      scrollRef.current?.scrollTo({ y: 0, animated: true });
       return;
     }
   
     if (newPassword !== confirmPassword) {
       Alert.alert("Error", "New passwords and Confirm Password do not match.");
+          scrollRef.current?.scrollTo({ y: 0, animated: true });
       return;
     }
       //console.log("Username",await AsyncStorage.getItem("username"));
@@ -61,52 +72,62 @@ export default function Profile() {
     router.replace("/");
   };
 
-
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView 
+           ref={scrollRef}
+        contentContainerStyle={styles.scrollContainer}
+        scrollEnabled={showPasswordFields}
+    
+    style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={styles.headerBox}>
       <TouchableOpacity onPress={() => {
     router.push('/dashboard'); // or whatever fallback screen you prefer
 }}>
-          <Ionicons name="arrow-back" size={24} color="white" />
+          <IconButton icon="arrow-left"size={width * .06} iconColor="#fff" style={styles.backIcon}/>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Profile</Text>
       </View>
 
       {/* Profile Card */}
-      <View style={styles.card}>
+        <Card style={styles.card}>
+     <Card.Content style={styles.profileSection}>
         <Image
           source={require("../assets/images/PROFILE.jpg")}
-          style={styles.profileImage}
+          style={styles.avatar}
         />
+        <View style={styles.textContainer}>
         <Text style={styles.name}>{user?.name}</Text>
-        <Text style={styles.designation}>{user?.role}</Text>
+        <Text style={styles.role}>{user?.role}</Text>
+        </View>
+      </Card.Content>
 
-        <View style={styles.detailRow}>
+      <Divider style={{ marginVertical: 12 }} />
+
+        <View style={styles.infoSection}>
           <Text style={styles.label}>Email</Text>
           <Text style={styles.value}>{user?.username}</Text>
+          <Divider style={styles.itemDivider} />
         </View>
 
-        <View style={styles.detailRow}>
+        <View style={styles.infoSection}>
           <Text style={styles.label}>Mobile</Text>
           <Text style={styles.value}>{user?.mobile}</Text>
+          <Divider style={styles.itemDivider} />
         </View>
 
-        <View style={styles.detailRow}>
+        <View style={styles.infoSection}>
           <Text style={styles.label}>Date of Joining</Text>
           <Text style={styles.value}>{user?.date_of_joining}</Text>
+          <Divider style={styles.itemDivider} />
         </View>
 
-        <View style={styles.detailRow}>
+        <View style={styles.infoSection}>
           <Text style={styles.label}>Location</Text>
           <Text style={styles.value}>{user?.location}</Text>
+          <Divider style={styles.itemDivider} />
         </View>
 
-        {/* <View style={styles.detailRow}>
-          <Text style={styles.label}>Password</Text>
-          <Text style={styles.value}>********</Text>
-        </View> */}
 
         {/* Change Password */}
         <TouchableOpacity onPress={() => setShowPasswordFields(!showPasswordFields)}>
@@ -115,56 +136,65 @@ export default function Profile() {
 
         {showPasswordFields && (
           <>
-            <View style={styles.passwordInput}>
+            <View style={styles.passwordBox}>
             <TextInput
             placeholder="Old Password"
             secureTextEntry={!showOldPass}
-            style={styles.input}
             value={oldPassword}
             onChangeText={setOldPassword}
+                                          right={
+                  <TextInput.Icon
+                    icon={showOldPass ? 'eye-off' : 'eye'}
+                    onPress={() => setShowOldPass(!showOldPass)}
+                    size={width * .06}
+                  />
+                } style={styles.input}
 />
-              <TouchableOpacity onPress={() => setShowOldPass(!showOldPass)}>
-                <Ionicons name={showOldPass ? "eye-off" : "eye"} size={22} />
-              </TouchableOpacity>
-            </View>
 
-            <View style={styles.passwordInput}>
+
             <TextInput
                 placeholder="New Password"
                 secureTextEntry={!showNewPass}
-                style={styles.input}
                 value={newPassword}
                 onChangeText={setNewPassword}
+                                                          right={
+                  <TextInput.Icon
+                    icon={showOldPass ? 'eye-off' : 'eye'}
+                    onPress={() => setShowOldPass(!showOldPass)}
+                    size={width * .06}
+                  />
+                }              style={styles.input}
 />
-              <TouchableOpacity onPress={() => setShowNewPass(!showNewPass)}>
-                <Ionicons name={showNewPass ? "eye-off" : "eye"} size={22} />
-              </TouchableOpacity>
-            </View>
 
-            <View style={styles.passwordInput}>
             <TextInput
                   placeholder="Confirm New Password"
                   secureTextEntry={!showConfirmPass}
                   style={styles.input}
                   value={confirmPassword}
                   onChangeText={setConfirmPassword}
+                  right={
+                  <TextInput.Icon
+                    icon={showOldPass ? 'eye-off' : 'eye'}
+                    onPress={() => setShowOldPass(!showOldPass)}
+                    size={width * .06}
+                                      />
+                } style={styles.input}
                 />
-              <TouchableOpacity onPress={() => setShowConfirmPass(!showConfirmPass)}>
-                <Ionicons name={showConfirmPass ? "eye-off" : "eye"} size={22} />
-              </TouchableOpacity>
+
             </View>
 
-            <TouchableOpacity style={styles.submitButton} onPress={handleChangePassword}>
-            <Text style={styles.submitText}>Submit</Text>
+            <TouchableOpacity style={styles.submitBtn} onPress={handleChangePassword}>
+            <Text style={styles.submitBtnText}>Submit</Text>
             </TouchableOpacity>
 
           </>
         )}
-      </View>
+        </Card>
+      
 
       {/* Logout */}
       <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-        <Text style={styles.logoutText}>Logout</Text>
+        <Text style={styles.logoutButtonText}>Logout</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -173,97 +203,122 @@ export default function Profile() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f4f4f4",
+    backgroundColor: '#F3F4F6',
   },
-  header: {
-    backgroundColor: "#2e7d32",
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
+  scrollContainer: {
+    paddingBottom: height * 0.05,
   },
-  headerTitle: {
-    color: "white",
-    fontSize: 20,
-    marginLeft: 12,
-  },
-  card: {
-    backgroundColor: "white",
-    margin: 16,
-    borderRadius: 12,
-    padding: 20,
-    alignItems: "center",
+  headerBox: {
+    backgroundColor: '#1B5E20',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: height * 0.01,
+    paddingBottom: height * 0.02,
+    paddingHorizontal: width * 0.04,
     elevation: 4,
   },
-  profileImage: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    marginBottom: 8,
+  backIcon: {
+    marginRight: width * 0.02,
+    paddingTop: height * 0.011,
+  },
+  headerTitle: {
+    color: '#fff',
+    paddingTop: height * 0.01,
+    fontSize: width * 0.045,
+    fontWeight: 'bold',
+  },
+  card: {
+    margin: width * 0.04,
+    borderRadius: width * 0.05,
+    paddingVertical: height * 0.02,
+    paddingHorizontal: width * 0.05,
+    backgroundColor: '#fff',
+    elevation: 3,
+  },
+  profileSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  avatar: {
+    height: width * 0.2,
+    width: width * 0.2,
+    borderRadius: width * 0.1,
+    marginRight: width * 0.04,
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: 'center',
   },
   name: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#2e7d32",
+    fontSize: width * 0.055,
+    fontWeight: 'bold',
+    color: '#1B5E20',
   },
-  designation: {
-    fontSize: 14,
-    color: "gray",
-    marginBottom: 12,
+  role: {
+    fontSize: width * 0.035,
+    color: '#4CAF50',
+    fontWeight: '500',
+    marginTop: height * 0.002,
   },
-  detailRow: {
-    width: "100%",
-    marginVertical: 6,
+  infoSection: {
+    marginTop: height * 0.015,
+  },
+  itemBlock: {
+    marginBottom: height * 0.018,
   },
   label: {
-    color: "gray",
-    fontSize: 13,
+    fontSize: width * 0.04,
+    color: '#1B5E20',
+    marginBottom: height * 0.003,
   },
   value: {
-    fontSize: 15,
-    marginTop: 2,
+    fontSize: width * 0.042,
+    color: '#333',
+    fontWeight: '500',
+  },
+  itemDivider: {
+    marginTop: height * 0.012,
   },
   changePassword: {
-    color: "#2e7d32",
-    fontWeight: "bold",
-    marginTop: 16,
-    alignSelf: "flex-start",
+    marginTop: height * 0.032,
+    color: '#1B5E20',
+    fontWeight: 'bold',
+    textAlign: 'right',
+    fontSize: width * 0.037,
   },
-  passwordInput: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderBottomWidth: 1,
-    borderColor: "#ccc",
-    marginTop: 10,
-    width: "100%",
+  passwordBox: {
+    marginTop: height * 0.035,
   },
   input: {
-    flex: 1,
-    paddingVertical: 8,
+    marginBottom: height * 0.015,
+    backgroundColor: '#fff',
+    padding: width * 0.03,
+    borderRadius: width * 0.02,
+    fontSize: width * 0.04,
   },
-  submitButton: {
-    backgroundColor: "#2e7d32",
-    paddingVertical: 12,
-    borderRadius: 8,
-    marginTop: 20,
-    width: "100%",
-    alignItems: "center",
+  submitBtn: {
+    backgroundColor: '#1B5E20',
+    borderRadius: width * 0.02,
+    marginTop: height * 0.01,
+    paddingVertical: height * 0.012,
+    alignItems: 'center',
   },
-  submitText: {
-    color: "white",
-    fontWeight: "bold",
+  submitBtnText: {
+    color: '#fff',
+    fontSize: width * 0.03,  // Adjust for readability
+    fontWeight: 'bold',
   },
   logoutButton: {
-    backgroundColor: "white",
-    padding: 16,
-    marginHorizontal: 16,
-    marginBottom: 20,
-    borderRadius: 8,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#ccc",
+    marginHorizontal: width * 0.04,
+    marginTop: height * 0.03,
+    backgroundColor: '#1B5E20',
+    borderRadius: width * 0.025,
+    paddingVertical: height * 0.01,
+    alignItems: 'center',
   },
-  logoutText: {
-    color: "red",
-    fontWeight: "bold",
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: width * 0.03,  // Adjust for readability
+    fontWeight: 'bold',
   },
 });
