@@ -183,7 +183,7 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
 
       {form.hasWell === "Yes" && (
         <>
-          <Text style={styles.question}>Area Irrigated (ha):</Text>
+          <Text style={styles.question}>No of Wells:</Text>
           <TextInput
             value={form.areaIrrigated}
             onChangeText={(text) => updateField("areaIrrigated", text)}
@@ -330,7 +330,7 @@ placeholderTextColor="#888"
   <View style={styles.inputHalfWrapper}>
       <Text style={styles.subLabel}>Goat</Text>
 <TextInput
-  placeholder="Goat"
+  // placeholder="Goat"
   value={String(form.livestock.goat)}
   onChangeText={(text) => {updateNestedField("livestock","goat",text)
     
@@ -346,7 +346,7 @@ placeholderTextColor="#888"
  <View style={styles.inputHalfWrapper}>
     <Text style={styles.subLabel}>Sheep</Text>
 <TextInput
-  placeholder="Sheep"
+  // placeholder="Sheep"
   value={String(form.livestock.sheep)}
   onChangeText={(text) => {updateNestedField("livestock","sheep",text)
     const sheep = form.livestock.sheep ||"0";
@@ -361,7 +361,7 @@ placeholderTextColor="#888"
 <View style={styles.inputHalfWrapper}>
     <Text style={styles.subLabel}>Milch Animals</Text>
 <TextInput
-  placeholder="Milch animals"
+  // placeholder="Milch animals"
   value={String(form.livestock.milchAnimals)}
   onChangeText={(text) => {updateNestedField("livestock","milchAnimals",text)
     const milchAnimals = form.livestock.milchAnimals ||"0";
@@ -379,7 +379,7 @@ placeholderTextColor="#888"
    <View style={styles.inputHalfWrapper}>
       <Text style={styles.subLabel}>Draught Animals</Text>
 <TextInput
-  placeholder="Draught"
+  // placeholder="Draught"
   value={String(form.livestock.draught_animals)}
   onChangeText={(text) => {updateNestedField("livestock","draught_animals",text)
     const draught_animals= form.livestock.draught_animals ||"0";
@@ -393,21 +393,21 @@ placeholderTextColor="#888"
  <View style={styles.inputHalfWrapper}>
     <Text style={styles.subLabel}>Poultry</Text>
 <TextInput
-  placeholder="Poultry"
+  // placeholder="Poultry"
   value={String(form.livestock.poultry)}
   onChangeText={(text) => {updateNestedField("livestock","poultry",text)
     const poultry= form.livestock.poultry ||"0";
     const livestockCombinedField = `${form.livestock.goat},${form.livestock.sheep},${form.livestock.milchAnimals},${form.livestock.draught_animals},${poultry},${form.livestock.others}`;
     updateField("livestockCombined",livestockCombinedField);
   }}
-  keyboardType="numeric"
+  // keyboardType="numeric"
   style={styles.input}
 />
 </View>
  <View style={styles.inputHalfWrapper}>
     <Text style={styles.subLabel}>Others</Text>
 <TextInput
-  placeholder="Others"
+  // placeholder="Others"
   value={String(form.livestock.others)}
   onChangeText={(text) => {updateNestedField("livestock","others",text)
     const others= form.livestock.others ||"0";
