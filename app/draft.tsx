@@ -59,52 +59,44 @@ export default function DraftsScreen() {
                 iconColor="#fff"
               />
               <Text style={styles.title}>DRAFT</Text>
-            </View>
-      {/* <IconButton icon="arrow-left" size={24} onPress={() => router.back()} /> */}
- <View style={styles.separator} />
-      <FlatList
-      // style={styles.scrollView}
-        data={drafts}
-        // style={styles.card}
-        // keyExtractor={(item) => item.draft_id}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() => openDraft(item)}
-           style={styles.scrollView}
-          //  style={styles.bioContainer}
-          >
-            <Text  style={styles.name}>
-              {item.basicDetails?.name?.trim() || "Unnamed Draft"}
-            </Text>
-             <View style={styles.rightContainer}>
-                  <Text style={styles.rightText}>
-                  <Text style={styles.label}>Form: </Text>
-<Text>
-  {   parseInt(item.formType) ===1
-    ? 'LAND'
-    : parseInt(item.formType) === 2
-    ? 'POND'
-    : parseInt(item.formType)===3
-    ? 'PLANTATION'
-    : 'UNKNOWN'}
-</Text>
-                  </Text>
-                  {/* <Text style={styles.rightText}>
-                    <Text style={styles.label}>Date: </Text>{item.landDevelopment.date}
-                  </Text> */}
-                </View>
-              {/* <Text style={{ fontSize: 16 }}>
-              {item.basicDetails?.draft_id?.trim() || " id"}
-            </Text> */}
-            {item.savedAt && (
-              <Text style={{ color: 'gray', fontSize: 12 }}>
-                Saved on: {new Date(item.savedAt).toLocaleString()}
-              </Text>
-            )}
-           
-          </TouchableOpacity>
-        )}
-      />
+            </View> 
+ <View  style={styles.separator} />
+<FlatList
+  data={drafts}
+  keyExtractor={(item, index) => `${index}`} // Make sure there's a key
+  contentContainerStyle={{ padding: width * 0.005, paddingTop: height * 0.04 }}
+  renderItem={({ item }) => (
+    <TouchableOpacity
+      onPress={() => openDraft(item)}
+      style={styles.card} // 🟩 Card styling applied here
+    >
+      <Text style={styles.name}>
+        {item.basicDetails?.name?.trim() || "Unnamed Draft"}
+      </Text>
+
+      <View style={styles.rightContainer}>
+        <Text style={styles.rightText}>
+          <Text style={styles.label}>Form: </Text>
+          {parseInt(item.formType) === 1
+            ? 'LAND'
+            : parseInt(item.formType ) === 2
+            ? 'POND'
+            : parseInt(item.formType) === 3
+            ? 'PLANTATION'
+            : 'UNKNOWN'}
+        </Text>
+      </View>
+
+      {item.savedAt && (
+        <Text style={{ color: 'gray', fontSize: 12 }}>
+          Saved on: {new Date(item.savedAt).toLocaleString()}
+        </Text>
+      )}
+    </TouchableOpacity>
+  )}
+/>
+
+
 
       {/* {drafts.length > 0 && (
         <Button mode="contained" onPress={uploadAllDrafts} style={{ marginTop: 20 }}>
@@ -150,22 +142,21 @@ const styles = StyleSheet.create({
   scrollView: {
     marginTop: height * 0.06,
     paddingHorizontal: width * 0.04,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
   },
   noResults: {
     textAlign: 'center',
     fontSize: height * 0.022,
     color: '#888',
   },
-  card: {
-    marginBottom: height * 0.015,
-    backgroundColor: '#F5F5F5',
-    elevation: 5,
-    borderRadius: width * 0.025,
-    padding: height * 0.015,
-  },
+card: {
+  marginHorizontal: width * 0.04,
+  marginVertical: height * 0.01,
+  backgroundColor: '#F5F5F5',
+  elevation: 5,
+  borderRadius: width * 0.025,
+  padding: height * 0.015,
+},
+
   bioContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
