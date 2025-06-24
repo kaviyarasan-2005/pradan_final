@@ -4,7 +4,7 @@ import axios from "axios";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from 'react';
-import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useUserStore } from "../storage/userDatastore";
 
 const url = Constants.expoConfig.extra.API_URL;
@@ -36,6 +36,7 @@ export default function LoginScreen() {
   };
 
   const handleLogin = async () => {
+     
     const response = await axios.post(`${url}/api/users/authUser`,{username, password});
     //console.log(response.data); // Log the response data);
     
@@ -43,7 +44,7 @@ export default function LoginScreen() {
       try {
         fetchUserData(username); 
         //await AsyncStorage.setItem("user", u); // Save the login state in AsyncStorage
-        await AsyncStorage.setItem("password", password); //WARNING: this is not secure, use JWT
+        await AsyncStorage.setItem("password", password);
         router.replace("/dashboard");
         //console.log("User data:", user?.username); 
       } catch (error) {
