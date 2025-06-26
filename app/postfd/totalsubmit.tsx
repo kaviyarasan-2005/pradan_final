@@ -6,6 +6,7 @@ import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
+  Dimensions,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,10 +14,11 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+const { height, width } = Dimensions.get('window');
+import DropDownPicker from 'react-native-dropdown-picker';
+import { IdFormStore } from "../../storage/IdStore";
+import { useFormStore } from "../../storage/useFormStore";
 import { DashbdStore } from "../../storage/DashbdStore";
-
-``
 const url = Constants.expoConfig.extra.API_URL;
 const statusStyles = {
    11: { backgroundColor: '#C8E6C9', textColor: '#2E7D32' },
@@ -35,8 +37,9 @@ const TotalSubmit = () => {
 
   const router = useRouter();
   // const { submittedForms, loadSubmittedForms, deleteFormByIndex } = useFormStore();
-  const { showActionSheetWithOptions } = useActionSheet();
-const {dashbdforms,loaddashbdForms} = DashbdStore();
+  const {dashbdforms,loaddashbdForms} = DashbdStore();
+  const {setData,data,resetData} = useFormStore();
+const forms = IdFormStore((state) => state.Idforms);
   const [searchText, setSearchText] = useState("");
   const [formType, setFormType] = useState("ALL");
   const [panchayat, setPanchayat] = useState("");
@@ -48,7 +51,20 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
   const [showFilters, setShowFilters] = useState(false);
   const [isStartDatePickerVisible, setStartDatePickerVisible] = useState(false);
   const [isEndDatePickerVisible, setEndDatePickerVisible] = useState(false);
-
+  const [open, setOpen] = useState(false);
+   const [typeopen, settypeOpen] = useState(false);
+    const [genderfilter,setgenderfilter ] = useState([
+    { label: 'ALL', value: 'ALL' },
+    { label: 'MALE', value: 'Male' },
+    { label: 'FEMALE', value: 'Female' },
+    { label: 'TRANSGENDER', value: 'Transgender' },
+  ]);
+    const [formtypefilter, setformtypefilter] = useState([
+    { label: 'ALL', value: 'ALL' },
+    { label: 'LAND', value: '1' },
+    { label: 'POND', value: '2' },
+    { label: 'PLANTATION', value: '3' },
+  ]);
   useEffect(() => {
     loaddashbdForms();
   }, []);
@@ -155,36 +171,48 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
         />
       </View>
 
-      {/* Filter Options (Toggleable) */}
+         {/* Filter Options (Toggleable) */}
       {showFilters && (
-        <View style={styles.filtersBox}>
-          <TextInput placeholder="Panchayat" value={panchayat} onChangeText={setPanchayat} style={styles.searchInput} />
-          <TextInput placeholder="Block" value={block} onChangeText={setBlock} style={styles.searchInput} />
-          <TextInput placeholder="Hamlet" value={hamlet} onChangeText={setHamlet} style={styles.searchInput} />
+        <View style={styles.filterSection}>
+          <TextInput placeholder="Panchayat" value={panchayat} onChangeText={setPanchayat} style={styles.dropdown} />
+          <TextInput placeholder="Block" value={block} onChangeText={setBlock} style={styles.dropdown} />
+          <TextInput placeholder="Hamlet" value={hamlet} onChangeText={setHamlet} style={styles.dropdown} />
 
-          <Text style={styles.filterLabel}>Form Type</Text>
-          <Picker selectedValue={formType} onValueChange={(val) => setFormType(val)}>
-  <Picker.Item label="ALL" value="ALL" />
-  <Picker.Item label="LAND" value="1" />
-  <Picker.Item label="POND" value="2" />
-  <Picker.Item label="PLANTATION" value="3" />
-</Picker>
+          <Text style={styles.filterSection}>Form Type</Text>
+            <DropDownPicker
+        open={typeopen}
+        value={formType}
+        items={formtypefilter}
+        setOpen={settypeOpen}
+        setValue={setFormType}
+        setItems={setformtypefilter}
+        style={styles.dropdown}
+        placeholder="Select Form Type"
+        dropDownContainerStyle={{ borderColor: '#1B5E20' }}
+      />
 
 
-          <Text style={styles.filterLabel}>Gender</Text>
-          <Picker selectedValue={gender} onValueChange={setGender}>
-            <Picker.Item label="ALL" value="ALL" />
-            <Picker.Item label="MALE" value="Male" />
-            <Picker.Item label="FEMALE" value="Female" />
-            <Picker.Item label="TRANSGENDER" value="Transgender" />
-          </Picker>
-
+          <Text style={styles.filterSection}>Gender</Text>
+           <DropDownPicker
+      open={open}
+      value={gender}
+      items={genderfilter}
+      setOpen={setOpen}
+      setValue={setGender}
+      setItems={setgenderfilter}
+      placeholder="Select Gender"
+      style={styles.dropdown}
+      dropDownContainerStyle={{ borderColor: '#1B5E20' }}
+      // style={{ zIndex: 1000 }} // If overlapping issues occur
+    />
+        <View style={styles.dateContainer}>
           <TouchableOpacity onPress={() => setStartDatePickerVisible(true)} style={styles.dateButton}>
-         <Text>{startDate ? `Start Date: ${startDate.toLocaleDateString()}` : "Start Date"}</Text>
+         <Text style={styles.dateText}>{startDate ? `Start Date: ${startDate.toLocaleDateString()}` : "Start Date"}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setEndDatePickerVisible(true)} style={styles.dateButton}>
-            <Text>{endDate ? `End Date: ${endDate.toLocaleDateString()}` : "End Date"}</Text>
+            <Text style={styles.dateText}>{endDate ? `End Date: ${endDate.toLocaleDateString()}` : "End Date"}</Text>
           </TouchableOpacity> 
+          </View>
 
           {/* Display the selected date range */}
           {startDate && endDate && (
@@ -194,65 +222,10 @@ const {dashbdforms,loaddashbdForms} = DashbdStore();
           )}
 
           <TouchableOpacity onPress={resetFilters} style={styles.resetButton}>
-            <Text>Reset Filters</Text>
+              <Text style={styles.resetButtonText}>Reset Filters</Text>
           </TouchableOpacity>
         </View>
       )}
-
-      {/* Date Time Picker Modal for Start Date */}
-      <DateTimePickerModal
-        isVisible={isStartDatePickerVisible}
-        mode="date"
-        onConfirm={handleConfirmStartDate}
-        onCancel={() => setStartDatePickerVisible(false)}
-      />
-
-      {/* Date Time Picker Modal for End Date */}
-      <DateTimePickerModal
-        isVisible={isEndDatePickerVisible}
-        mode="date"
-        onConfirm={handleConfirmEndDate}
-        onCancel={() => setEndDatePickerVisible(false)}
-      />
-
-      {/* No Data */}
-      {filteredForms.length === 0 ? (
-        <Text style={styles.noDataText}>No forms submitted yet.</Text>
-      ) : (
-        filteredForms.map((item, index) => {
-          const statusStyle = statusStyles[item.status] || {
-            backgroundColor: "#E0E0E0",
-            textColor: "#424242",
-          };
-
-          return (
-            <TouchableOpacity key={index} style={styles.card} onPress={() => handleCardPress(item)}>
-              <View style={styles.cardHeader}>
-                <Text style={styles.name}>{item.farmer_name|| "N/A"}</Text>
-                <View style={[styles.statusBadge, { backgroundColor: statusStyle.backgroundColor }]}>
-                  <Text style={[styles.statusText, { color: statusStyle.textColor }]}>
-  {item.status === 7
-    ? 'Pending'
-    : item.status === 11
-    ? 'Verified'
-    : item.status === 8
-    ? 'Review'
-    : item.status === 9
-    ? 'Approved'
-    : item.status === 10
-    ? 'Waiting for Veification'
-    : 'Unknown'}
-</Text>
-
-                </View>
-              </View>
-              
-              
-             <Text style={styles.label}>Form: <Text style={styles.value}>{formTypeMap[item.form_type] }</Text></Text>
-              <Text style={styles.label}>Date: <Text style={styles.value}>{item.created_at}</Text></Text>
-            </TouchableOpacity>
-          );
-        })
       )}
     </ScrollView>
   );
@@ -289,6 +262,10 @@ const styles = StyleSheet.create({
   searchIcon: {
     marginRight: 8,
   },
+  dateText: {
+    color: '#1B5E20',
+    fontWeight: 'bold',
+  },
   searchInput: {
     flex: 1,
     paddingVertical: 8,
@@ -303,10 +280,37 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0F4C3",
     marginBottom: 14,
   },
+   filterSection: {
+    marginBottom: height * 0.02,
+    paddingRight: width * 0.04,
+    gap: height * 0.01,
+  },
+    dropdown: {
+    borderColor: '#1B5E20',
+    marginBottom: height * 0.01,
+    zIndex: 1000,
+    borderWidth: 1,
+    borderRadius: width * 0.02,
+  },
   filterLabel: {
     fontWeight: "bold",
     marginTop: 6,
     color: "#1B5E20",
+  },
+    dateContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: height * 0.01,
+    paddingTop:width * 0.01,
+  },
+    dateButton: {
+    padding: height * 0.015,
+    borderWidth: 1,
+    borderColor: '#1B5E20',
+    borderRadius: width * 0.02,
+    flex: 1,
+    marginRight: width * 0.015,
+
   },
   noDataText: {
     fontSize: 16,
@@ -371,20 +375,29 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
-  resetButton: {
-    marginTop: 12,
-    padding: 10,
-    backgroundColor: "#81C784",
-    borderRadius: 6,
-    alignItems: "center",
+resetButton: {
+    borderWidth: 1,
+    borderColor: '#4CAF50',
+    borderRadius: width * 0.05,
+    paddingVertical: height * 0.015,
+    paddingHorizontal: width * 0.04,
+    alignItems: 'center',
+    marginTop: height * 0.01,
+    backgroundColor: '#2E7D32',
+  },
+  resetButtonText: {
+    color: '#F5F5F5',
+    fontWeight: 'bold',
+    fontSize: height * 0.02,
   },
   dateButton: {
-    padding: 12,
-    marginVertical: 8,
-    backgroundColor: "#E8F5E9",
-    borderRadius: 6,
-    justifyContent: "center",
-    alignItems: "center",
+    padding: height * 0.015,
+    borderWidth: 1,
+    borderColor: '#1B5E20',
+    borderRadius: width * 0.02,
+    flex: 1,
+    marginRight: width * 0.015,
+
   },
   dateRangeText: {
     fontSize: 14,
