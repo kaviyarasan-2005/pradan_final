@@ -1,10 +1,10 @@
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { Picker } from '@react-native-picker/picker';
 import axios from "axios";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
+
 import {
   Dimensions,
   ScrollView,
@@ -14,14 +14,15 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-const { height, width } = Dimensions.get('window');
 import DropDownPicker from 'react-native-dropdown-picker';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { DashbdStore } from "../../storage/DashbdStore";
 import { IdFormStore } from "../../storage/IdStore";
 import { useFormStore } from "../../storage/useFormStore";
-import { DashbdStore } from "../../storage/DashbdStore";
+const { height, width } = Dimensions.get('window');
 const url = Constants.expoConfig.extra.API_URL;
 const statusStyles = {
-   11: { backgroundColor: '#C8E6C9', textColor: '#2E7D32' },
+11: { backgroundColor: '#C8E6C9', textColor: '#2E7D32' },
   9: { backgroundColor: '#C8E6C9', textColor: '#2E7D32' },
   7: { backgroundColor: '#FFF9C4', textColor: '#F9A825' },
   8: { backgroundColor: '#BBDEFB', textColor: '#1976D2' },
@@ -37,8 +38,9 @@ const TotalSubmit = () => {
 
   const router = useRouter();
   // const { submittedForms, loadSubmittedForms, deleteFormByIndex } = useFormStore();
-  const {dashbdforms,loaddashbdForms} = DashbdStore();
-  const {setData,data,resetData} = useFormStore();
+  const { showActionSheetWithOptions } = useActionSheet();
+const {dashbdforms,loaddashbdForms} = DashbdStore();
+const {setData,data,resetData} = useFormStore();
 const forms = IdFormStore((state) => state.Idforms);
   const [searchText, setSearchText] = useState("");
   const [formType, setFormType] = useState("ALL");
@@ -65,14 +67,17 @@ const forms = IdFormStore((state) => state.Idforms);
     { label: 'POND', value: '2' },
     { label: 'PLANTATION', value: '3' },
   ]);
+
   useEffect(() => {
+    resetData();
     loaddashbdForms();
   }, []);
 
   const filteredForms = dashbdforms.filter((item) => {
     const matchesType = formType === "ALL" || String(item.form_type) === formType;
+
     const matchesName = item.farmer_name?.toLowerCase().includes(searchText.toLowerCase());
-        const matchesStatus = item.status ===7 || item.status ===8 || item.status ===9 || item.status ===10 || item.status ===11;
+    const matchesStatus = item.status ===7 || item.status ===8 || item.status ===9 || item.status ===10 || item.status ===11;
     const matchesPanchayat = item.panchayat?.toLowerCase().includes(panchayat.toLowerCase());
     const matchesBlock = item.block?.toLowerCase().includes(block.toLowerCase());
     const matchesHamlet = item.hamlet?.toLowerCase().includes(hamlet.toLowerCase());
@@ -89,27 +94,42 @@ const forms = IdFormStore((state) => state.Idforms);
     const matchesEnd = !endDate || itemDate <= new Date(endDate);
   
     return matchesStatus&&matchesType && matchesBlock && matchesHamlet&& matchesName && matchesPanchayat && matchesGender&& matchesStart && matchesEnd;
-    
+      //   
+   
   });
-  const handleCardPress = async (item) => {
-    let previewPath = "";
   
-     if (item.form_type === 1) previewPath = "/landform/Preview";
-    else if (item.form_type === 2) previewPath = "/pondform/Preview";
-    else if (item.form_type === 3) previewPath = "/plantationform/Preview";
-    else return alert("Unknown form type.");
-  
-    try {
-      const response = await axios.get(`${url}/api/dashboard/getpreviewspecificformData`,{params:{form_id:item.id}});
-      const fetchedData = response.data;
-      console.log(fetchedData +" "+item.id);
-    router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/postfd/totalsubmit" } });
-  
-    } catch (error) {
-      console.error("Error fetching form details:", error);
-      // Alert.alert("Error", "Failed to fetch form details.");
-    }
-  };
+
+const handleCardPress = async (item) => {
+  let previewPath = "";
+
+  if (item.form_type === 1) previewPath = "/landform/Preview";
+  else if (item.form_type === 2) previewPath = "/pondform/Preview";
+  else if (item.form_type === 3) previewPath = "/plantationform/Preview";
+  else return alert("Unknown form type.");
+    resetData();
+    console.log( JSON.stringify(data) + " this is data");
+  try {
+    const response = await axios.get(`${url}/api/dashboard/getpreviewspecificformData`, {
+      params: { form_id: item.id, form_type: item.form_type }
+    });
+
+    const fetchedData = response.data;
+    console.log(JSON.stringify(fetchedData) + " " + item.form_type);
+
+    // Set all keys of fetchedData into the form store using setData
+      setData("basicDetails", fetchedData.basicDetails);
+    setData("landOwnership", fetchedData.landOwnership);
+    setData("landDevelopment", fetchedData.landDevelopment);
+    setData("bankDetails", fetchedData.bankDetails);
+
+  router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/postfd/totalsubmit" } });
+
+  } catch (error) {
+    console.error("Error fetching form details:", error);
+    // Alert.alert("Error", "Failed to fetch form details.");
+  }
+};
+
 
   // const handleCardPress = (item) => {
     
@@ -121,6 +141,7 @@ const forms = IdFormStore((state) => state.Idforms);
 
   //   router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/postfd/totalsubmit" } });
   // };
+
 
   // Function to handle the date selection
   const handleConfirmStartDate = (date) => {
@@ -145,17 +166,19 @@ const forms = IdFormStore((state) => state.Idforms);
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.push("/dashboard")} style={styles.icon}>
-          <Ionicons name="arrow-back" size={24} color="#1B5E20" />
+     <View style={styles.container}>
+      <View >
+       <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.push('/dashboard')} style={styles.backIcon}>
+          <Ionicons name="arrow-back" size={width * .06} color="#1B5E20" />
         </TouchableOpacity>
-        <Text style={styles.title}>POST TotalForm Submissions</Text>
-        <TouchableOpacity onPress={() =>{ setShowFilters(!showFilters) 
-        // console.log(JSON.stringify(dashbdforms) +"total submit 111");
-        }} style={styles.icon}>
-          <MaterialIcons name="filter-list" size={24} color="#1B5E20" />
+        <Text style={styles.headerTitle}>POST TotalForm Submissions</Text>
+        <TouchableOpacity onPress={() => setShowFilters(!showFilters)} style={styles.filterIcon}>
+          {showFilters ? (
+            <MaterialIcons name="close" size={width * .06} color="#1B5E20" /> // Crossmark when filter is visible
+          ) : (
+            <MaterialIcons name="filter-list" size={width * .06} color="#1B5E20" /> // Filter icon when not visible
+          )}
         </TouchableOpacity>
       </View>
 
@@ -167,11 +190,11 @@ const forms = IdFormStore((state) => state.Idforms);
           value={searchText}
           onChangeText={setSearchText}
           style={styles.searchInput}
-          placeholderTextColor="#aaa"
+           placeholderTextColor="#aaa"
         />
       </View>
 
-         {/* Filter Options (Toggleable) */}
+      {/* Filter Options (Toggleable) */}
       {showFilters && (
         <View style={styles.filterSection}>
           <TextInput placeholder="Panchayat" value={panchayat} onChangeText={setPanchayat} style={styles.dropdown} />
@@ -226,84 +249,155 @@ const forms = IdFormStore((state) => state.Idforms);
           </TouchableOpacity>
         </View>
       )}
+</View>
+<ScrollView contentContainerStyle={styles.container}>
+      {/* Date Time Picker Modal for Start Date */}
+      <DateTimePickerModal
+        isVisible={isStartDatePickerVisible}
+        mode="date"
+        onConfirm={handleConfirmStartDate}
+        onCancel={() => setStartDatePickerVisible(false)}
+      />
+
+      {/* Date Time Picker Modal for End Date */}
+      <DateTimePickerModal
+        isVisible={isEndDatePickerVisible}
+        mode="date"
+        onConfirm={handleConfirmEndDate}
+        onCancel={() => setEndDatePickerVisible(false)}
+      />
+
+      {/* No Data */}
+      {filteredForms.length === 0 ? (
+        <Text style={styles.noDataText}>No forms submitted yet.</Text>
+      ) : (
+        filteredForms.map((item, index) => {
+          const statusStyle = statusStyles[item.status] || {
+            backgroundColor: "#E0E0E0",
+            textColor: "#424242",
+          };
+
+          return (
+            <TouchableOpacity key={index} style={styles.card} onPress={() => handleCardPress(item)}>
+              <View style={styles.cardHeader}>
+                <Text style={styles.name}>{item.farmer_name|| "N/A"}</Text>
+                <View style={[styles.statusBadge, { backgroundColor: statusStyle.backgroundColor }]}>
+                  <Text style={[styles.statusText, { color: statusStyle.textColor }]}>
+  {item.status === 1
+    ? 'Pending'
+    : item.status === 2
+    ? 'Change'
+    : item.status === 3
+    ? 'Rejected'
+    : item.status === 4
+    ? 'Approved'
+    : 'Unknown'}
+</Text>
+
+                </View>
+              </View>
+              
+              
+             <Text style={styles.label}>Form: <Text style={styles.value}>{formTypeMap[item.form_type] }</Text></Text>
+              <Text style={styles.label}>Date: <Text style={styles.value}>{item.created_at}</Text></Text>
+              <View style={styles.bioContainer}>
+                      <Text style={styles.bioTitle}>Remarks</Text>
+                      <Text style={styles.bioContent}>Remarks</Text>
+                    </View>
+            </TouchableOpacity>
+          );
+        })
       )}
     </ScrollView>
+    </View>
   );
 };
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
-    paddingTop: 40,
-    backgroundColor: "#fff",
+    paddingLeft: width * 0.02,
+    paddingRight: width * .02,
+    backgroundColor: '#fff',
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: height * 0.015,
+    paddingRight: width * 0.08,
+    paddingTop: width * 0.02,
+    paddingBottom: width*.01,
   },
-  icon: {
-    padding: 6,
+  fixedSearchContainer: {
+    marginTop: 0,
+    paddingHorizontal: width * 0.04,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    zIndex: 1,
+    position: 'absolute',
+    top: 0,
+    width: '112%', // Fully responsive
   },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#1B5E20",
+  scrollContainer: {
+    paddingTop: height * 0.015,
+    marginTop: height * 0.2,
+    paddingBottom: height * 0.03,
+  },
+  backIcon: {
+    padding: width * 0.01,
+  },
+  headerTitle: {
+    fontSize: height * 0.027,
+    fontWeight: 'bold',
+    color: '#1B5E20',
+    flex: 1,
+    textAlign: 'center',
+  },
+  filterIcon: {
+    padding: width * 0.01,
   },
   searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginVertical: 12,
+    width: '95%',
+    borderColor: '#1B5E20',
+    borderRadius: width * 0.02,
+    paddingHorizontal: width * 0.03,
+    marginBottom: height * 0.01,
   },
   searchIcon: {
-    marginRight: 8,
-  },
-  dateText: {
-    color: '#1B5E20',
-    fontWeight: 'bold',
+    marginRight: width * 0.02,
   },
   searchInput: {
     flex: 1,
-    paddingVertical: 8,
-    color: "#333",
-    marginBottom: 10,
-    borderBottomWidth: 0.5,
-    borderColor: "#ccc",
+    paddingVertical: height * 0.01,
+    color: '#000',
   },
-  filtersBox: {
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: "#F0F4C3",
-    marginBottom: 14,
+  searchButton: {
+    width: '95%',
+    marginBottom: 0,
+    backgroundColor: '#2E7D32',
   },
-   filterSection: {
+  filterSection: {
     marginBottom: height * 0.02,
     paddingRight: width * 0.04,
     gap: height * 0.01,
   },
-    dropdown: {
+  dropdown: {
     borderColor: '#1B5E20',
     marginBottom: height * 0.01,
     zIndex: 1000,
     borderWidth: 1,
     borderRadius: width * 0.02,
   },
-  filterLabel: {
-    fontWeight: "bold",
-    marginTop: 6,
-    color: "#1B5E20",
-  },
-    dateContainer: {
+  dateContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: height * 0.01,
     paddingTop:width * 0.01,
   },
-    dateButton: {
+  dateButton: {
     padding: height * 0.015,
     borderWidth: 1,
     borderColor: '#1B5E20',
@@ -312,70 +406,11 @@ const styles = StyleSheet.create({
     marginRight: width * 0.015,
 
   },
-  noDataText: {
-    fontSize: 16,
-    color: "#777",
-    textAlign: "center",
-    marginTop: 20,
+  dateText: {
+    color: '#1B5E20',
+    fontWeight: 'bold',
   },
-  card: {
-    backgroundColor: "#f5f5f5",
-    borderRadius: 10,
-    padding: 16,
-    marginBottom: 14,
-    elevation: 2,
-  },
-  cardHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 8,
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#1B5E20",
-  },
-  statusBadge: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 4,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: "bold",
-  },
-  label: {
-    fontSize: 14,
-    color: "#555",
-    marginTop: 4,
-  },
-  value: {
-    fontSize: 14,
-    color: "#333",
-  },
-  bioContainer: {
-    marginTop: 12,
-  },
-  bioTitle: {
-    fontSize: 14,
-    color: "#555",
-  },
-  bioContent: {
-    fontSize: 14,
-    color: "#333",
-  },
-  deleteButton: {
-    marginTop: 12,
-    padding: 10,
-    backgroundColor: "#E57373",
-    borderRadius: 6,
-    alignItems: "center",
-  },
-  deleteButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-resetButton: {
+  resetButton: {
     borderWidth: 1,
     borderColor: '#4CAF50',
     borderRadius: width * 0.05,
@@ -390,20 +425,64 @@ resetButton: {
     fontWeight: 'bold',
     fontSize: height * 0.02,
   },
-  dateButton: {
-    padding: height * 0.015,
-    borderWidth: 1,
-    borderColor: '#1B5E20',
-    borderRadius: width * 0.02,
-    flex: 1,
-    marginRight: width * 0.015,
-
+  card: {
+    backgroundColor: '#F5F5F5',
+    borderRadius: width * 0.03,
+    padding: width * 0.04,
+    marginBottom: height * 0.02,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  dateRangeText: {
-    fontSize: 14,
-    color: "#388E3C",
-    marginTop: 8,
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: height * 0.01,
+  },
+  name: {
+    fontSize: height * 0.023,
+    fontWeight: 'bold',
+    color: '#2E7D32',
+  },
+  statusBadge: {
+    paddingHorizontal: width * 0.025,
+    paddingVertical: height * 0.005,
+    borderRadius: width * 0.03,
+  },
+  statusText: {
+    fontWeight: '600',
+    fontSize: height * 0.019,
+  },
+  label: {
+    fontWeight: '700',
+    color: '#555',
+    marginTop: height * 0.005,
+    fontSize: height * 0.019,
+  },
+  value: {
+    fontWeight: '400',
+    fontSize: height * 0.019,
+    color: '#333',
+  },
+  bioContainer: {
+    marginTop: height * 0.015,
+    backgroundColor: '#E8F5E9',
+    borderRadius: width * 0.025,
+    padding: width * 0.03,
+  },
+  bioTitle: {
+    fontWeight: '600',
+    color: '#1B5E20',
+    fontSize: height * 0.019,
+    marginBottom: height * 0.005,
+  },
+  bioContent: {
+    color: '#4E4E4E',
+    fontSize: height * 0.019,
+    lineHeight: height * 0.028,
   },
 });
-
 export default TotalSubmit;
