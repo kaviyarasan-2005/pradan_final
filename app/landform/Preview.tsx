@@ -13,7 +13,7 @@ const { width, height } = Dimensions.get('window');
 const scaleFont = size => size * (width / 375);
 export default function   Preview() {
   const router = useRouter();
-  const { id,fromsubmit,returnsubmit,fromPreview} = useLocalSearchParams<{ id?: string , returnsubmit?: string,fromsubmit?: string, fromPreview?:string;}>();
+  const { id,fromsubmit,returnsubmit,fromPreview,fromdraft} = useLocalSearchParams<{ id?: string , returnsubmit?: string,fromsubmit?: string, fromPreview?:string,fromdraft?:string;}>();
   const { data, submittedForms, resetData,setData, submitForm,setNestedData,set2NestedData } = useFormStore();//draftForms,
   const {drafts,saveDraft} = useDraftStore();
 const isSubmittedPreview = !!id;
@@ -61,6 +61,7 @@ const canEdit = () => {
 };
 
 useEffect(() => {  
+   
   // console.log(user.id);
 setData("user_id",user.id);
   if(fromsubmit == "true" && fromPreview != "true"){
@@ -95,12 +96,28 @@ const Householdarray = data.basicDetails.hhcombined.split(',');
   setData("formType", 1);
 }, []);
 const handleSubmit = async () => {
+//  console.log(fromdraft+"dfghjk");
   if (submitting) return;
+
   try {
     setSubmitting(true);
+// console.log(data.id +"  submit");
+      if(data.id?.length >0){
+  await new Promise((resolve) => setTimeout(resolve, 50));
+      await axios.post(`${url}/api/formData/postLandformData`, data);
+      }
+    else{
+await new Promise((resolve) => setTimeout(resolve, 50));
 
-    await new Promise((resolve) => setTimeout(resolve, 50));
-    await axios.post(`${url}/api/formData/postLandformData`, data);
+    await axios.put(`${url}/api/formData/updateLandformData`, data);
+    }
+      if (fromdraft === "true") {
+  console.log("Deleting draft with ID:", data.draft_id);
+  if (data.draft_id) {
+    await useDraftStore.getState().deleteDraft(data.draft_id);
+  }
+}
+
     Alert.alert("Success", "Form Successfully Submitted!", [
       {
         text: "OK",
@@ -376,15 +393,18 @@ const handleSubmit = async () => {
     <TouchableOpacity
       style={styles.draftBtn}
       onPress={async () => {
-        try {
-          await new Promise((res) => setTimeout(res, 50));
-          useDraftStore.getState().saveDraft(data);
-          Alert.alert("Saved", "Form saved as draft successfully!");
-          router.push("/dashboard");
-        } catch (err) {
-          Alert.alert("Error", "Failed to save draft. Please try again.");
-        }
-      }}
+  try {
+   
+    await new Promise((res) => setTimeout(res, 50));
+    await useDraftStore.getState().saveDraft(data); 
+    Alert.alert("Saved", "Form saved as draft successfully!");
+    router.push("/dashboard");
+     console.log("Drafts:", useDraftStore.getState().drafts);
+  } catch (err) {
+    Alert.alert("Error", "Failed to save draft. Please try again.");
+  }
+}}
+
     >
       <Ionicons name="save-outline" size={width * 0.06} color="#fff" />
       <Text style={styles.draftText}>Save Draft</Text>

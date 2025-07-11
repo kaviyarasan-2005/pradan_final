@@ -2,16 +2,16 @@ import { useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
 import { Alert, Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { IconButton } from 'react-native-paper';
-import { useDraftStore } from '../storage/DraftStore'; // ✅ import the draft store
+import { useDraftStore } from '../storage/DraftStore';
 import { useFormStore } from '../storage/useFormStore';
 const { height, width } = Dimensions.get('window');
 export default function DraftsScreen() {
   const router = useRouter();
   const { setData } = useFormStore();
-  const { drafts, loadDrafts, clearDrafts } = useDraftStore(); // ✅ using Zustand values
+  const { drafts, loadDrafts, clearDrafts } = useDraftStore(); 
 
   useEffect(() => {
-    loadDrafts(); // ✅ load drafts from AsyncStorage into Zustand
+    loadDrafts(); 
   }, []);
 
   const openDraft = (item) => {
@@ -41,7 +41,7 @@ export default function DraftsScreen() {
 
   const uploadAllDrafts = async () => {
     try {
-      await clearDrafts(); // ✅ use the Zustand method to clear drafts
+      await clearDrafts(); 
       Alert.alert("Success", "All drafts uploaded to submitted forms");
     } catch (error) {
       console.error(error);
@@ -62,13 +62,13 @@ export default function DraftsScreen() {
             </View> 
  <View  style={styles.separator} />
 <FlatList
-  data={drafts}
-  keyExtractor={(item, index) => `${index}`} // Make sure there's a key
+  data={[...drafts].reverse()}  // show most recent drafts at top
+  keyExtractor={(item, index) => `${index}`}
   contentContainerStyle={{ padding: width * 0.005, paddingTop: height * 0.04 }}
   renderItem={({ item }) => (
     <TouchableOpacity
       onPress={() => openDraft(item)}
-      style={styles.card} // 🟩 Card styling applied here
+      style={styles.card} 
     >
       <Text style={styles.name}>
         {item.basicDetails?.name?.trim() || "Unnamed Draft"}
@@ -79,7 +79,7 @@ export default function DraftsScreen() {
           <Text style={styles.label}>Form: </Text>
           {parseInt(item.formType) === 1
             ? 'LAND'
-            : parseInt(item.formType ) === 2
+            : parseInt(item.formType) === 2
             ? 'POND'
             : parseInt(item.formType) === 3
             ? 'PLANTATION'
@@ -98,10 +98,10 @@ export default function DraftsScreen() {
 
 
 
+
       {/* {drafts.length > 0 && (
-        <Button mode="contained" onPress={uploadAllDrafts} style={{ marginTop: 20 }}>
-          Clear All Drafts
-        </Button>
+  <Button title="Clear All Drafts" onPress={uploadAllDrafts} />
+
       )} */}
     </View>
   );

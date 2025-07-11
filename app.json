@@ -40,7 +40,7 @@
       "typedRoutes": true
     },
     "extra": {
-      "API_URL": "http://13.201.137.191:5000",
+      "API_URL": "http://192.168.227.1:5000",
       "router": {
         "origin": false
       },

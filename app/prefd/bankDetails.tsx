@@ -1,10 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
-import axios from "axios";
-import { Buffer } from "buffer";
-import Constants from "expo-constants";
 import * as Crypto from 'expo-crypto';
 import * as DocumentPicker from "expo-document-picker";
-import * as FileSystem from "expo-file-system"; // Import FileSystem
+import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -16,111 +13,79 @@ import { useFormStore } from "../../storage/useFormStore";
 import { useUserStore } from "../../storage/userDatastore";
 
 const { width, height } = Dimensions.get('window');
-const url = Constants.expoConfig?.extra.API_URL;
 
 export default function BankDetails() {
   const router = useRouter();
-  const { id, fromPreview,returnTo,fromsubmit,returnsubmit,fromland,fromplantation,frompond } = useLocalSearchParams<{ id?: string; fromPreview?: string }>();
+  const { id, fromPreview, returnTo, fromsubmit, returnsubmit, fromland, fromplantation, frompond } = useLocalSearchParams();
   const { data, submittedForms, setData } = useFormStore();
-  const {user} = useUserStore();
+  const { user } = useUserStore();
 
   const [form, setForm] = useState(
     data.bankDetails || {
-      accountHolderName: "",//cd
-      accountNumber: "",//cd
-      bankName: "",//cd
+      accountHolderName: "",
+      accountNumber: "",
+      bankName: "",
       branch: "",
-      ifscCode: "",//cd
-      farmerAgreed: "",//cd
-      formStatus:"",
+      ifscCode: "",
+      farmerAgreed: "",
+      formStatus: "",
       submittedFiles: {
         patta: null,
-        idCard: null,//cd
+        idCard: null,
         fmb: null,
-        farmerPhoto: null,//cd
-        bankPassbook: null,//cd
-        geoTag: null,//cd
+        farmerPhoto: null,
+        bankPassbook: null,
+        geoTag: null,
       },
     }
   );
-     useEffect(() => {
-      // console.log( +" in bankdetails");
-        if (id && fromPreview === "true") {
-          // Load the form by ID and update current working data
-          const selected = submittedForms.find((form) => form.id === id);
-          if (selected) {
-            // Set every key in the form data
-            Object.entries(selected).forEach(([key, value]) => {
-              setData(key as keyof typeof data, value);
-            });
-          }
-        }
-      }, [id]);
 
-  const updateField = (field: string, value: any) => {
+  useEffect(() => {
+    if (id && fromPreview === "true") {
+      const selected = submittedForms.find((form) => form.id === id);
+      if (selected) {
+        Object.entries(selected).forEach(([key, value]) => {
+          setData(key, value);
+        });
+      }
+    }
+  }, [id]);
+
+  const updateField = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const uploadDocument = async (file:any, field:any) => {
-    const ext:string = file.name?.split('.').pop() || (file.type === "image" ? "jpg" : "pdf");
-
-    const mimeMap:{[key: string]: string} = {
-      pdf: "application/pdf",
-      jpg: "image/jpeg",
-      jpeg: "image/jpeg",
-      png: "image/png",
-    };
-
-    const mimeType = mimeMap[ext] || "application/octet-stream";
-
+  const uploadDocument = async (file, field) => {
+    const ext = file.name?.split('.').pop() || (file.type === "image" ? "jpg" : "pdf");
     const randomBytes = await Crypto.getRandomBytesAsync(16);
     const secureName = [...randomBytes].map((b) => b.toString(16).padStart(2, '0')).join('') + `.${ext}`;
-    console.log(secureName);
+    const localFilePath = `${FileSystem.documentDirectory}${secureName}`;
 
-    const uploadURL = await axios.get(`${url}/api/files/getUploadurl`,{params: {fileName: secureName,}});
-    console.log("Upload URL (Frontend):",uploadURL.data);
-    //const formData = new FormData();  
-    // formData.append("file", {
-    //   uri: file.uri,
-    //   name: file.name,
-    //   type: "application/pdf",
-    // });
-    //formData.append("file", file);
-    // console.log("Mime Type:",mimeType);
-    const fileData = await FileSystem.readAsStringAsync(file.uri, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-    const buffer = Buffer.from(fileData, 'base64');
-    console.log("Buffer:", buffer.BYTES_PER_ELEMENT);
     try {
-      const response = await axios.put(uploadURL.data, buffer, {
-        headers: {
-          'Content-Type': mimeType,
-        }
+      await FileSystem.copyAsync({
+        from: file.uri,
+        to: localFilePath,
       });
-   }
-   catch (error) {
-      console.error("Upload error:", error);
-   }
-   setForm((prev) => ({
-    ...prev,
-    submittedFiles: {
-      ...prev.submittedFiles,
-      [field]: {
-        ...(prev.submittedFiles?.[field] || {}),
-        name: secureName,
-        name2: file.name,
-      },
-    },
-  }));
-  
-  //return secureName;
-};
 
-  const handleUpload = async (field: string, fileType = "pdf") => {
+      setForm((prev) => ({
+        ...prev,
+        submittedFiles: {
+          ...prev.submittedFiles,
+          [field]: {
+            name: secureName,
+            name2: file.name,
+            uri: localFilePath,
+          },
+        },
+      }));
+    } catch (error) {
+      console.error("Local file save error:", error);
+    }
+  };
+
+  const handleUpload = async (field, fileType = "pdf") => {
     try {
       if (field === "farmerPhoto") {
-        // Only this one opens the camera
         const permission = await ImagePicker.requestCameraPermissionsAsync();
         if (!permission.granted) {
           alert("Camera permission is required to take a photo.");
@@ -135,61 +100,16 @@ export default function BankDetails() {
 
         if (!result.canceled && result.assets?.[0]) {
           const file = result.assets[0];
-          const localUri = file.uri;
-          const localFileName = `${FileSystem.documentDirectory}${file.fileName || `${field}.jpg`}`;
-
-          console.log(file);
-          uploadDocument(file,field);
-          //console.log("Uploaded filename:", uploaded_filename);
-
-          // Move the file to the local storage directory
-          await FileSystem.copyAsync({
-            from: localUri,
-            to: localFileName,
-          });
-
-          setForm((prev) => ({
-            ...prev,
-            submittedFiles: {
-              ...prev.submittedFiles,
-              [field]: {
-                ...(prev.submittedFiles?.[field] || {}),
-                uri: localFileName,
-              },
-            },
-          }));
+          uploadDocument(file, field);
         }
       } else {
-        // All others use Document Picker
         const result = await DocumentPicker.getDocumentAsync({
           type: fileType === "image" ? "image/*" : "application/pdf",
         });
 
         if (!result.canceled && result.assets?.[0]) {
           const file = result.assets[0];
-          const localUri = file.uri;
-          const localFileName = `${FileSystem.documentDirectory}${file.name}`;
-
-          //console.log(file);
-          uploadDocument(file,field);
-
-
-          // Move the file to the local storage directory
-          await FileSystem.copyAsync({
-            from: localUri,
-            to: localFileName,
-          });
-
-          setForm((prev) => ({
-            ...prev,
-            submittedFiles: {
-              ...prev.submittedFiles,
-              [field]: {
-                 //pass the generated file name
-                uri: localFileName,
-              },
-            },
-          }));
+          uploadDocument(file, field);
         }
       }
     } catch (err) {
@@ -199,21 +119,18 @@ export default function BankDetails() {
 
   const handlePreview = () => {
     setData("bankDetails", form);
-     if (fromPreview == "true" && returnTo ){
-      console.log(returnTo);
-      router.push({ pathname: returnTo, params: { id ,returnsubmit:returnsubmit,fromsubmit:fromsubmit} });
-    } 
-    
-    if(fromland== "true"){
-      router.push({pathname:"/landform/Preview",params:{fromland:"true", frompond :"false",fromplantation:"false"}});
-    }
-    else if(frompond== "true"){
-      router.push({pathname:"/pondform/Preview",params:{fromland:"false", frompond :"true",fromplantation:"false"}});
-    }
-    else if (fromplantation == "true"){
-      router.push({pathname:"/plantationform/Preview",params:{fromland:"false", frompond :"false",fromplantation:"true"}});
+    if (fromPreview == "true" && returnTo) {
+      router.push({ pathname: returnTo, params: { id, returnsubmit, fromsubmit } });
+    } else if (fromland == "true") {
+      router.push({ pathname: "/landform/Preview", params: { fromland: "true", frompond: "false", fromplantation: "false" } });
+    } else if (frompond == "true") {
+      router.push({ pathname: "/pondform/Preview", params: { fromland: "false", frompond: "true", fromplantation: "false" } });
+    } else if (fromplantation == "true") {
+      router.push({ pathname: "/plantationform/Preview", params: { fromland: "false", frompond: "false", fromplantation: "true" } });
     }
   };
+
+
 
   return (
       <KeyboardAwareScrollView style={styles.container}>

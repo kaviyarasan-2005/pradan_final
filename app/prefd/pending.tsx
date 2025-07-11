@@ -103,12 +103,13 @@ const handleCardPress = async (item) => {
   else if (item.form_type === 3) previewPath = "/plantationform/Preview";
   else return alert("Unknown form type.");
     resetData();
-    console.log( JSON.stringify(data) + " this is data");
+   
   try {
     const response = await axios.get(`${url}/api/dashboard/getpreviewspecificformData`, {
       params: { form_id: item.id, form_type: item.form_type }
+      
     });
-
+ console.log( item.id+ " this is data");
     const fetchedData = response.data;
     console.log(JSON.stringify(fetchedData) + " " + item.form_type);
 
@@ -274,7 +275,7 @@ const handleCardPress = async (item) => {
       {filteredForms.length === 0 ? (
         <Text style={styles.noDataText}>No forms Pending yet.</Text>
       ) : (
-        filteredForms.map((item, index) => {
+        [...filteredForms].reverse().map((item, index) => {
           const statusStyle = statusStyles[item.status] || {
             backgroundColor: "#E0E0E0",
             textColor: "#424242",

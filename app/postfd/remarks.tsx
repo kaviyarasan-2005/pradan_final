@@ -273,7 +273,7 @@ const handleCardPress = async (item) => {
       {filteredForms.length === 0 ? (
         <Text style={styles.noDataText}>No Remarks forms found.</Text>
       ) : (
-        filteredForms.map((item, index) => {
+         [...filteredForms].reverse().map((item, index) => {
           const statusStyle = statusStyles[item.status] || {
             backgroundColor: "#E0E0E0",
             textColor: "#424242",
