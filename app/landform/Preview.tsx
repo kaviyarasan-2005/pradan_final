@@ -112,9 +112,9 @@ await new Promise((resolve) => setTimeout(resolve, 50));
     await axios.put(`${url}/api/formData/updateLandformData`, data);
     }
       if (fromdraft === "true") {
-  console.log("Deleting draft with ID:", data.draft_id);
-  if (data.draft_id) {
-    await useDraftStore.getState().deleteDraft(data.draft_id);
+  console.log("Deleting draft with ID:", data.id);
+  if (data.id) {
+    await useDraftStore.getState().deleteDraft(data.id);
   }
 }
 
