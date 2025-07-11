@@ -98,8 +98,22 @@ const handleSubmit = async () => {
   try {
     setSubmitting(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 50));
-    await axios.post(`${url}/api/formData/postPlantationformData`, data);
+    if (!id || isNaN(id)) {
+  // id is undefined, null, 0, or not a number → perform POST
+  await new Promise((resolve) => setTimeout(resolve, 50));
+  await axios.post(`${url}/api/formData/postPlantationformData`, data);
+} else {
+  // id exists and is a number → perform PUT
+  await new Promise((resolve) => setTimeout(resolve, 50));
+  await axios.put(`${url}/api/formData/updatePlantationformData`, data);
+}
+      if (fromdraft === "true") {
+  // console.log("Deleting draft with ID:", data.id);
+  if (data.id) {
+    await useDraftStore.getState().deleteDraft(data.id);
+  }
+}
+
     Alert.alert("Success", "Form Successfully Submitted!", [
       {
         text: "OK",

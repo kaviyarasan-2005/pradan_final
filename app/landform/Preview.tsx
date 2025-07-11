@@ -102,17 +102,17 @@ const handleSubmit = async () => {
   try {
     setSubmitting(true);
 // console.log(data.id +"  submit");
-      if(data.id?.length >0){
+   if (!id || isNaN(id)) {
+  // id is undefined, null, 0, or not a number → perform POST
   await new Promise((resolve) => setTimeout(resolve, 50));
-      await axios.post(`${url}/api/formData/postLandformData`, data);
-      }
-    else{
-await new Promise((resolve) => setTimeout(resolve, 50));
-
-    await axios.put(`${url}/api/formData/updateLandformData`, data);
-    }
+  await axios.post(`${url}/api/formData/postLandformData`, data);
+} else {
+  // id exists and is a number → perform PUT
+  await new Promise((resolve) => setTimeout(resolve, 50));
+  await axios.put(`${url}/api/formData/updateLandformData`, data);
+}
       if (fromdraft === "true") {
-  console.log("Deleting draft with ID:", data.id);
+  // console.log("Deleting draft with ID:", data.id);
   if (data.id) {
     await useDraftStore.getState().deleteDraft(data.id);
   }
@@ -267,6 +267,7 @@ await new Promise((resolve) => setTimeout(resolve, 50));
 /> */}
       <View style={styles.headerContainer}>
   <TouchableOpacity  onPress={() => {
+    
     if (fromsubmit) {
       router.push(returnsubmit); // Go back to total submitted page
     } else {
@@ -399,7 +400,8 @@ await new Promise((resolve) => setTimeout(resolve, 50));
     await useDraftStore.getState().saveDraft(data); 
     Alert.alert("Saved", "Form saved as draft successfully!");
     router.push("/dashboard");
-     console.log("Drafts:", useDraftStore.getState().drafts);
+    //  console.log("Drafts:", useDraftStore.getState().drafts);
+
   } catch (err) {
     Alert.alert("Error", "Failed to save draft. Please try again.");
   }
