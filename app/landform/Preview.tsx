@@ -1,7 +1,9 @@
 import { useUserStore } from '@/storage/userDatastore';
 import { Ionicons } from '@expo/vector-icons';
 import axios from "axios";
+import { Buffer } from "buffer";
 import Constants from "expo-constants";
+import * as FileSystem from "expo-file-system"; // Import FileSystem
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { Alert, Dimensions, Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -104,8 +106,42 @@ const handleSubmit = async () => {
 // console.log(data.id +"  submit");
    if (!id || isNaN(id)) {
   // id is undefined, null, 0, or not a number → perform POST
+const files = selectedForm.bankDetails?.submittedFiles;
+
+for (const key of Object.keys(files)) {
+   const file = files[key];
+      const ext:string = file.name?.split('.').pop();
+
+    const mimeMap:{[key: string]: string} = {
+      pdf: "application/pdf",
+      jpg: "image/jpeg",
+      jpeg: "image/jpeg",
+      png: "image/png",
+    };
+
+    const mimeType = mimeMap[ext] || "application/octet-stream";
+
+    const uploadURL = await axios.get(`${url}/api/files/getUploadurl`,{params: {fileName: file.name,}});
+      const fileData = await FileSystem.readAsStringAsync(file.uri, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+    const buffer = Buffer.from(fileData, 'base64');
+    console.log("Buffer:", buffer.BYTES_PER_ELEMENT);
+    try {
+      const response = await axios.put(uploadURL.data, buffer, {
+        headers: {
+          'Content-Type': mimeType,
+        }
+      });
+   }
+   catch (error) {
+      console.error("Upload error:", error);
+   }
+}
+
   await new Promise((resolve) => setTimeout(resolve, 50));
   await axios.post(`${url}/api/formData/postLandformData`, data);
+
 } else {
   // id exists and is a number → perform PUT
   await new Promise((resolve) => setTimeout(resolve, 50));
@@ -267,7 +303,7 @@ const handleSubmit = async () => {
 /> */}
       <View style={styles.headerContainer}>
   <TouchableOpacity  onPress={() => {
-    
+    // console.log(selectedForm.bankDetails?.submittedFiles);
     if (fromsubmit) {
       router.push(returnsubmit); // Go back to total submitted page
     } else {
