@@ -1,7 +1,7 @@
 import { useFormStore } from '@/storage/useFormStore';
 import { Ionicons } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import {
   Dimensions,
@@ -14,20 +14,46 @@ import {
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
-
 const BasicDetailsForm = () => {
   const route = useRoute();
-  const { id, onSubmit } = route.params || {};
+  const { id } = useLocalSearchParams() || {};
   const { data, submittedForms } = useFormStore();
 
   const selectedForm = React.useMemo(() => {
     const matched = submittedForms.find(
-      (form) => String(form.basicDetails?.form_id) === String(id)
+      (form) => String(form?.basicDetails?.form_id) === String(id)
     );
-    console.log("Matched form:", matched);
     return matched || data;
   }, [id, submittedForms, data]);
 
+  // Create fallbacks even if selectedForm is undefined
+  const basicDetails = selectedForm?.basicDetails || {};
+  const landOwnership = selectedForm?.landOwnership || {};
+  const landDevelopment = selectedForm?.landDevelopment || {};
+  const bankDetails = selectedForm?.bankDetails || {};
+
+  const formData = {
+    name: basicDetails.name || '',
+    fatherSpouse: basicDetails.fatherSpouse || '',
+    code: basicDetails.idCardNumber || '',
+    hamlet: basicDetails.hamlet || '',
+    panchayat: basicDetails.panchayat || '',
+    revenueVillage: landOwnership.revenueVillage || '',
+    block: basicDetails.block || '',
+    district: basicDetails.district || '',
+    totalArea: landOwnership.totalArea || '',
+    pradanContribution: landDevelopment.pradanContribution || '',
+    farmerContribution: landDevelopment.farmerContribution || '',
+  };
+
+  const [measuredBy, setMeasuredBy] = React.useState(
+    bankDetails.measuredBy || 'Associate'
+  );
+  const [isEditable] = React.useState(false);
+
+  const handleChange = () => {};
+
+  // Early return now only uses variables, not hooks
   if (!selectedForm || !selectedForm.basicDetails) {
     return (
       <View style={styles.container}>
@@ -37,35 +63,6 @@ const BasicDetailsForm = () => {
       </View>
     );
   }
-
-  const formData = {
-    name: selectedForm.basicDetails.name || '',
-    fatherSpouse: selectedForm.basicDetails.fatherSpouse || '',
-    code: selectedForm.basicDetails.idCardNumber || '',
-    hamlet: selectedForm.basicDetails.hamlet || '',
-    panchayat: selectedForm.basicDetails.panchayat || '',
-    revenueVillage: selectedForm.landOwnership?.revenueVillage || '',
-    block: selectedForm.basicDetails.block || '',
-    district: selectedForm.basicDetails.district || '',
-    totalArea: selectedForm.landOwnership?.totalArea || '',
-    pradanContribution: selectedForm.landDevelopment?.pradanContribution || '',
-    farmerContribution:
-      selectedForm.landDevelopment?.farmerContribution || '',
-  };
-
-  const [measuredBy, setMeasuredBy] = React.useState(
-    selectedForm.bankDetails?.measuredBy || 'Associate'
-  );
-  const [isEditable] = React.useState(false);
-
-  const handleSubmit = () => {
-    // Submit logic here
-    // if (onSubmit) onSubmit();
-    router.push('/dashboard');
-  };
-
-  const handleChange = () => {}; // disabled editing
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerContainer}>
@@ -75,6 +72,7 @@ const BasicDetailsForm = () => {
         <Text style={styles.header}>Post Fund Land Inspection</Text>
       </View>
 
+      {/* Non-editable fields */}
       {[
         { label: 'Name of Farmer', field: 'name' },
         { label: 'Father/Spouse', field: 'fatherSpouse' },
@@ -95,6 +93,7 @@ const BasicDetailsForm = () => {
         </View>
       ))}
 
+      {/* Editable fields */}
       {[
         { label: 'Total Area', field: 'totalArea' },
         { label: 'Pradan Contribution', field: 'pradanContribution' },
@@ -106,7 +105,7 @@ const BasicDetailsForm = () => {
             <TextInput
               style={styles.inputEditable}
               value={formData[item.field]}
-              editable={isEditable}
+              // editable={isEditable}
               onChangeText={(text) => handleChange(item.field, text)}
             />
           </View>
@@ -131,12 +130,16 @@ const BasicDetailsForm = () => {
         </View>
       </View>
 
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+      <TouchableOpacity
+        style={styles.submitButton}
+        onPress={() => router.push('/dashboard')}
+      >
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
     </ScrollView>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -147,7 +150,6 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F3F6F4',
     paddingVertical: height * 0.02,
     marginBottom: height * 0.02,
   },
