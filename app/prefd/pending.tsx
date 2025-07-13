@@ -109,9 +109,8 @@ const handleCardPress = async (item) => {
       params: { form_id: item.id, form_type: item.form_type }
       
     });
- console.log( item.id+ " this is data");
+
     const fetchedData = response.data;
-    console.log(JSON.stringify(fetchedData) + " " + item.form_type);
 
     // Set all keys of fetchedData into the form store using setData
       setData("basicDetails", fetchedData.basicDetails);
@@ -124,7 +123,7 @@ const handleCardPress = async (item) => {
       params: {
         id: item.id,
         fromsubmit: "true",
-        returnsubmit: "/prefd/rejected"
+        returnsubmit: "/prefd/pending"
       }
     });
 

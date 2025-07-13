@@ -1,43 +1,62 @@
+import { useFormStore } from '@/storage/useFormStore';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
 const { width, height } = Dimensions.get('window');
 
 const BasicDetailsForm = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { onSubmit } = route.params || {};
+  const { id, onSubmit } = route.params || {};
+  const { data, submittedForms } = useFormStore();
 
-  const [formData, setFormData] = useState({
-    name: 'John Doe',
-    fatherSpouse: 'Father Name',
-    code: '12345',
-    hamlet: 'Hamlet Name',
-    panchayat: 'Panchayat Name',
-    revenueVillage: 'Revenue Village Name',
-    block: 'Block Name',
-    district: 'District Name',
-    totalArea: '100 Acres',
-    pradanContribution: '5000',
-    farmerContribution: '2000',
-    measuredBy: 'Associate',
-  });
+  // Determine which form to use
+const selectedForm = React.useMemo(() => {
+  // console.log("Checking submittedForms against ID:", id);
+  const matched = submittedForms.find(
+    (form) => String(form.basicDetails?.form_id) === String(id)
+  );
+  console.log("Matched form:", matched);
+  return matched || data;
+}, [id, submittedForms, data]);
 
-  const [isEditable, setIsEditable] = useState(false);
 
-  const handleChange = (name, value) => {
-    setFormData({ ...formData, [name]: value });
+
+  if (!selectedForm || !selectedForm.basicDetails) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ textAlign: "center", color: "red" }}>Form not found!</Text>
+      </View>
+    );
+  }
+
+  const formData = {
+    name: selectedForm.basicDetails.name || '',
+    fatherSpouse: selectedForm.basicDetails.fatherSpouse || '',
+    code: selectedForm.basicDetails.idCardNumber || '',
+    hamlet: selectedForm.basicDetails.hamlet || '',
+    panchayat: selectedForm.basicDetails.panchayat || '',
+    revenueVillage: selectedForm.landOwnership?.revenueVillage || '',
+    block: selectedForm.basicDetails.block || '',
+    district: selectedForm.basicDetails.district || '',
+    totalArea: selectedForm.landOwnership?.totalArea || '',
+    pradanContribution: selectedForm.landDevelopment?.pradanContribution || '',
+    farmerContribution: selectedForm.landDevelopment?.farmerContribution || '',
+ 
+
   };
+  const [measuredBy, setMeasuredBy] = React.useState(
+  selectedForm.bankDetails?.measuredBy || 'Associate'
+);
+  const [isEditable] = React.useState(false);
 
   const handleSubmit = () => {
-    console.log('Form Data Submitted:', formData);
-    if (onSubmit) {
-      onSubmit(); // Call the function passed via route
-    }
+    
+  
   };
+
+  const handleChange = () => {}; // disabled editing
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -86,30 +105,34 @@ const BasicDetailsForm = () => {
         </View>
       ))}
 
-      <View style={styles.formGroup}>
-        <Text style={styles.label}>Measured By</Text>
-        <View style={styles.radioGroup}>
-          {['Associate', 'Coordinator'].map((option) => (
-            <TouchableOpacity
-              key={option}
-              style={styles.radioOption}
-              onPress={() => handleChange('measuredBy', option)}
-            >
-              <View style={styles.radioOuter}>
-                {formData.measuredBy === option && <View style={styles.radioInner} />}
-              </View>
-              <Text style={styles.radioLabel}>{option}</Text>
-            </TouchableOpacity>
-          ))}
+    <View style={styles.formGroup}>
+  <Text style={styles.label}>Measured By</Text>
+  <View style={styles.radioGroup}>
+    {['Associate', 'Coordinator'].map((option) => (
+      <TouchableOpacity
+        key={option}
+        style={styles.radioOption}
+        onPress={() => setMeasuredBy(option)}
+      >
+        <View style={styles.radioOuter}>
+          {measuredBy === option && <View style={styles.radioInner} />}
         </View>
-      </View>
+        <Text style={styles.radioLabel}>{option}</Text>
+      </TouchableOpacity>
+    ))}
+  </View>
+</View>
 
-      <TouchableOpacity style={styles.submitButton} onPress={() => { router.push('dashboard'); }}>
-                  <Text style={styles.submitButtonText}>Submit</Text>
-                </TouchableOpacity>
+
+     <TouchableOpacity style={styles.submitButton} onPress={() => navigation.navigate('dashboard')}
+>
+  <Text style={styles.submitButtonText}>Submit</Text>
+</TouchableOpacity>
+
     </ScrollView>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

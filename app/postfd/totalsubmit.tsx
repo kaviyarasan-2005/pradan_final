@@ -69,7 +69,7 @@ const forms = IdFormStore((state) => state.Idforms);
   ]);
 
   useEffect(() => {
-    resetData();
+    // resetData();
     loaddashbdForms();
   }, []);
 
@@ -107,7 +107,6 @@ const handleCardPress = async (item) => {
   else if (item.form_type === 3) previewPath = "./postplantation";
   else return alert("Unknown form type.");
     resetData();
-    console.log( JSON.stringify(data) + " this is data");
   try {
     const response = await axios.get(`${url}/api/dashboard/getpreviewspecificformData`, {
       params: { form_id: item.id, form_type: item.form_type }

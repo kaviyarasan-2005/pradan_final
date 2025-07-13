@@ -106,14 +106,13 @@ const handleCardPress = async (item) => {
   else if (item.form_type === 3) previewPath = "/plantationform/Preview";
   else return alert("Unknown form type.");
     resetData();
-    // console.log( item.id + " this is data");
+
   try {
     const response = await axios.get(`${url}/api/dashboard/getpreviewspecificformData`, {
       params: { form_id: item.id, form_type: item.form_type }
     });
 
     const fetchedData = response.data;
-    // console.log(JSON.stringify(fetchedData) + " " + item.form_type);
 
     // Set all keys of fetchedData into the form store using setData
       setData("basicDetails", fetchedData.basicDetails);
@@ -121,7 +120,7 @@ const handleCardPress = async (item) => {
     setData("landDevelopment", fetchedData.landDevelopment);
     setData("bankDetails", fetchedData.bankDetails);
        
-//  console.log(item.id+"iddd");
+
     router.push(
       {
       pathname: previewPath,

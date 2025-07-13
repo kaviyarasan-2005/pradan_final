@@ -23,11 +23,13 @@ const {user} = useUserStore();
 const selectedForm = React.useMemo(() => {
   if (fromsubmit) {
 
-    // console.log(JSON.stringify(data) + "inside");
+   
     return data; // Always use updated data when fromsubmit
   }
+
   // if (isSubmittedPreview && id || draftForms && id) {
     if (isSubmittedPreview && id ) {
+        console.log(submittedForms+" sdfghjkkjhgfds");
     return submittedForms.find((form) => String(form.id) === id);
   }
   return data;
@@ -38,8 +40,7 @@ const canEdit = () => {
   const status = selectedForm?.bankDetails?.formStatus;
   return  status ===1||status === 2|| status === 3;
 };
-  // console.log("Selected Form:", selectedForm);
-  // console.log(id);
+
   if (!selectedForm) {
     return (
       <View style={styles.container}>
@@ -64,7 +65,6 @@ const canEdit = () => {
 
 useEffect(() => {  
    
-  // console.log(user.id);
 setData("user_id",user.id);
   if(fromsubmit == "true" && fromPreview != "true"){
 const occupationarray = data.basicDetails.occupationCombined.split(',');
@@ -98,12 +98,11 @@ const Householdarray = data.basicDetails.hhcombined.split(',');
   setData("formType", 1);
 }, []);
 const handleSubmit = async () => {
-//  console.log(fromdraft+"dfghjk");
+
   if (submitting) return;
 
   try {
     setSubmitting(true);
-// console.log(data.id +"  submit");
    if (!id || isNaN(id)) {
   // id is undefined, null, 0, or not a number → perform POST
 const files = selectedForm.bankDetails?.submittedFiles;
@@ -126,7 +125,7 @@ for (const key of Object.keys(files)) {
       encoding: FileSystem.EncodingType.Base64,
     });
     const buffer = Buffer.from(fileData, 'base64');
-    console.log("Buffer:", buffer.BYTES_PER_ELEMENT);
+ 
     try {
       const response = await axios.put(uploadURL.data, buffer, {
         headers: {
@@ -148,7 +147,7 @@ for (const key of Object.keys(files)) {
   await axios.put(`${url}/api/formData/updateLandformData`, data);
 }
       if (fromdraft === "true") {
-  // console.log("Deleting draft with ID:", data.id);
+
   if (data.id) {
     await useDraftStore.getState().deleteDraft(data.id);
   }
@@ -303,7 +302,7 @@ for (const key of Object.keys(files)) {
 /> */}
       <View style={styles.headerContainer}>
   <TouchableOpacity  onPress={() => {
-    // console.log(selectedForm.bankDetails?.submittedFiles);
+
     if (fromsubmit) {
       router.push(returnsubmit); // Go back to total submitted page
     } else {
@@ -436,7 +435,7 @@ for (const key of Object.keys(files)) {
     await useDraftStore.getState().saveDraft(data); 
     Alert.alert("Saved", "Form saved as draft successfully!");
     router.push("/dashboard");
-    //  console.log("Drafts:", useDraftStore.getState().drafts);
+ 
 
   } catch (err) {
     Alert.alert("Error", "Failed to save draft. Please try again.");
