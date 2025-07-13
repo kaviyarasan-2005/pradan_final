@@ -1,7 +1,8 @@
+import { useFormStore } from '@/storage/useFormStore';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { router } from 'expo-router';
-import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Dimensions,
   ScrollView,
@@ -9,32 +10,42 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
 const BasicDetailsForm = () => {
   const navigation = useNavigation();
-  const route = useRoute();
-  const { onSubmit } = route.params || {};
+  const { id } = useLocalSearchParams();
+  const { submittedForms, data } = useFormStore();
+
+  const selectedForm = useMemo(() => {
+    const matched = submittedForms.find(
+      (form) => String(form?.basicDetails?.form_id) === String(id)
+    );
+    return matched || data;
+  }, [id, submittedForms, data]);
+
+  const basicDetails = selectedForm?.basicDetails || {};
+  const landOwnership = selectedForm?.landOwnership || {};
+  const landDevelopment = selectedForm?.landDevelopment || {};
 
   const [formData, setFormData] = useState({
-    name: 'John Doe',
-    fatherSpouse: 'Father Name',
-    code: '12345',
-    hamlet: 'Hamlet Name',
-    panchayat: 'Panchayat Name',
-    revenueVillage: 'Revenue Village Name',
-    block: 'Block Name',
-    district: 'District Name',
-    totalArea: '2.5',
-    pradanContribution: '5000',
-    farmerContribution: '2000',
-    totalAmount: '7000',
-    measuredBy: '', // <- New field for radio selection
+    name: basicDetails.name || '',
+    fatherSpouse: basicDetails.fatherSpouse || '',
+    code: basicDetails.idCardNumber || '',
+    hamlet: basicDetails.hamlet || '',
+    panchayat: basicDetails.panchayat || '',
+    revenueVillage: landOwnership.revenueVillage || '',
+    block: basicDetails.block || '',
+    district: basicDetails.district || '',
+    totalArea: landOwnership.totalArea || '',
+    pradanContribution: landDevelopment.pradanContribution || '',
+    farmerContribution: landDevelopment.farmerContribution || '',
+    totalAmount: '',
+    measuredBy: '',
   });
-  
 
   const [isEditable, setIsEditable] = useState(true);
 
@@ -44,16 +55,16 @@ const BasicDetailsForm = () => {
 
   const [otherExpenses, setOtherExpenses] = useState('');
 
+  useEffect(() => {
+    const totalAmount = (
+      parseFloat(formData.pradanContribution || 0) +
+      parseFloat(formData.farmerContribution || 0)
+    ).toFixed(2);
+    setFormData((prev) => ({ ...prev, totalAmount }));
+  }, [formData.pradanContribution, formData.farmerContribution]);
+
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = () => {
-    console.log('Form Data Submitted:', formData);
-    if (onSubmit) {
-      onSubmit();
-    }
-    router.push('/dashboard');
   };
 
   const handlePlantationChange = (index, field, value) => {
@@ -73,7 +84,10 @@ const BasicDetailsForm = () => {
 
   const calculateTotalExpenses = () => {
     const plantationTotal = plantations.reduce((acc, plantation) => {
-      return acc + (parseFloat(plantation.price || 0) * parseInt(plantation.number || 0));
+      return (
+        acc +
+        parseFloat(plantation.price || 0) * parseInt(plantation.number || 0)
+      );
     }, 0);
     return plantationTotal + (parseFloat(otherExpenses) || 0);
   };
@@ -121,14 +135,13 @@ const BasicDetailsForm = () => {
           <TextInput
             style={styles.inputEditable}
             value={formData[item.field]}
-            editable={isEditable}
+            editable={item.editable !== false && isEditable}
             onChangeText={(text) => handleChange(item.field, text)}
             keyboardType="numeric"
           />
         </View>
       ))}
 
-      {/* Plantation Table Section */}
       <View style={styles.formGroup}>
         <Text style={styles.label}>Plantation Details</Text>
         <View style={styles.tableHeader}>
@@ -176,7 +189,6 @@ const BasicDetailsForm = () => {
           </TouchableOpacity>
         )}
 
-        {/* Other Expenses and Total Expenses */}
         <View style={styles.tableRow}>
           <TextInput
             style={styles.tableInput}
@@ -193,26 +205,9 @@ const BasicDetailsForm = () => {
             editable={false}
           />
         </View>
-        <View style={styles.tableRow}>
-          <TextInput
-            style={styles.tableInput}
-            placeholder="Total Expenses"
-            keyboardType="numeric"
-            value={otherExpenses}
-            onChangeText={(text) => setOtherExpenses(text)}
-            editable={isEditable}
-          />
-          <TextInput
-            style={styles.tableInput}
-            placeholder="Total Expenses"
-            value={`₹ ${totalExpenses.toFixed(2)}`}
-            editable={false}
-          />
-        </View>
       </View>
 
-      {/* Measured By - Radio Buttons */}
-  <View style={styles.formGroup}>
+      <View style={styles.formGroup}>
         <Text style={styles.label}>Measured By</Text>
         <View style={styles.radioGroup}>
           {['Associate', 'Coordinator'].map((option) => (
@@ -230,14 +225,16 @@ const BasicDetailsForm = () => {
         </View>
       </View>
 
-      
-
-      <TouchableOpacity style={styles.submitButton} onPress={() => { router.push('/dashboard'); }}>
-                        <Text style={styles.submitButtonText}>Submit</Text>
-                      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.submitButton}
+        onPress={() => router.push('/dashboard')}
+      >
+        <Text style={styles.submitButtonText}>Submit</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
