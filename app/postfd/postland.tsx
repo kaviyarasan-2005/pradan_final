@@ -1,32 +1,39 @@
 import { useFormStore } from '@/storage/useFormStore';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
+import { router } from 'expo-router';
 import React from 'react';
-import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
 const { width, height } = Dimensions.get('window');
 
 const BasicDetailsForm = () => {
-  const navigation = useNavigation();
   const route = useRoute();
   const { id, onSubmit } = route.params || {};
   const { data, submittedForms } = useFormStore();
 
-  // Determine which form to use
-const selectedForm = React.useMemo(() => {
-  // console.log("Checking submittedForms against ID:", id);
-  const matched = submittedForms.find(
-    (form) => String(form.basicDetails?.form_id) === String(id)
-  );
-  console.log("Matched form:", matched);
-  return matched || data;
-}, [id, submittedForms, data]);
-
-
+  const selectedForm = React.useMemo(() => {
+    const matched = submittedForms.find(
+      (form) => String(form.basicDetails?.form_id) === String(id)
+    );
+    console.log("Matched form:", matched);
+    return matched || data;
+  }, [id, submittedForms, data]);
 
   if (!selectedForm || !selectedForm.basicDetails) {
     return (
       <View style={styles.container}>
-        <Text style={{ textAlign: "center", color: "red" }}>Form not found!</Text>
+        <Text style={{ textAlign: 'center', color: 'red' }}>
+          Form not found!
+        </Text>
       </View>
     );
   }
@@ -42,18 +49,19 @@ const selectedForm = React.useMemo(() => {
     district: selectedForm.basicDetails.district || '',
     totalArea: selectedForm.landOwnership?.totalArea || '',
     pradanContribution: selectedForm.landDevelopment?.pradanContribution || '',
-    farmerContribution: selectedForm.landDevelopment?.farmerContribution || '',
- 
-
+    farmerContribution:
+      selectedForm.landDevelopment?.farmerContribution || '',
   };
+
   const [measuredBy, setMeasuredBy] = React.useState(
-  selectedForm.bankDetails?.measuredBy || 'Associate'
-);
+    selectedForm.bankDetails?.measuredBy || 'Associate'
+  );
   const [isEditable] = React.useState(false);
 
   const handleSubmit = () => {
-    
-  
+    // Submit logic here
+    // if (onSubmit) onSubmit();
+    router.push('/dashboard');
   };
 
   const handleChange = () => {}; // disabled editing
@@ -61,7 +69,7 @@ const selectedForm = React.useMemo(() => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="#0B8B42" />
         </TouchableOpacity>
         <Text style={styles.header}>Post Fund Land Inspection</Text>
@@ -105,34 +113,30 @@ const selectedForm = React.useMemo(() => {
         </View>
       ))}
 
-    <View style={styles.formGroup}>
-  <Text style={styles.label}>Measured By</Text>
-  <View style={styles.radioGroup}>
-    {['Associate', 'Coordinator'].map((option) => (
-      <TouchableOpacity
-        key={option}
-        style={styles.radioOption}
-        onPress={() => setMeasuredBy(option)}
-      >
-        <View style={styles.radioOuter}>
-          {measuredBy === option && <View style={styles.radioInner} />}
+      <View style={styles.formGroup}>
+        <Text style={styles.label}>Measured By</Text>
+        <View style={styles.radioGroup}>
+          {['Associate', 'Coordinator'].map((option) => (
+            <TouchableOpacity
+              key={option}
+              style={styles.radioOption}
+              onPress={() => setMeasuredBy(option)}
+            >
+              <View style={styles.radioOuter}>
+                {measuredBy === option && <View style={styles.radioInner} />}
+              </View>
+              <Text style={styles.radioLabel}>{option}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
-        <Text style={styles.radioLabel}>{option}</Text>
+      </View>
+
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
-    ))}
-  </View>
-</View>
-
-
-     <TouchableOpacity style={styles.submitButton} onPress={() => navigation.navigate('dashboard')}
->
-  <Text style={styles.submitButtonText}>Submit</Text>
-</TouchableOpacity>
-
     </ScrollView>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
