@@ -97,9 +97,9 @@ const forms = IdFormStore((state) => state.Idforms);
 const handleCardPress = async (item) => {
   let previewPath = "";
 
-  if (item.form_type === 1) previewPath = "/landform/Preview";
-  else if (item.form_type === 2) previewPath = "/pondform/Preview";
-  else if (item.form_type === 3) previewPath = "/plantationform/Preview";
+   if (item.form_type === 1) previewPath = "./postland";
+  else if (item.form_type === 2) previewPath = "./postpond";
+  else if (item.form_type === 3) previewPath = "./postplantation";
   else return alert("Unknown form type.");
     resetData();
     console.log( JSON.stringify(data) + " this is data");

@@ -3,13 +3,13 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Dimensions,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -53,7 +53,7 @@ const BasicDetailsForm = () => {
     if (onSubmit) {
       onSubmit();
     }
-    router.push('/dashboard_verifier');
+    router.push('/dashboard');
   };
 
   const handlePlantationChange = (index, field, value) => {
