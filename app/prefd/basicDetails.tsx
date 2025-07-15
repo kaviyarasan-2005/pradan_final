@@ -26,6 +26,7 @@ const {user} = useUserStore();
     data.basicDetails || {
       name: "",//cd
       age: "",
+      form_id:"",//for post fund
       mobile: "",
       district: "",
       hamlet: "",
@@ -43,7 +44,7 @@ const {user} = useUserStore();
       specialCategory: "",//no
       specialCategoryNumber: "0",//cd
       caste: "",
-        // measuredBy: "",
+        measuredBy: "",
       houseOwnership: "",//cd
       houseType: "",//cd
       drinkingWater: [],//no

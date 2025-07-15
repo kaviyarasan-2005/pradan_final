@@ -4,7 +4,6 @@ import axios from "axios";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-
 import {
   Dimensions,
   ScrollView,
@@ -19,6 +18,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { DashbdStore } from "../../storage/DashbdStore";
 import { IdFormStore } from "../../storage/IdStore";
 import { useFormStore } from "../../storage/useFormStore";
+import { useUserStore } from "../../storage/userDatastore";
 const { height, width } = Dimensions.get('window');
 const url = Constants.expoConfig.extra.API_URL;
 const statusStyles = {
@@ -35,12 +35,12 @@ const TotalSubmit = () => {
   2: "POND",
   3: "PLANTATION"
 };
-
+const { user, logout } = useUserStore();
   const router = useRouter();
   // const { submittedForms, loadSubmittedForms, deleteFormByIndex } = useFormStore();
   const { showActionSheetWithOptions } = useActionSheet();
 const {dashbdforms,loaddashbdForms} = DashbdStore();
-const {setData,data,resetData} = useFormStore();
+const {setData,data,resetData,setNestedData} = useFormStore();
 const forms = IdFormStore((state) => state.Idforms);
   const [searchText, setSearchText] = useState("");
   const [formType, setFormType] = useState("ALL");
@@ -70,6 +70,7 @@ const forms = IdFormStore((state) => state.Idforms);
 
   useEffect(() => {
     // resetData();
+    
     loaddashbdForms();
   }, []);
 
@@ -108,6 +109,7 @@ const handleCardPress = async (item) => {
   else return alert("Unknown form type.");
     resetData();
   try {
+  
     const response = await axios.get(`${url}/api/formData/getpf_landformData`, {
       params: { form_id: item.id, form_type: item.form_type }
     });
@@ -126,6 +128,7 @@ const handleCardPress = async (item) => {
   panchayat: fetchedData.panchayat,
   block: fetchedData.block,
   district: fetchedData.district,
+  measuredBy:user.username,
 });
 
 setData("landOwnership", {

@@ -28,6 +28,7 @@ export default function BankDetails() {
       branch: "",
       ifscCode: "",
       farmerAgreed: "",
+      pf_passbook:"",
       formStatus: "",
       submittedFiles: {
         patta: null,
@@ -37,7 +38,7 @@ export default function BankDetails() {
         bankPassbook: null,
         geoTag: null,
       },
-      pf_passbook:"",
+     
     }
   );
 

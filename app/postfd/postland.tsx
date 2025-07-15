@@ -18,6 +18,7 @@ import {
   View
 } from "react-native";
 
+
 const url = Constants.expoConfig.extra.API_URL;
 
 const { width, height } = Dimensions.get('window');
@@ -40,6 +41,7 @@ const PostlLndForm = () => {
   const bankDetails = selectedForm?.bankDetails || {};
 
 const [formData, setFormData] = useState({
+  form_id: basicDetails.form_id || '',
   name: basicDetails.name || '',
   fatherSpouse: basicDetails.fatherSpouse || '',
   code: basicDetails.idCardNumber || '',
@@ -51,10 +53,11 @@ const [formData, setFormData] = useState({
   totalArea: landOwnership.totalArea || '',
   pradanContribution: landDevelopment.pradanContribution || '',
   farmerContribution: landDevelopment.farmerContribution || '',
-  pf_passbook: bankDetails?.submittedFiles?.pf_passbook || null,
+  pf_passbook: bankDetails?.pf_passbook || null,
 });
-
    useEffect(() => {
+    console.log('selectedForm:', selectedForm);
+  console.log('basicDetails:', basicDetails);
       const totalAmount = (parseFloat(formData.pradanContribution || 0) +parseFloat(formData.farmerContribution || 0)).toFixed(2);
       setFormData((prev) => ({ ...prev, totalAmount }));
     }, [formData.pradanContribution, formData.farmerContribution]);
@@ -80,7 +83,7 @@ const handleSubmit = async () => {
       bankDetails: {
         ...selectedForm.bankDetails,
         submittedFiles: {
-          ...selectedForm.bankDetails.submittedFiles,
+          ...selectedForm.bankDetails.pf_passbook,
         },
       },
     };
@@ -128,6 +131,7 @@ const handleSubmit = async () => {
   }
 };
 const handleChange = (field: string, value: string) => {
+ 
   setFormData((prev) => ({
     ...prev,
     [field]: value,
