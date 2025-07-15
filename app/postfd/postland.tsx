@@ -88,9 +88,14 @@ const PostlLndForm = () => {
       };
       const file = files['pf_passbook'];
       if (file) {
-        const ext = file.name?.split('.').pop();
-        const mimeMap = { pdf: "application/pdf" };
-        const mimeType = mimeMap[ext] || "application/octet-stream";
+       const ext = file.name?.split(".").pop()?.toLowerCase();
+const mimeMap: Record<string, string> = {
+  pdf : "application/pdf",
+  jpg : "image/jpeg",
+  jpeg: "image/jpeg",
+  png : "image/png",
+};
+const mimeType = mimeMap[ext!] || "application/octet-stream";
 
         const randomBytes = await Crypto.getRandomBytesAsync(16);
         const secureName =
@@ -130,16 +135,23 @@ const PostlLndForm = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleFilePick = async (key) => {
-    try {
-      const result = await DocumentPicker.getDocumentAsync({ type: '*/*' });
-      if (!result.canceled) {
-        setFiles((prev) => ({ ...prev, [key]: result.assets[0] }));
-      }
-    } catch (error) {
-      console.error('File pick error:', error);
+const handleFilePick = async (key: string) => {
+  try {
+    const result = await DocumentPicker.getDocumentAsync({
+      type: ['application/pdf', 'image/jpeg', 'image/png'],
+      copyToCacheDirectory: true,
+      multiple: false,
+    });
+
+    if (!result.canceled) {
+      setFiles((prev) => ({ ...prev, [key]: result.assets[0] }));
     }
-  };
+  } catch (error) {
+    console.error('File pick error:', error);
+  }
+};
+
+
 
   if (!selectedForm || !selectedForm.basicDetails) {
     return (

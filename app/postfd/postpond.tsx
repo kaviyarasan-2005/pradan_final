@@ -73,12 +73,21 @@ const PostFundBasicDetailsForm = () => {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleFilePick = async (key) => {
-    const result = await DocumentPicker.getDocumentAsync({ type: '*/*' });
+const handleFilePick = async (key: string) => {
+  try {
+    const result = await DocumentPicker.getDocumentAsync({
+      type: ['application/pdf', 'image/jpeg', 'image/png'],
+      copyToCacheDirectory: true,
+      multiple: false,
+    });
+
     if (!result.canceled) {
       setFiles((prev) => ({ ...prev, [key]: result.assets[0] }));
     }
-  };
+  } catch (error) {
+    console.error('File pick error:', error);
+  }
+};
 
   const handleSubmit = async () => {
     try {
@@ -111,8 +120,14 @@ const PostFundBasicDetailsForm = () => {
 
       const file = files['pf_passbook'];
       if (file) {
-        const ext = file.name.split('.').pop();
-        const mimeType = 'application/pdf';
+        const ext = file.name?.split('.').pop();
+      const mimeMap = {
+        pdf: 'application/pdf',
+        jpg: 'image/jpeg',
+        png: 'image/png',
+        jpeg: 'image/jpeg',
+      };
+      const mimeType = mimeMap[ext] || 'application/octet-stream';
 
         const randomBytes = await Crypto.getRandomBytesAsync(16);
         const secureName = [...randomBytes].map((b) => b.toString(16).padStart(2, '0')).join('') + `.${ext}`;

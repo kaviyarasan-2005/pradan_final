@@ -75,19 +75,30 @@ const url = Constants.expoConfig.extra.API_URL; // Place after `const { width, h
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
   };
-const handleFilePick = async (key) => {
+const handleFilePick = async (key: string) => {
   try {
-    const result = await DocumentPicker.getDocumentAsync({ type: '*/*' });
+    const result = await DocumentPicker.getDocumentAsync({
+      type: ['application/pdf', 'image/jpeg', 'image/png'],
+      copyToCacheDirectory: true,
+      multiple: false,
+    });
+
     if (!result.canceled) {
       setFiles((prev) => ({ ...prev, [key]: result.assets[0] }));
     }
-  } catch (err) {
-    console.error("File selection error:", err);
+  } catch (error) {
+    console.error('File pick error:', error);
   }
 };
 
 const handleSubmit = async () => {
   try {
+ const totalNos = plantations.reduce(
+      (sum, item) => sum + (Number(item.number) || 0),
+      0
+    );
+
+
     const plantationTypes = plantations.map((item) => item.type.trim()).filter(Boolean).join(',');
     const plantationNumbers = plantations.map((item) => item.number).join(',');
     const plantationPrices = plantations.map((item) => item.price).join(',');
@@ -115,6 +126,8 @@ const handleSubmit = async () => {
         plantationPrices,
         otherExpenses,
       totalExpenses: totalExpenses.toFixed(2),
+      total_nos: totalNos.toString()
+,
       },
       
     };
