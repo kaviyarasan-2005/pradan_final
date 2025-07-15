@@ -1,26 +1,26 @@
 import { useFormStore } from '@/storage/useFormStore';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import { Buffer } from 'buffer';
+import Constants from 'expo-constants';
+import * as Crypto from 'expo-crypto';
+import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+  Alert, Dimensions, ScrollView, StyleSheet,
+  Text, TextInput, TouchableOpacity, View
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
+const url = Constants.expoConfig.extra.API_URL;
 
-const BasicDetailsForm = () => {
-  const navigation = useNavigation();
+const PostFundBasicDetailsForm = () => {
   const { id } = useLocalSearchParams();
-  const { submittedForms, data } = useFormStore();
+  const { data, submittedForms } = useFormStore();
 
-  const selectedForm = useMemo(() => {
+  const selectedForm = React.useMemo(() => {
     const matched = submittedForms.find(
       (form) => String(form?.basicDetails?.form_id) === String(id)
     );
@@ -28,11 +28,12 @@ const BasicDetailsForm = () => {
   }, [id, submittedForms, data]);
 
   const basicDetails = selectedForm?.basicDetails || {};
-  const landOwnership = selectedForm?.landOwnership || {};
   const landDevelopment = selectedForm?.landDevelopment || {};
-  const bankDetails = selectedForm?.bankDetails || {};
+  const landOwnership=selectedForm?.landOwnership||{};
+  const bankDetails=selectedForm?.bankDetails||{};
 
   const [formData, setFormData] = useState({
+    form_id: basicDetails.form_id || '',
     name: basicDetails.name || '',
     fatherSpouse: basicDetails.fatherSpouse || '',
     code: basicDetails.idCardNumber || '',
@@ -41,40 +42,108 @@ const BasicDetailsForm = () => {
     revenueVillage: landOwnership.revenueVillage || '',
     block: basicDetails.block || '',
     district: basicDetails.district || '',
-    length: landDevelopment.length,
-    breadth: landDevelopment.breadth,
-    depth: landDevelopment.depth,
-    totalArea: landOwnership.totalArea || '',
+    length: landDevelopment.length||'',
+    breadth: landDevelopment.breadth || '',
+    depth: landDevelopment.depth || '',
+    volume: landOwnership.volume|| '',
     pradanContribution: landDevelopment.pradanContribution || '',
     farmerContribution: landDevelopment.farmerContribution || '',
-    totalAmount: '',
-    measuredBy: bankDetails.measuredBy || 'Associate',
-    measuredByName: bankDetails.measuredByName || '',
-    measuredByDesignation: bankDetails.measuredByDesignation || '',
-    approvedByName: bankDetails.approvedByName || '',
-    approvedByDesignation: bankDetails.approvedByDesignation || '',
+    totalAmount: landDevelopment.totalEstimate || '',
   });
 
-  const [isEditable, setIsEditable] = useState(false);
+  const [files, setFiles] = useState({});
 
   useEffect(() => {
-    const { length, breadth, depth, pradanContribution, farmerContribution } = formData;
-
-    if (length && breadth && depth) {
-      const totalArea = (
-        parseFloat(length) * parseFloat(breadth) * parseFloat(depth)
+    if (formData.length && formData.breadth && formData.depth) {
+      const volume = (
+        parseFloat(formData.length) *
+        parseFloat(formData.breadth) *
+        parseFloat(formData.depth)
       ).toFixed(2);
-      setFormData((prevData) => ({ ...prevData, totalArea }));
+      setFormData((prev) => ({ ...prev, totalArea: volume }));
     }
-
     const totalAmount = (
-      parseFloat(pradanContribution || 0) + parseFloat(farmerContribution || 0)
+      parseFloat(formData.pradanContribution || '0') +
+      parseFloat(formData.farmerContribution || '0')
     ).toFixed(2);
-    setFormData((prevData) => ({ ...prevData, totalAmount }));
+    setFormData((prev) => ({ ...prev, totalAmount }));
   }, [formData.length, formData.breadth, formData.depth, formData.pradanContribution, formData.farmerContribution]);
 
-  const handleChange = (name, value) => {
-    setFormData({ ...formData, [name]: value });
+  const handleChange = (key, value) => {
+    setFormData((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleFilePick = async (key) => {
+    const result = await DocumentPicker.getDocumentAsync({ type: '*/*' });
+    if (!result.canceled) {
+      setFiles((prev) => ({ ...prev, [key]: result.assets[0] }));
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const updatedForm = {
+        form_id: formData.form_id,
+        ...selectedForm,
+        basicDetails: {
+          ...selectedForm.basicDetails,
+          name: formData.name,
+          fatherSpouse: formData.fatherSpouse,
+          idCardNumber: formData.code,
+          hamlet: formData.hamlet,
+          panchayat: formData.panchayat,
+          revenueVillage: formData.revenueVillage,
+          block: formData.block,
+          district: formData.district,
+        },
+        landDevelopment: {
+          ...selectedForm.landDevelopment,
+          pradanContribution: formData.pradanContribution,
+          farmerContribution: formData.farmerContribution,
+          totalEstimate: formData.totalAmount,
+           volume: formData.totalArea,
+        },
+       bankDetails: {
+          ...selectedForm.bankDetails,
+          pf_passbook: { ...selectedForm.bankDetails?.pf_passbook || {} },
+        },
+      };
+
+      const file = files['pf_passbook'];
+      if (file) {
+        const ext = file.name.split('.').pop();
+        const mimeType = 'application/pdf';
+
+        const randomBytes = await Crypto.getRandomBytesAsync(16);
+        const secureName = [...randomBytes].map((b) => b.toString(16).padStart(2, '0')).join('') + `.${ext}`;
+
+        const fileData = await FileSystem.readAsStringAsync(file.uri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+
+        const buffer = Buffer.from(fileData, 'base64');
+
+        const uploadURL = await axios.get(`${url}/api/files/getUploadurl`, {
+          params: { fileName: secureName },
+        });
+
+        await axios.put(uploadURL.data, buffer, {
+          headers: { 'Content-Type': mimeType },
+        });
+
+        updatedForm.bankDetails.pf_passbook = {
+          uri: file.uri,
+          name: file.name,
+          name2: secureName,
+        };
+      }
+
+      await axios.put(`${url}/api/formData/updatepf_pondformData`, updatedForm);
+      Alert.alert('Success', 'Form updated successfully!');
+      router.push('/dashboard');
+    } catch (err) {
+      Alert.alert('Error', err.message);
+    }
   };
 
   if (!selectedForm || !selectedForm.basicDetails) {
@@ -88,87 +157,56 @@ const BasicDetailsForm = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="#0B8B42" />
         </TouchableOpacity>
-        <Text style={styles.header}>Post Funding Pond Inspection</Text>
+        <Text style={styles.header}>Post Fund Basic Details</Text>
       </View>
 
-      {[
-        { label: 'Name of Farmer', field: 'name' },
-        { label: 'Father/Spouse', field: 'fatherSpouse' },
-        { label: 'Code', field: 'code' },
-        { label: 'Hamlet', field: 'hamlet' },
-        { label: 'Panchayat', field: 'panchayat' },
-        { label: 'Revenue Village', field: 'revenueVillage' },
-        { label: 'Block', field: 'block' },
-        { label: 'District', field: 'district' },
-      ].map((item, index) => (
+      {['name', 'fatherSpouse', 'code', 'hamlet', 'panchayat', 'revenueVillage', 'block', 'district'].map((field, index) => (
         <View style={styles.formGroup} key={index}>
-          <Text style={styles.label}>{item.label}</Text>
-          <TextInput style={styles.input} value={formData[item.field]} editable={false} />
-        </View>
-      ))}
-
-      {[
-        { label: 'Length (m)', field: 'length' },
-        { label: 'Breadth (m)', field: 'breadth' },
-        { label: 'Depth (m)', field: 'depth' },
-        { label: 'Total Area (cu m)', field: 'totalArea', editable: false },
-      ].map((item, index) => (
-        <View style={styles.formGroup} key={index}>
-          <Text style={styles.label}>{item.label}</Text>
+          <Text style={styles.label}>{field.replace(/([A-Z])/g, ' $1')}</Text>
           <TextInput
-            style={styles.inputEditable}
-            value={formData[item.field]}
-            editable={item.editable !== false ? isEditable : false}
-            onChangeText={(text) => handleChange(item.field, text)}
-            keyboardType="numeric"
+            style={styles.input}
+            value={formData[field]}
+            editable={true}
+            onChangeText={(text) => handleChange(field, text)}
           />
         </View>
       ))}
 
-      {[
-        { label: 'Pradan Contribution', field: 'pradanContribution' },
-        { label: 'Farmer Contribution', field: 'farmerContribution' },
-        { label: 'Total Amount', field: 'totalAmount', editable: false },
-      ].map((item, index) => (
+      {['length', 'breadth', 'depth', 'totalArea', 'pradanContribution', 'farmerContribution', 'totalAmount'].map((field, index) => (
         <View style={styles.formGroup} key={index}>
-          <Text style={styles.label}>{item.label}</Text>
+          <Text style={styles.label}>{field.replace(/([A-Z])/g, ' $1')}</Text>
           <TextInput
-            style={styles.inputEditable}
-            value={formData[item.field]}
-            editable={item.editable !== false ? isEditable : false}
-            onChangeText={(text) => handleChange(item.field, text)}
+            style={styles.input}
             keyboardType="numeric"
+            value={formData[field]}
+            onChangeText={(text) => handleChange(field, text)}
+            editable={field !== 'totalAmount'}
           />
         </View>
       ))}
 
-      <View style={styles.formGroup}>
-        <Text style={styles.label}>Measured By</Text>
-        <View style={styles.radioGroup}>
-          {['Associate', 'Coordinator'].map((option) => (
-            <TouchableOpacity
-              key={option}
-              style={styles.radioOption}
-              onPress={() => handleChange('measuredBy', option)}
-            >
-              <View style={styles.radioOuter}>
-                {formData.measuredBy === option && <View style={styles.radioInner} />}
-              </View>
-              <Text style={styles.radioLabel}>{option}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+      <Text style={styles.label}>Passbook File:</Text>
+      <View style={styles.uploadGroup}>
+        <TouchableOpacity
+          style={styles.uploadBox}
+          onPress={() => handleFilePick('pf_passbook')}
+        >
+          <Ionicons
+            name={files['pf_passbook'] ? 'document-attach' : 'cloud-upload-outline'}
+            size={width * 0.05}
+            color="#0B8B42"
+          />
+          <Text style={styles.uploadLabel}>Upload Passbook</Text>
+          <Text style={styles.uploadStatus}>
+            {files['pf_passbook'] ? `Uploaded: ${files['pf_passbook'].name}` : 'Tap to Upload'}
+          </Text>
+        </TouchableOpacity>
       </View>
 
-      <TouchableOpacity
-        style={styles.submitButton}
-        onPress={() => {
-          router.push('/dashboard');
-        }}
-      >
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -184,7 +222,6 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F3F6F4',
     paddingVertical: height * 0.02,
     marginBottom: height * 0.02,
   },
@@ -192,15 +229,16 @@ const styles = StyleSheet.create({
     fontSize: width * 0.06,
     fontWeight: 'bold',
     color: '#0B8B42',
-    marginLeft: 10,
+    marginLeft: width * 0.025,
   },
   formGroup: {
     marginBottom: height * 0.02,
   },
   label: {
-    fontSize: width * 0.04,
-    marginBottom: 5,
+    fontSize: width * 0.035,
+    marginVertical: height * 0.01,
     color: '#333',
+    fontWeight: '600',
   },
   input: {
     borderWidth: 1,
@@ -212,18 +250,6 @@ const styles = StyleSheet.create({
     color: '#333',
     fontSize: width * 0.035,
     height: height * 0.06,
-  },
-  inputEditable: {
-    borderWidth: 1,
-    borderColor: '#A5D6A7',
-    borderRadius: width * 0.02,
-    paddingHorizontal: width * 0.03,
-    paddingVertical: height * 0.012,
-    backgroundColor: '#E8F5E9',
-    color: '#333',
-    fontSize: width * 0.035,
-    height: height * 0.06,
-    flex: 1,
   },
   submitButton: {
     marginTop: height * 0.03,
@@ -237,37 +263,34 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
   },
-  radioGroup: {
+  uploadGroup: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginTop: 5,
+    justifyContent: 'space-between',
   },
-  radioOption: {
-    flexDirection: 'row',
+  uploadBox: {
+    width: '48%',
+    borderWidth: 1,
+    borderColor: '#A5D6A7',
+    borderRadius: width * 0.025,
+    padding: width * 0.03,
+    marginBottom: height * 0.02,
+    backgroundColor: '#E8F5E9',
     alignItems: 'center',
-    marginRight: 15,
-    marginBottom: 10,
   },
-  radioOuter: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#0B8B42',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  radioInner: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#0B8B42',
-  },
-  radioLabel: {
-    marginLeft: 5,
+  uploadLabel: {
     fontSize: width * 0.035,
+    fontWeight: '600',
+    marginTop: height * 0.01,
     color: '#333',
+    textAlign: 'center',
+  },
+  uploadStatus: {
+    fontSize: width * 0.03,
+    color: '#777',
+    marginTop: height * 0.005,
+    textAlign: 'center',
   },
 });
 
-export default BasicDetailsForm;
+export default PostFundBasicDetailsForm;

@@ -1,16 +1,22 @@
 import { useFormStore } from '@/storage/useFormStore';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import { Buffer } from 'buffer';
+import Constants from 'expo-constants';
+import * as Crypto from 'expo-crypto';
+import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  Dimensions,
+  Alert, Dimensions,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -19,6 +25,8 @@ const BasicDetailsForm = () => {
   const navigation = useNavigation();
   const { id } = useLocalSearchParams();
   const { submittedForms, data } = useFormStore();
+const [files, setFiles] = useState({});
+const url = Constants.expoConfig.extra.API_URL; // Place after `const { width, height }`
 
   const selectedForm = useMemo(() => {
     const matched = submittedForms.find(
@@ -30,6 +38,7 @@ const BasicDetailsForm = () => {
   const basicDetails = selectedForm?.basicDetails || {};
   const landOwnership = selectedForm?.landOwnership || {};
   const landDevelopment = selectedForm?.landDevelopment || {};
+  const bankDetails=selectedForm?.bankDetails||{};
 
   const [formData, setFormData] = useState({
     name: basicDetails.name || '',
@@ -40,11 +49,11 @@ const BasicDetailsForm = () => {
     revenueVillage: landOwnership.revenueVillage || '',
     block: basicDetails.block || '',
     district: basicDetails.district || '',
-    totalArea: landOwnership.totalArea || '',
+    totalArea: landOwnership.totalArea || 'null',
     pradanContribution: landDevelopment.pradanContribution || '',
     farmerContribution: landDevelopment.farmerContribution || '',
-    totalAmount: '',
-    measuredBy: '',
+    // totalAmount: '',
+    // measuredBy: '',
   });
 
   const [isEditable, setIsEditable] = useState(true);
@@ -66,6 +75,101 @@ const BasicDetailsForm = () => {
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
   };
+const handleFilePick = async (key) => {
+  try {
+    const result = await DocumentPicker.getDocumentAsync({ type: '*/*' });
+    if (!result.canceled) {
+      setFiles((prev) => ({ ...prev, [key]: result.assets[0] }));
+    }
+  } catch (err) {
+    console.error("File selection error:", err);
+  }
+};
+
+const handleSubmit = async () => {
+  try {
+    const plantationTypes = plantations.map((item) => item.type.trim()).filter(Boolean).join(',');
+    const plantationNumbers = plantations.map((item) => item.number).join(',');
+    const plantationPrices = plantations.map((item) => item.price).join(',');
+
+    const updatedForm = {
+      form_id: basicDetails.form_id || id,
+      ...selectedForm,
+      landOwnership: {
+        ...selectedForm.landOwnership,
+        totalArea: formData.totalArea,
+      },
+      landDevelopment: {
+        ...selectedForm.landDevelopment,
+        pradanContribution: formData.pradanContribution,
+        farmerContribution: formData.farmerContribution,
+        totalEstimate: formData.totalAmount,
+      },
+      bankDetails: {
+        ...selectedForm.bankDetails,
+        pf_passbook: { ...selectedForm.bankDetails?.pf_passbook || {} },
+      },
+      plantations: {
+        plantationTypes,
+        plantationNumbers,
+        plantationPrices,
+        otherExpenses,
+      totalExpenses: totalExpenses.toFixed(2),
+      },
+      
+    };
+
+    const file = files['pf_passbook'];
+    if (file) {
+      const ext = file.name?.split('.').pop();
+      const mimeMap = {
+        pdf: 'application/pdf',
+        jpg: 'image/jpeg',
+        png: 'image/png',
+        jpeg: 'image/jpeg',
+      };
+      const mimeType = mimeMap[ext] || 'application/octet-stream';
+
+      const randomBytes = await Crypto.getRandomBytesAsync(16);
+      const secureName = [...randomBytes].map((b) => b.toString(16).padStart(2, '0')).join('') + `.${ext}`;
+
+      const fileData = await FileSystem.readAsStringAsync(file.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      const buffer = Buffer.from(fileData, 'base64');
+
+      
+      const uploadURL = await axios.get(`${url}/api/files/getUploadurl`, {
+        params: { fileName: secureName },
+      });
+
+   
+      await axios.put(uploadURL.data, buffer, {
+        headers: {
+          'Content-Type': mimeType,
+        },
+      });
+
+    
+      updatedForm.bankDetails.pf_passbook = {
+        uri: file.uri,
+        name: file.name,
+        name2: secureName,
+      };
+    }
+
+  
+    await axios.put(`${url}/api/formData/updatepf_plantationformData`, updatedForm);
+
+    Alert.alert('Success', 'Form updated successfully!');
+    router.push('/dashboard');
+  } catch (error) {
+    console.error('Upload or submit error:', error);
+    Alert.alert('Error', 'Failed to update form: ' + error.message);
+  }
+};
+
 
   const handlePlantationChange = (index, field, value) => {
     const updated = [...plantations];
@@ -207,30 +311,30 @@ const BasicDetailsForm = () => {
         </View>
       </View>
 
-      <View style={styles.formGroup}>
-        <Text style={styles.label}>Measured By</Text>
-        <View style={styles.radioGroup}>
-          {['Associate', 'Coordinator'].map((option) => (
-            <TouchableOpacity
-              key={option}
-              style={styles.radioOption}
-              onPress={() => handleChange('measuredBy', option)}
-            >
-              <View style={styles.radioOuter}>
-                {formData.measuredBy === option && <View style={styles.radioInner} />}
-              </View>
-              <Text style={styles.radioLabel}>{option}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
+<Text style={styles.label}>Upload Document:</Text>
+<View style={styles.uploadGroup}>
+  <TouchableOpacity style={styles.uploadBox} onPress={() => handleFilePick('pf_passbook')}>
+    <Ionicons
+      name={files['pf_passbook'] ? 'document-attach' : 'cloud-upload-outline'}
+      size={width * 0.05}
+      color="#0B8B42"
+    />
+    <Text style={styles.uploadLabel}>Upload File</Text>
+    <Text style={styles.uploadStatus}>
+      {files['pf_passbook'] ? `Selected: ${files['pf_passbook'].name}` : 'Tap to Upload'}
+    </Text>
+  </TouchableOpacity>
+</View>
 
-      <TouchableOpacity
-        style={styles.submitButton}
-        onPress={() => router.push('/dashboard')}
-      >
-        <Text style={styles.submitButtonText}>Submit</Text>
-      </TouchableOpacity>
+
+
+     <TouchableOpacity
+  style={styles.submitButton}
+  onPress={handleSubmit}
+>
+  <Text style={styles.submitButtonText}>Submit</Text>
+</TouchableOpacity>
+
     </ScrollView>
   );
 };
@@ -271,6 +375,35 @@ const styles = StyleSheet.create({
     backgroundColor: '#E8F5E9',
     fontSize: width * 0.04,
   },
+  uploadGroup: {
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  justifyContent: 'space-between',
+},
+uploadBox: {
+  width: '48%',
+  borderWidth: 1,
+  borderColor: '#A5D6A7',
+  borderRadius: width * 0.025,
+  padding: width * 0.03,
+  marginBottom: height * 0.02,
+  backgroundColor: '#E8F5E9',
+  alignItems: 'center',
+},
+uploadLabel: {
+  fontSize: width * 0.035,
+  fontWeight: '600',
+  marginTop: height * 0.01,
+  color: '#333',
+  textAlign: 'center',
+},
+uploadStatus: {
+  fontSize: width * 0.03,
+  color: '#777',
+  marginTop: height * 0.005,
+  textAlign: 'center',
+},
+
   inputEditable: {
     borderWidth: 1,
     borderColor: '#A5D6A7',
@@ -326,6 +459,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   submitButtonText: {
+    paddingLeft: 170,
     color: '#fff',
     fontSize: width * 0.05,
     fontWeight: 'bold',

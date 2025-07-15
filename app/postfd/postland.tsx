@@ -43,7 +43,7 @@ const PostlLndForm = () => {
     form_id: basicDetails.form_id || '',
     name: basicDetails.name || '',
     fatherSpouse: basicDetails.fatherSpouse || '',
-    code: basicDetails.idCardNumber || '',
+    code: basicDetails.idCardNumber || '12345678',
     hamlet: basicDetails.hamlet || '',
     panchayat: basicDetails.panchayat || '',
     revenueVillage: landOwnership.revenueVillage || '',
@@ -86,7 +86,6 @@ const PostlLndForm = () => {
           pf_passbook: { ...selectedForm.bankDetails?.pf_passbook || {} },
         },
       };
-
       const file = files['pf_passbook'];
       if (file) {
         const ext = file.name?.split('.').pop();

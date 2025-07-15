@@ -109,15 +109,12 @@ const handleCardPress = async (item) => {
   else return alert("Unknown form type.");
     resetData();
   try {
-     
-    const response = await axios.get(`${url}/api/formData/getpf_landformData`, {
+     let fetchedData;
+   if(item.form_type == 1){
+     const response = await axios.get(`${url}/api/formData/getpf_landformData`, {
       params: { form_id: item.id, form_type: item.form_type }
     });
-
-    const fetchedData = response.data;
-
-  
-    // Set all keys of fetchedData into the form store using setData
+    fetchedData = response.data;
       setData("basicDetails", {
    
   name: fetchedData.farmer_name,
@@ -135,19 +132,109 @@ const handleCardPress = async (item) => {
 setData("landOwnership", {
   revenueVillage: fetchedData.revenue,
   totalArea: fetchedData.total_area,
+
 });
 
 setData("landDevelopment", {
+ 
   pradanContribution: fetchedData.p_contribution,
   farmerContribution: fetchedData.f_contribution,
 });
 
 setData("bankDetails", {
-  submittedFiles: {
+  //  submittedFiles: {
     pf_passbook: item.passbook_postfunding || null,
-  },
+  // },
   measuredBy: item.verified_by,
 });
+   }
+   else if(item.form_type == 2){
+ const response = await axios.get(`${url}/api/formData/getpf_pondformData`, {
+      params: { form_id: item.id, form_type: item.form_type }
+    });
+    fetchedData = response.data;
+       setData("basicDetails", {
+   
+  name: fetchedData.farmer_name,
+  fatherSpouse: fetchedData.spouse,
+  form_id:fetchedData.form_id,
+  // use idCardNumber storage for m  code;
+  idCardNumber: fetchedData.mcode,
+  hamlet: fetchedData.hamlet,
+  panchayat: fetchedData.panchayat,
+  block: fetchedData.block,
+  district: fetchedData.district,
+  measuredBy:user.username,
+});
+
+setData("landOwnership", {
+
+  revenueVillage: fetchedData.revenue,
+
+});
+
+setData("landDevelopment", {
+  length:fetchedData.length,
+  breadth:fetchedData.breadth,
+  depth:fetchedData.depth,
+  volume: fetchedData.volume,
+  pradanContribution: fetchedData.p_contribution,
+  farmerContribution: fetchedData.f_contribution,
+});
+
+setData("bankDetails", {
+
+    // submittedFiles: {
+    pf_passbook: item.passbook_postfunding || null,
+  // },
+  measuredBy: item.verified_by,
+});
+   }
+   else if(item.form_type == 3){
+ const response = await axios.get(`${url}/api/formData/getpf_plantationformData`, {
+      params: { form_id: item.id, form_type: item.form_type }
+      
+    });
+    fetchedData = response.data;
+        setData("basicDetails", {
+   
+  name: fetchedData.farmer_name,
+  fatherSpouse: fetchedData.spouse,
+  form_id:fetchedData.form_id,
+  // use idCardNumber storage for m  code;
+  idCardNumber: fetchedData.mcode,
+  hamlet: fetchedData.hamlet,
+  panchayat: fetchedData.panchayat,
+  block: fetchedData.block,
+  district: fetchedData.district,
+  measuredBy:user.username,
+});
+
+setData("landOwnership", {
+  revenueVillage: fetchedData.revenue,
+  totalArea: fetchedData.total_area,
+
+});
+
+setData("landDevelopment", {
+ 
+  pradanContribution: fetchedData.p_contribution,
+  farmerContribution: fetchedData.f_contribution,
+});
+
+setData("bankDetails", {
+    // submittedFiles: {
+    pf_passbook: item.passbook_postfunding || null,
+  // },
+  measuredBy: item.verified_by,
+});
+   }
+
+    
+
+  console.log(fetchedData);
+    // Set all keys of fetchedData into the form store using setData
+   
  
 
   router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/postfd/totalsubmit" } });
