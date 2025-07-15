@@ -37,6 +37,7 @@ export default function BankDetails() {
         bankPassbook: null,
         geoTag: null,
       },
+      pf_passbook:"",
     }
   );
 

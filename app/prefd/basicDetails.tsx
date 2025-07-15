@@ -43,6 +43,7 @@ const {user} = useUserStore();
       specialCategory: "",//no
       specialCategoryNumber: "0",//cd
       caste: "",
+        // measuredBy: "",
       houseOwnership: "",//cd
       houseType: "",//cd
       drinkingWater: [],//no
@@ -55,7 +56,8 @@ const {user} = useUserStore();
       occupationCombined:"",//cd
       drinkingWaterCombined:[],//cd
       potabilityCombined:[],//cd
-      domesticWaterCombined:[],//cd    
+      domesticWaterCombined:[],//cd 
+      
       }
   );
   

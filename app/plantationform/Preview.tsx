@@ -15,7 +15,15 @@ const { width, height } = Dimensions.get('window');
 const scaleFont = size => size * (width / 375);
 export default function   Preview() {
   const router = useRouter();
-  const { id,fromsubmit,returnsubmit,fromPreview} = useLocalSearchParams<{ id?: string , returnsubmit?: string,fromsubmit?: string, fromPreview?:string;}>();
+const { id, fromsubmit, returnsubmit, fromPreview, fromdraft } = useLocalSearchParams<{
+  id?: string;
+  returnsubmit?: string;
+  fromsubmit?: string;
+  fromPreview?: string;
+  fromdraft?: string;
+}>();
+
+
   const { data, submittedForms, resetData,setData, submitForm,setNestedData,set2NestedData } = useFormStore();//draftForms,
   const {drafts,saveDraft} = useDraftStore();
 const isSubmittedPreview = !!id;
@@ -141,8 +149,7 @@ for (const key of Object.keys(files)) {
   await new Promise((resolve) => setTimeout(resolve, 50));
   await axios.put(`${url}/api/formData/updatePlantationformData`, data);
 }
-      if (fromdraft === "true") {
-  // console.log("Deleting draft with ID:", data.id);
+if (fromdraft === "true") {
   if (data.id) {
     await useDraftStore.getState().deleteDraft(data.id);
   }

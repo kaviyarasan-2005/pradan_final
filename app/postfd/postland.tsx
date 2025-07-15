@@ -1,20 +1,28 @@
 import { useFormStore } from '@/storage/useFormStore';
 import { Ionicons } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
+import axios from "axios";
+import { Buffer } from "buffer";
+import Constants from "expo-constants";
+import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from "expo-file-system";
 import { router, useLocalSearchParams } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Dimensions,
+  Alert, Dimensions,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
-} from 'react-native';
+  View
+} from "react-native";
+
+const url = Constants.expoConfig.extra.API_URL;
 
 const { width, height } = Dimensions.get('window');
-const BasicDetailsForm = () => {
+
+const PostlLndForm = () => {
   const route = useRoute();
   const { id } = useLocalSearchParams() || {};
   const { data, submittedForms } = useFormStore();
@@ -26,34 +34,117 @@ const BasicDetailsForm = () => {
     return matched || data;
   }, [id, submittedForms, data]);
 
-  // Create fallbacks even if selectedForm is undefined
   const basicDetails = selectedForm?.basicDetails || {};
   const landOwnership = selectedForm?.landOwnership || {};
   const landDevelopment = selectedForm?.landDevelopment || {};
   const bankDetails = selectedForm?.bankDetails || {};
 
-  const formData = {
-    name: basicDetails.name || '',
-    fatherSpouse: basicDetails.fatherSpouse || '',
-    code: basicDetails.idCardNumber || '',
-    hamlet: basicDetails.hamlet || '',
-    panchayat: basicDetails.panchayat || '',
-    revenueVillage: landOwnership.revenueVillage || '',
-    block: basicDetails.block || '',
-    district: basicDetails.district || '',
-    totalArea: landOwnership.totalArea || '',
-    pradanContribution: landDevelopment.pradanContribution || '',
-    farmerContribution: landDevelopment.farmerContribution || '',
-  };
+const [formData, setFormData] = useState({
+  name: basicDetails.name || '',
+  fatherSpouse: basicDetails.fatherSpouse || '',
+  code: basicDetails.idCardNumber || '',
+  hamlet: basicDetails.hamlet || '',
+  panchayat: basicDetails.panchayat || '',
+  revenueVillage: landOwnership.revenueVillage || '',
+  block: basicDetails.block || '',
+  district: basicDetails.district || '',
+  totalArea: landOwnership.totalArea || '',
+  pradanContribution: landDevelopment.pradanContribution || '',
+  farmerContribution: landDevelopment.farmerContribution || '',
+  pf_passbook: bankDetails?.submittedFiles?.pf_passbook || null,
+});
 
+   useEffect(() => {
+      const totalAmount = (parseFloat(formData.pradanContribution || 0) +parseFloat(formData.farmerContribution || 0)).toFixed(2);
+      setFormData((prev) => ({ ...prev, totalAmount }));
+    }, [formData.pradanContribution, formData.farmerContribution]);
   const [measuredBy, setMeasuredBy] = React.useState(
     bankDetails.measuredBy || 'Associate'
   );
   const [isEditable] = React.useState(false);
+  const [files, setFiles] = React.useState({});
+const handleSubmit = async () => {
+  try {
+    const updatedForm = {
+      ...selectedForm,
+      landOwnership: {
+        ...selectedForm.landOwnership,
+        totalArea: formData.totalArea,
+      },
+      landDevelopment: {
+        ...selectedForm.landDevelopment,
+        pradanContribution: formData.pradanContribution,
+        farmerContribution: formData.farmerContribution,
+        totalEstimate: formData.totalAmount,
+      },
+      bankDetails: {
+        ...selectedForm.bankDetails,
+        submittedFiles: {
+          ...selectedForm.bankDetails.submittedFiles,
+        },
+      },
+    };
 
-  const handleChange = () => {};
+    // File Upload (if file was picked)
+    if (files['paymentProof']) {
+      const file = files['paymentProof'];
+      const ext = file.name?.split('.').pop();
+      const mimeMap = {
+        pdf: "application/pdf",
+      
+      };
+      const mimeType = mimeMap[ext] || "application/octet-stream";
 
-  // Early return now only uses variables, not hooks
+      // Get presigned URL from server
+      const uploadURL = await axios.get(`${url}/api/files/getUploadurl`, {
+        params: { fileName: file.name },
+      });
+
+      const fileData = await FileSystem.readAsStringAsync(file.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      const buffer = Buffer.from(fileData, "base64");
+
+      await axios.put(uploadURL.data, buffer, {
+        headers: { "Content-Type": mimeType },
+      });
+
+      // Save file reference in submittedFiles
+      updatedForm.bankDetails.submittedFiles["paymentProof"] = {
+        uri: file.uri,
+        name: file.name,
+        name2: file.name,
+      };
+    }
+
+    // Update to server
+    await axios.put(`${url}/api/formData/updatepf_landformData`, updatedForm);
+
+    Alert.alert("Success", "Form updated successfully!");
+    router.push("/dashboard");
+  } catch (error) {
+    Alert.alert("Error", "Failed to update form: " + error.message);
+  }
+};
+const handleChange = (field: string, value: string) => {
+  setFormData((prev) => ({
+    ...prev,
+    [field]: value,
+  }));
+};
+
+  const handleFilePick = async (key) => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({ type: '*/*' });
+      if (!result.canceled) {
+        setFiles((prev) => ({ ...prev, [key]: result.assets[0] }));
+      }
+    } catch (error) {
+      console.error('File pick error:', error);
+    }
+  };
+
   if (!selectedForm || !selectedForm.basicDetails) {
     return (
       <View style={styles.container}>
@@ -63,6 +154,7 @@ const BasicDetailsForm = () => {
       </View>
     );
   }
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerContainer}>
@@ -98,49 +190,50 @@ const BasicDetailsForm = () => {
         { label: 'Total Area', field: 'totalArea' },
         { label: 'Pradan Contribution', field: 'pradanContribution' },
         { label: 'Farmer Contribution', field: 'farmerContribution' },
+        { label: 'Total Amount', field: 'totalAmount', editable: false },
       ].map((item, index) => (
         <View style={styles.formGroup} key={index}>
           <Text style={styles.label}>{item.label}</Text>
           <View style={styles.editableContainer}>
             <TextInput
               style={styles.inputEditable}
+             keyboardType="numeric"
               value={formData[item.field]}
-              // editable={isEditable}
               onChangeText={(text) => handleChange(item.field, text)}
             />
           </View>
         </View>
       ))}
 
-      <View style={styles.formGroup}>
-        <Text style={styles.label}>Measured By</Text>
-        <View style={styles.radioGroup}>
-          {['Associate', 'Coordinator'].map((option) => (
-            <TouchableOpacity
-              key={option}
-              style={styles.radioOption}
-              onPress={() => setMeasuredBy(option)}
-            >
-              <View style={styles.radioOuter}>
-                {measuredBy === option && <View style={styles.radioInner} />}
-              </View>
-              <Text style={styles.radioLabel}>{option}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+      {/* Upload document */}
+      <Text style={styles.label}>File submitted:</Text>
+      <View style={styles.uploadGroup}>
+        <TouchableOpacity
+          style={styles.uploadBox}
+          onPress={() => handleFilePick('paymentProof')}
+        >
+          <Ionicons
+            name={files['paymentProof'] ? 'document-attach' : 'cloud-upload-outline'}
+            size={width * 0.05}
+            color="#0B8B42"
+          />
+          <Text style={styles.uploadLabel}>Payment Received Proof</Text>
+          <Text style={styles.uploadStatus}>
+            {files['paymentProof'] ? 'Uploaded' : 'Tap to Upload'}
+          </Text>
+        </TouchableOpacity>
       </View>
 
-      <TouchableOpacity
-        style={styles.submitButton}
-        onPress={() => router.push('/dashboard')}
-      >
-        <Text style={styles.submitButtonText}>Submit</Text>
-      </TouchableOpacity>
+     <TouchableOpacity
+  style={styles.submitButton}
+  onPress={handleSubmit}
+>
+  <Text style={styles.submitButtonText}>Submit</Text>
+</TouchableOpacity>
+
     </ScrollView>
   );
 };
-
-
 const styles = StyleSheet.create({
   container: {
     padding: width * 0.05,
@@ -238,6 +331,34 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
   },
+  uploadGroup: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  uploadBox: {
+    width: '48%',
+    borderWidth: 1,
+    borderColor: '#A5D6A7',
+    borderRadius: width * 0.025,
+    padding: width * 0.03,
+    marginBottom: height * 0.02,
+    backgroundColor: '#E8F5E9',
+    alignItems: 'center',
+  },
+  uploadLabel: {
+    fontSize: width * 0.035,
+    fontWeight: '600',
+    marginTop: height * 0.01,
+    color: '#333',
+    textAlign: 'center',
+  },
+  uploadStatus: {
+    fontSize: width * 0.03,
+    color: '#777',
+    marginTop: height * 0.005,
+    textAlign: 'center',
+  },
 });
 
-export default BasicDetailsForm;
+export default PostlLndForm;

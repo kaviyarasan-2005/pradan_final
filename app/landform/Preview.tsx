@@ -103,11 +103,12 @@ const handleSubmit = async () => {
 
   try {
     setSubmitting(true);
-   if (!id || isNaN(id)) {
+  if (!id || isNaN(Number(id))) {
   // id is undefined, null, 0, or not a number → perform POST
 const files = selectedForm.bankDetails?.submittedFiles;
 
 for (const key of Object.keys(files)) {
+
    const file = files[key];
       const ext:string = file.name?.split('.').pop();
 
@@ -125,7 +126,8 @@ for (const key of Object.keys(files)) {
       encoding: FileSystem.EncodingType.Base64,
     });
     const buffer = Buffer.from(fileData, 'base64');
- 
+  console.log("Buffer: data", buffer.BYTES_PER_ELEMENT);
+  
     try {
       const response = await axios.put(uploadURL.data, buffer, {
         headers: {
@@ -142,6 +144,7 @@ for (const key of Object.keys(files)) {
   await axios.post(`${url}/api/formData/postLandformData`, data);
 
 } else {
+
   // id exists and is a number → perform PUT
   await new Promise((resolve) => setTimeout(resolve, 50));
   await axios.put(`${url}/api/formData/updateLandformData`, data);
