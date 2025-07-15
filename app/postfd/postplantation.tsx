@@ -235,7 +235,6 @@ const BasicDetailsForm = () => {
   );
 };
 
-
 const styles = StyleSheet.create({
   container: {
     padding: width * 0.05,
