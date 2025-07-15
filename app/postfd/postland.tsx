@@ -4,6 +4,7 @@ import { useRoute } from '@react-navigation/native';
 import axios from "axios";
 import { Buffer } from "buffer";
 import Constants from "expo-constants";
+import * as Crypto from 'expo-crypto';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from "expo-file-system";
 import { router, useLocalSearchParams } from 'expo-router';
@@ -18,9 +19,7 @@ import {
   View
 } from "react-native";
 
-
 const url = Constants.expoConfig.extra.API_URL;
-
 const { width, height } = Dimensions.get('window');
 
 const PostlLndForm = () => {
@@ -40,103 +39,97 @@ const PostlLndForm = () => {
   const landDevelopment = selectedForm?.landDevelopment || {};
   const bankDetails = selectedForm?.bankDetails || {};
 
-const [formData, setFormData] = useState({
-  form_id: basicDetails.form_id || '',
-  name: basicDetails.name || '',
-  fatherSpouse: basicDetails.fatherSpouse || '',
-  code: basicDetails.idCardNumber || '',
-  hamlet: basicDetails.hamlet || '',
-  panchayat: basicDetails.panchayat || '',
-  revenueVillage: landOwnership.revenueVillage || '',
-  block: basicDetails.block || '',
-  district: basicDetails.district || '',
-  totalArea: landOwnership.totalArea || '',
-  pradanContribution: landDevelopment.pradanContribution || '',
-  farmerContribution: landDevelopment.farmerContribution || '',
-  pf_passbook: bankDetails?.pf_passbook || null,
-});
-   useEffect(() => {
-    console.log('selectedForm:', selectedForm);
-  console.log('basicDetails:', basicDetails);
-      const totalAmount = (parseFloat(formData.pradanContribution || 0) +parseFloat(formData.farmerContribution || 0)).toFixed(2);
-      setFormData((prev) => ({ ...prev, totalAmount }));
-    }, [formData.pradanContribution, formData.farmerContribution]);
-  const [measuredBy, setMeasuredBy] = React.useState(
-    bankDetails.measuredBy || 'Associate'
-  );
-  const [isEditable] = React.useState(false);
+  const [formData, setFormData] = useState({
+    form_id: basicDetails.form_id || '',
+    name: basicDetails.name || '',
+    fatherSpouse: basicDetails.fatherSpouse || '',
+    code: basicDetails.idCardNumber || '',
+    hamlet: basicDetails.hamlet || '',
+    panchayat: basicDetails.panchayat || '',
+    revenueVillage: landOwnership.revenueVillage || '',
+    block: basicDetails.block || '',
+    district: basicDetails.district || '',
+    totalArea: landOwnership.totalArea || '',
+    pradanContribution: landDevelopment.pradanContribution || '',
+    farmerContribution: landDevelopment.farmerContribution || '',
+    pf_passbook: bankDetails?.pf_passbook,
+  });
+
+  useEffect(() => {
+    console.log(selectedForm);
+    const totalAmount = (
+      parseFloat(formData.pradanContribution || 0) +
+      parseFloat(formData.farmerContribution || 0)
+    ).toFixed(2);
+    setFormData((prev) => ({ ...prev, totalAmount }));
+  }, [formData.pradanContribution, formData.farmerContribution]);
+
   const [files, setFiles] = React.useState({});
-const handleSubmit = async () => {
-  try {
-    const updatedForm = {
-      ...selectedForm,
-      landOwnership: {
-        ...selectedForm.landOwnership,
-        totalArea: formData.totalArea,
-      },
-      landDevelopment: {
-        ...selectedForm.landDevelopment,
-        pradanContribution: formData.pradanContribution,
-        farmerContribution: formData.farmerContribution,
-        totalEstimate: formData.totalAmount,
-      },
-      bankDetails: {
-        ...selectedForm.bankDetails,
-        submittedFiles: {
-          ...selectedForm.bankDetails.pf_passbook,
+
+  const handleSubmit = async () => {
+    try {
+      const updatedForm = {
+         form_id: formData.form_id,
+        ...selectedForm,
+        landOwnership: {
+          ...selectedForm.landOwnership,
+          totalArea: formData.totalArea,
         },
-      },
-    };
-
-    // File Upload (if file was picked)
-    if (files['paymentProof']) {
-      const file = files['paymentProof'];
-      const ext = file.name?.split('.').pop();
-      const mimeMap = {
-        pdf: "application/pdf",
-      
+        landDevelopment: {
+          ...selectedForm.landDevelopment,
+          pradanContribution: formData.pradanContribution,
+          farmerContribution: formData.farmerContribution,
+          totalEstimate: formData.totalAmount,
+        },
+        bankDetails: {
+          ...selectedForm.bankDetails,
+          pf_passbook: { ...selectedForm.bankDetails?.pf_passbook || {} },
+        },
       };
-      const mimeType = mimeMap[ext] || "application/octet-stream";
 
-      // Get presigned URL from server
-      const uploadURL = await axios.get(`${url}/api/files/getUploadurl`, {
-        params: { fileName: file.name },
-      });
+      const file = files['pf_passbook'];
+      if (file) {
+        const ext = file.name?.split('.').pop();
+        const mimeMap = { pdf: "application/pdf" };
+        const mimeType = mimeMap[ext] || "application/octet-stream";
 
-      const fileData = await FileSystem.readAsStringAsync(file.uri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
+        const randomBytes = await Crypto.getRandomBytesAsync(16);
+        const secureName =
+          [...randomBytes].map((b) => b.toString(16).padStart(2, "0")).join("") + `.${ext}`;
 
-      const buffer = Buffer.from(fileData, "base64");
+        const fileData = await FileSystem.readAsStringAsync(file.uri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
 
-      await axios.put(uploadURL.data, buffer, {
-        headers: { "Content-Type": mimeType },
-      });
+        const buffer = Buffer.from(fileData, "base64");
 
-      // Save file reference in submittedFiles
-      updatedForm.bankDetails.submittedFiles["paymentProof"] = {
-        uri: file.uri,
-        name: file.name,
-        name2: file.name,
-      };
+        const uploadURL = await axios.get(`${url}/api/files/getUploadurl`, {
+          params: { fileName: secureName },
+        });
+
+        await axios.put(uploadURL.data, buffer, {
+          headers: { "Content-Type": mimeType },
+        });
+
+        updatedForm.bankDetails.pf_passbook = {
+          uri: file.uri,
+          name: file.name,
+          name2: secureName,
+        };
+      }
+
+      await axios.put(`${url}/api/formData/updatepf_landformData`, updatedForm);
+
+      Alert.alert("Success", "Form updated successfully!");
+      router.push("/dashboard");
+    } catch (error) {
+      Alert.alert("Error", "Failed to update form: " + error.message);
     }
+  };
 
-    // Update to server
-    await axios.put(`${url}/api/formData/updatepf_landformData`, updatedForm);
-
-    Alert.alert("Success", "Form updated successfully!");
-    router.push("/dashboard");
-  } catch (error) {
-    Alert.alert("Error", "Failed to update form: " + error.message);
-  }
-};
-const handleChange = (field: string, value: string) => {
- 
-  setFormData((prev) => ({
-    ...prev,
-    [field]: value,
-  }));
-};
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleFilePick = async (key) => {
     try {
@@ -152,9 +145,7 @@ const handleChange = (field: string, value: string) => {
   if (!selectedForm || !selectedForm.basicDetails) {
     return (
       <View style={styles.container}>
-        <Text style={{ textAlign: 'center', color: 'red' }}>
-          Form not found!
-        </Text>
+        <Text style={{ textAlign: 'center', color: 'red' }}>Form not found!</Text>
       </View>
     );
   }
@@ -168,76 +159,57 @@ const handleChange = (field: string, value: string) => {
         <Text style={styles.header}>Post Fund Land Inspection</Text>
       </View>
 
-      {/* Non-editable fields */}
-      {[
-        { label: 'Name of Farmer', field: 'name' },
-        { label: 'Father/Spouse', field: 'fatherSpouse' },
-        { label: 'Code', field: 'code' },
-        { label: 'Hamlet', field: 'hamlet' },
-        { label: 'Panchayat', field: 'panchayat' },
-        { label: 'Revenue Village', field: 'revenueVillage' },
-        { label: 'Block', field: 'block' },
-        { label: 'District', field: 'district' },
-      ].map((item, index) => (
+      {["name", "fatherSpouse", "code", "hamlet", "panchayat", "revenueVillage", "block", "district"].map((field, index) => (
         <View style={styles.formGroup} key={index}>
-          <Text style={styles.label}>{item.label}</Text>
+          <Text style={styles.label}>{field.replace(/([A-Z])/g, ' $1')}</Text>
           <TextInput
             style={styles.input}
-            value={formData[item.field]}
+            value={formData[field]}
             editable={false}
           />
         </View>
       ))}
 
-      {/* Editable fields */}
-      {[
-        { label: 'Total Area', field: 'totalArea' },
-        { label: 'Pradan Contribution', field: 'pradanContribution' },
-        { label: 'Farmer Contribution', field: 'farmerContribution' },
-        { label: 'Total Amount', field: 'totalAmount', editable: false },
-      ].map((item, index) => (
+      {["totalArea", "pradanContribution", "farmerContribution", "totalAmount"].map((field, index) => (
         <View style={styles.formGroup} key={index}>
-          <Text style={styles.label}>{item.label}</Text>
+          <Text style={styles.label}>{field.replace(/([A-Z])/g, ' $1')}</Text>
           <View style={styles.editableContainer}>
             <TextInput
               style={styles.inputEditable}
-             keyboardType="numeric"
-              value={formData[item.field]}
-              onChangeText={(text) => handleChange(item.field, text)}
+              keyboardType="numeric"
+              value={formData[field]}
+              onChangeText={(text) => handleChange(field, text)}
+              editable={field !== "totalAmount"}
             />
           </View>
         </View>
       ))}
 
-      {/* Upload document */}
-      <Text style={styles.label}>File submitted:</Text>
+      <Text style={styles.label}>Passbook File:</Text>
       <View style={styles.uploadGroup}>
         <TouchableOpacity
           style={styles.uploadBox}
-          onPress={() => handleFilePick('paymentProof')}
+          onPress={() => handleFilePick('pf_passbook')}
         >
           <Ionicons
-            name={files['paymentProof'] ? 'document-attach' : 'cloud-upload-outline'}
+            name={files['pf_passbook'] ? 'document-attach' : 'cloud-upload-outline'}
             size={width * 0.05}
             color="#0B8B42"
           />
-          <Text style={styles.uploadLabel}>Payment Received Proof</Text>
+          <Text style={styles.uploadLabel}>Passbook File</Text>
           <Text style={styles.uploadStatus}>
-            {files['paymentProof'] ? 'Uploaded' : 'Tap to Upload'}
+            {files['pf_passbook'] ? `Uploaded: ${files['pf_passbook'].name}` : 'Tap to Upload'}
           </Text>
         </TouchableOpacity>
       </View>
 
-     <TouchableOpacity
-  style={styles.submitButton}
-  onPress={handleSubmit}
->
-  <Text style={styles.submitButtonText}>Submit</Text>
-</TouchableOpacity>
-
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <Text style={styles.submitButtonText}>Submit</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     padding: width * 0.05,
@@ -291,37 +263,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-  },
-  radioGroup: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 5,
-  },
-  radioOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: 15,
-    marginBottom: 10,
-  },
-  radioOuter: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#0B8B42',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  radioInner: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#0B8B42',
-  },
-  radioLabel: {
-    marginLeft: 5,
-    fontSize: width * 0.035,
-    color: '#333',
   },
   submitButton: {
     marginTop: height * 0.03,

@@ -69,8 +69,8 @@ const forms = IdFormStore((state) => state.Idforms);
   ]);
 
   useEffect(() => {
-    // resetData();
-    
+    resetData();
+   
     loaddashbdForms();
   }, []);
 
@@ -109,7 +109,7 @@ const handleCardPress = async (item) => {
   else return alert("Unknown form type.");
     resetData();
   try {
-  
+     
     const response = await axios.get(`${url}/api/formData/getpf_landformData`, {
       params: { form_id: item.id, form_type: item.form_type }
     });
@@ -122,6 +122,7 @@ const handleCardPress = async (item) => {
    
   name: fetchedData.farmer_name,
   fatherSpouse: fetchedData.spouse,
+  form_id:fetchedData.form_id,
   // use idCardNumber storage for m  code;
   idCardNumber: fetchedData.mcode,
   hamlet: fetchedData.hamlet,

@@ -26,7 +26,7 @@ const {user} = useUserStore();
     data.basicDetails || {
       name: "",//cd
       age: "",
-      form_id:"",//for post fund
+      // form_id:"",//for post fund
       mobile: "",
       district: "",
       hamlet: "",
