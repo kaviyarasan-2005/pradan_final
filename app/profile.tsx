@@ -1,9 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from '@react-navigation/native';
 import axios from "axios";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
-import { Alert, Dimensions, Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Alert, BackHandler, Dimensions, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import {
   Card,
   Divider,
@@ -18,6 +19,7 @@ const { width, height } = Dimensions.get('window');
 
 export default function Profile() {
 
+
   const scrollRef = useRef(null);
   const router = useRouter();
   const { user, logout } = useUserStore();
@@ -30,6 +32,20 @@ export default function Profile() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  
+useFocusEffect(
+  React.useCallback(() => {
+    const onBackPress = () => {
+      router.push('/dashboard');
+      return true; 
+    };
+
+ const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+return () => backHandler.remove(); 
+
+  }, [])
+);
   const handleChangePassword = async () => {
     const storedPassword = await AsyncStorage.getItem("password");
   

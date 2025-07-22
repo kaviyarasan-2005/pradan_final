@@ -1,4 +1,5 @@
 import { MaterialIcons } from "@expo/vector-icons";
+import { useFocusEffect } from '@react-navigation/native';
 import axios from "axios";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
@@ -6,6 +7,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Animated,
+  BackHandler,
   Dimensions,
   FlatList,
   Image,
@@ -108,6 +110,7 @@ const DashboardScreen: React.FC = () => {
   }
 
   useEffect(() => {
+   console.log("backed");
     // console.log(JSON.stringify(data) + "dash data bf");
     resetData();
     // console.log(JSON.stringify(data) + "dash data  af");
@@ -119,6 +122,21 @@ const DashboardScreen: React.FC = () => {
       resetStatus_totalCount();
     };
   }, [user?.id]);
+
+
+useFocusEffect(
+  React.useCallback(() => {
+    const onBackPress = () => {
+      router.push('/');
+      return true; 
+    };
+
+ const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+return () => backHandler.remove(); 
+
+  }, [])
+);
 
   if ((status_total?.totalCount_pre === 0 && !status_total?.hasfetched_total)) {
     return <ActivityIndicator />;

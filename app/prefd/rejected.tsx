@@ -1,9 +1,11 @@
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { useFocusEffect } from '@react-navigation/native';
 import axios from "axios";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
+import { BackHandler } from 'react-native';
 
 import {
   Dimensions,
@@ -68,6 +70,19 @@ const forms = IdFormStore((state) => state.Idforms);
     resetData();
     loaddashbdForms();
   }, []);
+useFocusEffect(
+  React.useCallback(() => {
+    const onBackPress = () => {
+      router.push('/dashboard');
+      return true; 
+    };
+
+ const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+return () => backHandler.remove(); 
+
+  }, [])
+);
 
   const filteredForms = dashbdforms.filter((item) => {
     const matchesType = formType === "ALL" || String(item.form_type) === formType;

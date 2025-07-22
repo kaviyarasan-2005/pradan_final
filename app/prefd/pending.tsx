@@ -1,19 +1,19 @@
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { useFocusEffect } from '@react-navigation/native';
 import axios from "axios";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-
 import {
-  Dimensions,
+  BackHandler, Dimensions,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View
-} from "react-native";
+} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { DashbdStore } from "../../storage/DashbdStore";
@@ -69,6 +69,21 @@ const forms = IdFormStore((state) => state.Idforms);
     resetData();
     loaddashbdForms();
   }, []);
+
+
+useFocusEffect(
+  React.useCallback(() => {
+    const onBackPress = () => {
+      router.push('/dashboard');
+      return true; 
+    };
+
+ const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+return () => backHandler.remove(); 
+
+  }, [])
+);
 
   const filteredForms = dashbdforms.filter((item) => {
     const matchesType = formType === "ALL" || String(item.form_type) === formType;
