@@ -41,6 +41,78 @@ const selectedForm = React.useMemo(() => {
   return data;
 }, [id, fromsubmit, submittedForms, data]);
 
+const isFormComplete = React.useMemo(() => {
+  if (!selectedForm) return false;
+
+  const bd = selectedForm.basicDetails;
+  const lo = selectedForm.landOwnership;
+  const ld = selectedForm.landDevelopment;
+  const bank = selectedForm.bankDetails;
+
+  return (
+    bd?.name &&
+    bd?.age &&
+    bd?.mobile &&
+    bd?.district &&
+    bd?.block &&
+    bd?.panchayat &&
+    bd?.hamlet &&
+    bd?.idCardNumber &&
+    bd?.gender &&
+    bd?.fatherSpouse &&
+    bd?.householdType &&
+    bd?.adults !== undefined &&
+    bd?.children !== undefined &&
+    bd?.occupation &&
+    bd?.specialCategory !== undefined &&
+    bd?.specialCategoryNumber !== undefined &&
+    bd?.caste &&
+    bd?.houseOwnership &&
+    bd?.houseType &&
+    bd?.drinkingWaterCombined &&
+    bd?.potabilityCombined &&
+    bd?.domesticWaterCombined &&
+    bd?.toiletAvailability &&
+    bd?.toiletCondition &&
+    bd?.education &&
+
+    lo?.landOwnershipType &&
+    lo?.hasWell !== undefined &&
+    lo?.areaIrrigated !== undefined &&
+    lo?.irrigatedLand &&
+    lo?.pattaNumber &&
+    lo?.totalArea &&
+    lo?.taluk &&
+    lo?.firka &&
+    lo?.revenueVillage &&
+    lo?.cropSeasonCombined &&
+    lo?.livestock &&
+
+    ld?.sfNumber &&
+    ld?.latitude &&
+    ld?.longitude &&
+    ld?.soilTypeCombined &&
+    ld?.landBenefit !== undefined &&
+    ld?.date &&
+    ld?.workType &&
+    ld?.proposalArea !== undefined &&
+    ld?.otherWorks !== undefined &&
+    ld?.pradanContribution !== undefined &&
+    ld?.farmerContribution !== undefined &&
+    ld?.totalEstimate !== undefined &&
+
+    bank?.accountHolderName &&
+    bank?.accountNumber &&
+    bank?.bankName &&
+    bank?.branch &&
+    bank?.ifscCode &&
+    bank?.farmerAgreed !== undefined &&
+    bank?.submittedFiles &&
+    Object.keys(bank.submittedFiles).length > 0
+  );
+}, [selectedForm]);
+
+
 const canEdit = () => {
   if (!isSubmittedPreview) return true; // it's a draft
   const status = selectedForm?.bankDetails?.formStatus;
@@ -444,15 +516,18 @@ if (fromdraft === "true") {
     </TouchableOpacity>
 )}
     {/* Submit Button */}
-    <TouchableOpacity
-      style={styles.submitButton}
-      onPress={() => {
-        handleSubmit();
-      }}
-    >
-      <Ionicons name="checkmark-circle-outline" size={width * 0.06} color="#fff" />
-      <Text style={styles.submitText}>Submit</Text>
-    </TouchableOpacity>
+    {isFormComplete && (
+  <TouchableOpacity
+    style={styles.submitButton}
+    onPress={() => {
+      handleSubmit();
+    }}
+  >
+    <Ionicons name="checkmark-circle-outline" size={width * 0.06} color="#fff" />
+    <Text style={styles.submitText}>Submit</Text>
+  </TouchableOpacity>
+)}
+
   </View>
 
   {/* <Button

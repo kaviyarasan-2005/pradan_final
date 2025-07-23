@@ -86,7 +86,7 @@ const forms = IdFormStore((state) => state.Idforms);
 
 return () => backHandler.remove(); 
 
-  }, [])
+},[])
 );
 
   const filteredForms = dashbdforms.filter((item) => {
@@ -247,7 +247,7 @@ setData("bankDetails", {
 
     
 
-  console.log(fetchedData);
+  // console.log(fetchedData);
     // Set all keys of fetchedData into the form store using setData
    
  
