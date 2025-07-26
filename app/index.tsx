@@ -4,7 +4,7 @@ import axios from "axios";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useUserStore } from "../storage/userDatastore";
 
 const url = Constants.expoConfig.extra.API_URL;
@@ -25,35 +25,37 @@ export default function LoginScreen() {
     };
     checkLogin();
   }, []);
+ const fetchUserData = async (username) => {
+  const response = await axios.get(`${url}/api/users/getUserData/${username}`);
+  const userData = response.data;
 
-  const fetchUserData = async (username) => {
-    
-    const response = await axios.get(`${url}/api/users/getUserData/${username}`);
-    setUser(response.data); 
-    setUser({username:response.data.email});// Save the user data in Zustand store
-    //console.log("User data:", user); // Log the response data
-    
-  };
+  setUser({ username: userData.email, role: userData.role }); // Save in Zustand
+  return userData.role; // Return role
+};
+
 
   const handleLogin = async () => {
-     
-    const response = await axios.post(`${url}/api/users/authUser`,{username, password});
-    //console.log(response.data); // Log the response data);
-    
-    if (response.data === 1) { 
-      try {
-        fetchUserData(username); 
-        //await AsyncStorage.setItem("user", u); // Save the login state in AsyncStorage
-        await AsyncStorage.setItem("password", password);
+  try {
+    const response = await axios.post(`${url}/api/users/authUser`, { username, password });
+
+    if (response.data === 1) {
+      const role = await fetchUserData(username); // Await user data with role
+      await AsyncStorage.setItem("password", password); // Save password if needed
+      if (role === "Associate") {
+        router.replace("/Verifier/verifierdashboard")
+      } else if (role === "developer") {
         router.replace("/dashboard");
-        //console.log("User data:", user?.username); 
-      } catch (error) {
-        Alert.alert("Error", "Failed to save login state."); 
-      }
-    } else {
-      Alert.alert("Invalid Credentials", "Please enter valid ID and Password"); //if incorrect, show an alert
-    }
-  };
+  }
+  else{
+    Alert.alert("Role not Match");
+  }
+ }}
+  catch (error) {
+    console.error("Login error:", error);
+    Alert.alert("Login Failed", "Something went wrong.");
+  }
+};
+
   
   return (
     <View style={styles.container}>

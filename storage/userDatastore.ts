@@ -28,6 +28,5 @@ export const useUserStore = create<UserStore>((set) => ({
         ...updatedFields,
       },
     })),
-
   logout: () => set({ user: {} }),
 }));
