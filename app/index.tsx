@@ -4,7 +4,7 @@ import axios from "axios";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from 'react';
-import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useUserStore } from "../storage/userDatastore";
 
 const url = Constants.expoConfig.extra.API_URL;
@@ -25,34 +25,34 @@ export default function LoginScreen() {
     };
     checkLogin();
   }, []);
- const fetchUserData = async (username) => {
+
+  const fetchUserData = async (username) => {
   const response = await axios.get(`${url}/api/users/getUserData/${username}`);
   const userData = response.data;
-
-  setUser({ username: userData.email, role: userData.role }); // Save in Zustand
-  return userData.role; // Return role
+  setUser(userData);
+  setUser({ username: userData.email }); // optional, if used elsewhere
+  return userData.role; // return role here
 };
 
 
-  const handleLogin = async () => {
-  try {
-    const response = await axios.post(`${url}/api/users/authUser`, { username, password });
+const handleLogin = async () => {
+  const response = await axios.post(`${url}/api/users/authUser`, { username, password });
 
-    if (response.data === 1) {
-      const role = await fetchUserData(username); // Await user data with role
-      await AsyncStorage.setItem("password", password); // Save password if needed
-      if (role === "Associate") {
-        router.replace("/Verifier/verifierdashboard")
-      } else if (role === "developer") {
+  if (response.data === 1) {
+    try {
+      const role = await fetchUserData(username);
+      await AsyncStorage.setItem("password", password);
+
+      if (role === "developer") {
         router.replace("/dashboard");
-  }
-  else{
-    Alert.alert("Role not Match");
-  }
- }}
-  catch (error) {
-    console.error("Login error:", error);
-    Alert.alert("Login Failed", "Something went wrong.");
+      } else {
+        router.replace("/Verifier/verifierdashboard");
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to save login state.");
+    }
+  } else {
+    Alert.alert("Invalid Credentials", "Please enter valid ID and Password");
   }
 };
 
