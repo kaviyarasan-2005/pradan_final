@@ -114,7 +114,7 @@ return () => backHandler.remove();
 
 const handleCardPress = async (item) => {
   let previewPath = "";
-
+  console.log(item.id);
   if (item.form_type === 1) previewPath = "/landform/Preview";
   else if (item.form_type === 2) previewPath = "/pondform/Preview";
   else if (item.form_type === 3) previewPath = "/plantationform/Preview";
@@ -133,10 +133,11 @@ const handleCardPress = async (item) => {
     setData("landOwnership", fetchedData.landOwnership);
     setData("landDevelopment", fetchedData.landDevelopment);
     setData("bankDetails", fetchedData.bankDetails);
-       
+        console.log(item.id);
 
     router.push(
       {
+       
       pathname: previewPath,
       params: {
         id: item.id,
