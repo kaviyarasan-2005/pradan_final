@@ -516,6 +516,9 @@ for (const key of Object.keys(files)) {
   } catch (err) {
     Alert.alert("Error", "Failed to save draft. Please try again.");
   }
+  finally{
+     resetData();
+  }
 }}
 
     >

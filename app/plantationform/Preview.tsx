@@ -509,6 +509,9 @@ if (fromdraft === "true") {
         } catch (err) {
           Alert.alert("Error", "Failed to save draft. Please try again.");
         }
+         finally{
+     resetData();
+  }
       }}
     >
       <Ionicons name="save-outline" size={width * 0.06} color="#fff" />
