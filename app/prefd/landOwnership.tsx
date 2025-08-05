@@ -15,7 +15,7 @@ export default function LandOwnership() {
     data.landOwnership || {
       landOwnershipType: "",//cd
       hasWell: "",//cd
-      areaIrrigated: "",//cd
+      areaIrrigated: "0",//cd
       irrigatedLand:{//no
         rainfed: "0",//no
         tankfed: "0",//no

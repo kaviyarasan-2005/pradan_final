@@ -400,7 +400,7 @@ if (fromdraft === "true") {
 
       {renderSection("Basic Details", [
         //  {label : "Date",value: selectedForm.landDevelopment?.date},
-        {label : "ID",value: id},
+        // {label : "ID",value: id},
         { label: "1. Name of Farmer", value: selectedForm.basicDetails?.name},
         { label: "1-2. Age", value: selectedForm.basicDetails?.age},
         { label: "2. Mobile Number", value: selectedForm.basicDetails?.mobile},
@@ -436,7 +436,7 @@ if (fromdraft === "true") {
       {renderSection("Land Ownership & Livestock", [
         { label: "23. Land Ownership", value: selectedForm.landOwnership?.landOwnershipType },
         { label: "24. Well for Irrigation", value: selectedForm.landOwnership?.hasWell },
-        { subLabel: "Area Irrigated (ha)", value: selectedForm.landOwnership?.areaIrrigated },
+        { subLabel: "No of Wells", value: selectedForm.landOwnership?.areaIrrigated },
         { label: "25. Irrigated Lands (ha)",value: selectedForm.landOwnership?.irrigatedLand},
         //  { subLabel: "Rainfed", value: selectedForm.landOwnership?.rainfed},
         //   { subLabel: "Tankfed", value: selectedForm.landOwnership?.tankfed },
