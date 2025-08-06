@@ -89,13 +89,14 @@ const isFormComplete = React.useMemo(() => {
     lo?.cropSeasonCombined &&
     lo?.livestock &&
 
+    
     ld?.sfNumber &&
     ld?.latitude &&
     ld?.longitude &&
     ld?.soilTypeCombined &&
     ld?.landBenefit !== undefined &&
     ld?.date &&
-    ld?.workType &&
+    ld?.workType2 &&
     ld?.proposalArea !== undefined &&
     ld?.otherWorks !== undefined &&
     ld?.pradanContribution !== undefined &&
