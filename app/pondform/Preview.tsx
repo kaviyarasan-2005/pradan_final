@@ -85,11 +85,11 @@ const isFormComplete = React.useMemo(() => {
     ld?.latitude &&
     ld?.longitude &&
     ld?.soilTypeCombined &&
-    ld?.landBenefit !== undefined &&
+    // ld?.landBenefit !== undefined &&
     ld?.date &&
-    ld?.workType &&
+    // ld?.workType &&
     ld?.proposalArea !== undefined &&
-    ld?.otherWorks !== undefined &&
+    // ld?.otherWorks !== undefined &&
     ld?.pradanContribution !== undefined &&
     ld?.farmerContribution !== undefined &&
     ld?.totalEstimate !== undefined &&
@@ -151,6 +151,7 @@ const canEdit = () => {
       );
 
 useEffect(() => {  
+  console.log(selectedForm);
   setData("user_id",user.id);
   if(fromsubmit == "true" && fromPreview != "true"){
 const occupationarray = data.basicDetails.occupationCombined.split(',');
