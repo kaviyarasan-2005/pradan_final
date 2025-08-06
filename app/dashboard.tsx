@@ -127,15 +127,18 @@ const DashboardScreen: React.FC = () => {
 useFocusEffect(
   React.useCallback(() => {
     const onBackPress = () => {
-      BackHandler.exitApp();
-      return true; 
+      if (modalVisible) {
+        setModalVisible(false);  
+        return true; 
+      }
+
+      BackHandler.exitApp(); 
+      return true;
     };
 
- const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
-
-return () => backHandler.remove(); 
-
-  }, [])
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    return () => backHandler.remove();
+  }, [modalVisible]) 
 );
 
   if ((status_total?.totalCount_pre === 0 && !status_total?.hasfetched_total)) {
