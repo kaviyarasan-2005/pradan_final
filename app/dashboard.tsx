@@ -127,7 +127,7 @@ const DashboardScreen: React.FC = () => {
 useFocusEffect(
   React.useCallback(() => {
     const onBackPress = () => {
-      router.push('/');
+      BackHandler.exitApp();
       return true; 
     };
 
