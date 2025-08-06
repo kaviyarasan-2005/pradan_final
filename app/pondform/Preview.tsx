@@ -1,12 +1,13 @@
 import { useUserStore } from '@/storage/userDatastore';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import axios from "axios";
 import { Buffer } from "buffer";
 import Constants from "expo-constants";
 import * as FileSystem from "expo-file-system";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { Alert, Dimensions, Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Alert, BackHandler, Dimensions, Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Card, Divider, Text } from "react-native-paper";
 import { useDraftStore } from "../../storage/DraftStore";
 import { useFormStore } from "../../storage/useFormStore";
@@ -133,6 +134,21 @@ const canEdit = () => {
     .toString()
     .padStart(2, "0")}${now.getMilliseconds().toString().padStart(3, "0")}`;
 };
+ useFocusEffect(
+        React.useCallback(() => {
+          const onBackPress = () => {
+              if (fromsubmit) {
+      router.push(returnsubmit); 
+    } else {
+      router.back(); 
+    }
+            return true; 
+          };
+       const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => backHandler.remove(); 
+      
+        }, [])
+      );
 
 useEffect(() => {  
   setData("user_id",user.id);
@@ -370,9 +386,9 @@ for (const key of Object.keys(files)) {
       <View style={styles.headerContainer}>
   <TouchableOpacity  onPress={() => {
     if (fromsubmit) {
-      router.push(returnsubmit); // Go back to total submitted page
+      router.push(returnsubmit); 
     } else {
-      router.back(); // Go back normally
+      router.back(); 
     }
   }}>
     <Ionicons name="arrow-back" size={width * 0.06} color="#0B8B42" style={styles.backArrow} />

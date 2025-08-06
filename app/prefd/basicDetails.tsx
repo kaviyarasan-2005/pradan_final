@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { BackHandler, Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import * as Animatable from 'react-native-animatable';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Checkbox, RadioButton } from "react-native-paper";
@@ -66,6 +67,7 @@ const {user} = useUserStore();
     if(fromPreview == "true"){
         updateField("idCardType","Aadhar");
     }
+  
   setData("user_id", user.id);
   if ((id && fromPreview === "true") || (id && fromsubmit === "true")) {
     const selected = submittedForms.find((form) => form.id === id);
@@ -76,7 +78,17 @@ const {user} = useUserStore();
     }
   }
 }, [id]);
-
+  useFocusEffect(
+      React.useCallback(() => {
+        const onBackPress = () => {
+          router.back();
+          return true; 
+        };
+     const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    return () => backHandler.remove(); 
+    
+      }, [])
+    );
 
 
   const updateField = (field: string, value: any) => {

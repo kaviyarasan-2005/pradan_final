@@ -1,11 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
+
 import * as Crypto from 'expo-crypto';
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { BackHandler, Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import * as Animatable from 'react-native-animatable';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { IconButton, RadioButton } from "react-native-paper";
@@ -52,6 +54,18 @@ export default function BankDetails() {
       }
     }
   }, [id]);
+
+    useFocusEffect(
+        React.useCallback(() => {
+          const onBackPress = () => {
+            router.back();
+            return true; 
+          };
+       const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => backHandler.remove(); 
+      
+        }, [])
+      );
 
   const updateField = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));

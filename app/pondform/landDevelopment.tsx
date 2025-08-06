@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Dimensions, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import { BackHandler, Dimensions, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Checkbox, Text } from "react-native-paper";
 import { useFormStore } from "../../storage/useFormStore";
@@ -44,7 +45,17 @@ export default function PondDevelopment() {
       }
     }
   }, [id]);
-
+ useFocusEffect(
+        React.useCallback(() => {
+          const onBackPress = () => {
+            router.back();
+            return true; 
+          };
+       const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => backHandler.remove(); 
+      
+        }, [])
+      );
   const updateField = (field: string, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };

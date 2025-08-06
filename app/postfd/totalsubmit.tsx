@@ -78,7 +78,7 @@ const forms = IdFormStore((state) => state.Idforms);
   useFocusEffect(
   React.useCallback(() => {
     const onBackPress = () => {
-      router.push('/dashboard');
+      router.back();
       return true; 
     };
 
@@ -299,7 +299,7 @@ setData("bankDetails", {
      <View style={styles.container}>
       <View >
        <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.push('/dashboard')} style={styles.backIcon}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backIcon}>
           <Ionicons name="arrow-back" size={width * .06} color="#1B5E20" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>POST TotalForm Submissions</Text>

@@ -1,6 +1,6 @@
 import { useFormStore } from '@/storage/useFormStore';
 import { Ionicons } from '@expo/vector-icons';
-import { useRoute } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import axios from "axios";
 import { Buffer } from "buffer";
 import Constants from "expo-constants";
@@ -10,7 +10,9 @@ import * as FileSystem from "expo-file-system";
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-  Alert, Dimensions,
+  Alert,
+  BackHandler,
+  Dimensions,
   ScrollView,
   StyleSheet,
   Text,
@@ -54,6 +56,20 @@ const PostlLndForm = () => {
     farmerContribution: landDevelopment.farmerContribution || '',
     pf_passbook: bankDetails?.pf_passbook,
   });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        router.back();
+        return true; 
+      };
+  
+   const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+  
+  return () => backHandler.remove(); 
+  
+    }, [])
+  );
 
   useEffect(() => {
     console.log(selectedForm);

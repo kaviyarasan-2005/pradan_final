@@ -1,5 +1,6 @@
 import { useFormStore } from '@/storage/useFormStore';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import { Buffer } from 'buffer';
 import Constants from 'expo-constants';
@@ -9,7 +10,9 @@ import * as FileSystem from 'expo-file-system';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-  Alert, Dimensions, ScrollView, StyleSheet,
+  Alert,
+  BackHandler,
+  Dimensions, ScrollView, StyleSheet,
   Text, TextInput, TouchableOpacity, View
 } from 'react-native';
 
@@ -52,7 +55,19 @@ const PostFundBasicDetailsForm = () => {
   });
 
   const [files, setFiles] = useState({});
-
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        router.back();
+        return true; 
+      };
+  
+   const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+  
+  return () => backHandler.remove(); 
+  
+    }, [])
+  );
   useEffect(() => {
     if (formData.length && formData.breadth && formData.depth) {
       const volume = (

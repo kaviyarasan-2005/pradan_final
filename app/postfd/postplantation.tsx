@@ -1,6 +1,6 @@
 import { useFormStore } from '@/storage/useFormStore';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { Buffer } from 'buffer';
 import Constants from 'expo-constants';
@@ -10,7 +10,9 @@ import * as FileSystem from 'expo-file-system';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  Alert, Dimensions,
+  Alert,
+  BackHandler,
+  Dimensions,
   ScrollView,
   StyleSheet,
   Text,
@@ -63,7 +65,19 @@ const url = Constants.expoConfig.extra.API_URL; // Place after `const { width, h
   ]);
 
   const [otherExpenses, setOtherExpenses] = useState('');
-
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        router.back();
+        return true; 
+      };
+  
+   const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+  
+  return () => backHandler.remove(); 
+  
+    }, [])
+  );
   useEffect(() => {
     const totalAmount = (
       parseFloat(formData.pradanContribution || 0) +

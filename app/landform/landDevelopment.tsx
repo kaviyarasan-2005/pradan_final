@@ -1,6 +1,7 @@
+import { useFocusEffect } from "@react-navigation/native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import { Dimensions, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { BackHandler, Dimensions, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
   Checkbox,
@@ -53,6 +54,17 @@ export default function LandDevelopment() {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+    useFocusEffect(
+        React.useCallback(() => {
+          const onBackPress = () => {
+            router.back();
+            return true; 
+          };
+       const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => backHandler.remove(); 
+      
+        }, [])
+      );
   const toggleCheckbox = (field: string, value: string) => {
     setForm((prev) => {
       const currentValue = typeof prev[field] === "string" ? prev[field] : "";
