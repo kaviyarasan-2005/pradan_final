@@ -80,16 +80,16 @@ const isFormComplete = React.useMemo(() => {
     lo?.revenueVillage &&
     lo?.cropSeasonCombined &&
     lo?.livestock &&
-
     ld?.sfNumber &&
     ld?.latitude &&
     ld?.longitude &&
+    ld?.length&&
+     ld?.depth&&
+      ld?.volume&&
     ld?.soilTypeCombined &&
-    // ld?.landBenefit !== undefined &&
+    ld?.proposalArea&&
     ld?.date &&
-    // ld?.workType &&
     ld?.proposalArea !== undefined &&
-    // ld?.otherWorks !== undefined &&
     ld?.pradanContribution !== undefined &&
     ld?.farmerContribution !== undefined &&
     ld?.totalEstimate !== undefined &&
@@ -472,7 +472,7 @@ for (const key of Object.keys(files)) {
         { subLabel: "Latitude", value: selectedForm.landDevelopment?.latitude },
         { subLabel: "Longitude", value: selectedForm.landDevelopment?.longitude },
         { label: "32. Soil Type", value: selectedForm.landDevelopment?.soilTypeCombined },
-        { label: "33. Land to benefit (ha)", value: selectedForm.landDevelopment?.landBenefit },
+        { label: "33. Land to benefit (ha)", value: selectedForm.landDevelopment?.proposalArea},
         { label: "36. Date of Inspection", value: selectedForm.landDevelopment?.date},
         { label: "38. Length", value: selectedForm.landDevelopment?.length },
         { label: "39. Breadth", value: selectedForm.landDevelopment?.breadth },
