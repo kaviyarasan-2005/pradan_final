@@ -16,7 +16,7 @@ const { width, height } = Dimensions.get('window');
 const scaleFont = size => size * (width / 375);
 export default function   Preview() {
   const router = useRouter();
-  const { id,fromsubmit,returnsubmit,fromPreview,fromdraft} = useLocalSearchParams<{ id?: string , returnsubmit?: string,fromsubmit?: string, fromPreview?:string,fromdraft?:string;}>();
+  const { id,fromsubmit,returnsubmit,fromPreview,fromdraft,fromland,fromplantation,frompond} = useLocalSearchParams<{ id?: string , returnsubmit?: string,fromsubmit?: string, fromPreview?:string,fromdraft?:string;}>();
   const { data, submittedForms, resetData,setData, submitForm,setNestedData,set2NestedData } = useFormStore();//draftForms,
   const {drafts,saveDraft} = useDraftStore();
 const isSubmittedPreview = !!id;
@@ -346,6 +346,9 @@ for (const key of Object.keys(files)) {
               fromsubmit: fromsubmit,
               returnsubmit: returnsubmit,
               fromedit:"true",
+              fromland:fromland,
+              frompond:frompond,
+              fromplantation:fromplantation,
             },
           })
         }

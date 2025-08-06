@@ -237,7 +237,9 @@ const totalestimation =(feild : any,value : any) =>{
        placeholder="Enter amount"
           placeholderTextColor="#888"
         value={form.pradanContribution}
-        onChangeText={(text) => updateField("pradanContribution", text)}
+        onChangeText={(text) => {updateField("pradanContribution", text)
+           totalestimation( text, form.farmerContribution )
+        }}
         style={styles.input}
         keyboardType="numeric"
       />

@@ -266,7 +266,9 @@ export default function PondDevelopment() {
       <Text style={styles.label}>41. PRADAN contribution (in Rs)</Text>
       <TextInput
         value={form.pradanContribution}
-        onChangeText={(text) => updateField("pradanContribution", text)}
+         onChangeText={(text) => {updateField("pradanContribution", text)
+           totalestimation( text, form.farmerContribution )
+        }}
         style={styles.input}
          placeholder="Enter amount"
           placeholderTextColor="#888"
