@@ -58,7 +58,9 @@ const handleLogin = async () => {
 
   
   return (
+   
     <View style={styles.container}>
+         <Text style={styles.versionText}>Test version 1 </Text>
       <Image
   source={require("../assets/images/pradan_logo.png")} 
   style={styles.logo}
@@ -128,6 +130,16 @@ const styles = StyleSheet.create({
     height: 70,
     alignSelf: "center",
   },
+
+  versionText: {
+  alignSelf: 'center',
+  fontSize: 28,
+  fontWeight:'bold',
+  color: '#000000ff',
+  fontStyle:'italic',
+  
+  marginBottom: 10,
+},
   titleContainer: {
     marginTop: 40,
     marginBottom: 30,
