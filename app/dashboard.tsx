@@ -474,7 +474,10 @@ const renderCard2 = ({ item }: any) => {
 
         <Pressable
           style={styles.newFormButton}
-          onPress={() => setModalVisible(true)}
+          onPress={() => {
+            setModalVisible(true)
+            resetData();}
+          }
         >
           <MaterialIcons name="add-circle-outline" size={width * 0.10} color="#fff" />
           <Text style={styles.newFormText}>New Form</Text>
@@ -482,6 +485,7 @@ const renderCard2 = ({ item }: any) => {
         <TouchableOpacity
         style={styles.draftButton}
         onPress={() => {
+          resetData();
           router.push("/draft");
         }}
       >
