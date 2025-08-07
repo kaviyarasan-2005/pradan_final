@@ -102,10 +102,10 @@ return () => backHandler.remove(); 
     // Date range filtering logic
     const formatDate = (dateString) => {
       const [day, month, year] = dateString.split('/');
-      return new Date(year, month - 1, day); // Create a Date object with year, month (0-indexed), and day
+      return new Date(year, month - 1, day); 
     };
   
-    const itemDate = formatDate(item.created_at); // Convert the item's date to Date object
+    const itemDate = formatDate(item.created_at); 
     const matchesStart = !startDate || itemDate >= new Date(startDate);
     const matchesEnd = !endDate || itemDate <= new Date(endDate);
   

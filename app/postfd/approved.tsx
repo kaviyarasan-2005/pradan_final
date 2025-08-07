@@ -3,6 +3,7 @@ import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect } from '@react-navigation/native';
 import axios from "axios";
 import Constants from "expo-constants";
+
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -19,6 +20,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { DashbdStore } from "../../storage/DashbdStore";
 import { IdFormStore } from "../../storage/IdStore";
 import { useFormStore } from "../../storage/useFormStore";
+import { useUserStore } from "../../storage/userDatastore";
 const { height, width } = Dimensions.get('window');
 const url = Constants.expoConfig.extra.API_URL;
 const statusStyles = {
@@ -63,7 +65,7 @@ const forms = IdFormStore((state) => state.Idforms);
     { label: 'POND', value: '2' },
     { label: 'PLANTATION', value: '3' },
   ]);
-
+const { user, logout } = useUserStore();
   useEffect(() => {
     resetData();
     loaddashbdForms();
@@ -107,9 +109,7 @@ return () => backHandler.remove();
       //   
    
   });
-  
-
-const handleCardPress = async (item) => {
+  const handleCardPress = async (item) => {
   let previewPath = "";
 
   if (item.form_type === 1) previewPath = "./postland";
@@ -117,35 +117,179 @@ const handleCardPress = async (item) => {
   else if (item.form_type === 3) previewPath = "./postplantation";
   else return alert("Unknown form type.");
     resetData();
-    console.log( JSON.stringify(data) + " this is data");
   try {
-    const response = await axios.get(`${url}/api/dashboard/getpreviewspecificformData`, {
+     let fetchedData;
+   if(item.form_type == 1){
+     const response = await axios.get(`${url}/api/formData/getpf_landformData`, {
       params: { form_id: item.id, form_type: item.form_type }
     });
+    fetchedData = response.data;
+      setData("basicDetails", {
+   
+  name: fetchedData.farmer_name,
+  fatherSpouse: fetchedData.spouse,
+  form_id:fetchedData.form_id,
+  // use idCardNumber storage for m  code;
+  idCardNumber: fetchedData.mcode,
+  hamlet: fetchedData.hamlet,
+  panchayat: fetchedData.panchayat,
+  block: fetchedData.block,
+  district: fetchedData.district,
+  measuredBy:user.username,
+});
 
-    const fetchedData = response.data;
-    console.log(JSON.stringify(fetchedData) + " " + item.form_type);
+setData("landOwnership", {
+  revenueVillage: fetchedData.revenue,
+  totalArea: fetchedData.total_area,
 
-    // Set all keys of fetchedData into the form store using setData
-      setData("basicDetails", fetchedData.basicDetails);
-    setData("landOwnership", fetchedData.landOwnership);
-    setData("landDevelopment", fetchedData.landDevelopment);
-    setData("bankDetails", fetchedData.bankDetails);
+});
 
-    router.push({
-      pathname: previewPath,
-      params: {
-        id: item.id,
-        fromsubmit: "true",
-        returnsubmit: "/postfd/approved"
-      }
+setData("landDevelopment", {
+ 
+  pradanContribution: fetchedData.p_contribution,
+  farmerContribution: fetchedData.f_contribution,
+});
+
+setData("bankDetails", {
+  //  submittedFiles: {
+    pf_passbook: item.passbook_postfunding || null,
+  // },
+  measuredBy: item.verified_by,
+});
+   }
+   else if(item.form_type == 2){
+ const response = await axios.get(`${url}/api/formData/getpf_pondformData`, {
+      params: { form_id: item.id, form_type: item.form_type }
     });
+    fetchedData = response.data;
+       setData("basicDetails", {
+   
+  name: fetchedData.farmer_name,
+  fatherSpouse: fetchedData.spouse,
+  form_id:fetchedData.form_id,
+  // use idCardNumber storage for m  code;
+  idCardNumber: fetchedData.mcode,
+  hamlet: fetchedData.hamlet,
+  panchayat: fetchedData.panchayat,
+  block: fetchedData.block,
+  district: fetchedData.district,
+  measuredBy:user.username,
+});
+
+setData("landOwnership", {
+
+  revenueVillage: fetchedData.revenue,
+
+});
+
+setData("landDevelopment", {
+  length:fetchedData.length,
+  breadth:fetchedData.breadth,
+  depth:fetchedData.depth,
+  volume: fetchedData.volume,
+  pradanContribution: fetchedData.p_contribution,
+  farmerContribution: fetchedData.f_contribution,
+});
+
+setData("bankDetails", {
+
+    // submittedFiles: {
+    pf_passbook: item.passbook_postfunding || null,
+  // },
+  measuredBy: item.verified_by,
+});
+   }
+   else if(item.form_type == 3){
+ const response = await axios.get(`${url}/api/formData/getpf_plantationformData`, {
+      params: { form_id: item.id, form_type: item.form_type }
+      
+    });
+    fetchedData = response.data;
+        setData("basicDetails", {
+   
+  name: fetchedData.farmer_name,
+  fatherSpouse: fetchedData.spouse,
+  form_id:fetchedData.form_id,
+  // use idCardNumber storage for m  code;
+  idCardNumber: fetchedData.mcode,
+  hamlet: fetchedData.hamlet,
+  panchayat: fetchedData.panchayat,
+  block: fetchedData.block,
+  district: fetchedData.district,
+  measuredBy:user.username,
+});
+
+setData("landOwnership", {
+  revenueVillage: fetchedData.revenue,
+  totalArea: fetchedData.total_area,
+
+});
+
+setData("landDevelopment", {
+ 
+  pradanContribution: fetchedData.p_contribution,
+  farmerContribution: fetchedData.f_contribution,
+});
+
+setData("bankDetails", {
+    // submittedFiles: {
+    pf_passbook: item.passbook_postfunding || null,
+  // },
+  measuredBy: item.verified_by,
+});
+   }
+
+    
+
+  // console.log(fetchedData);
+    // Set all keys of fetchedData into the form store using setData
+   
+ 
+
+  router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/postfd/totalsubmit" } });
 
   } catch (error) {
     console.error("Error fetching form details:", error);
     // Alert.alert("Error", "Failed to fetch form details.");
   }
 };
+
+
+// const handleCardPress = async (item) => {
+//   let previewPath = "";
+
+//   if (item.form_type === 1) previewPath = "./postland";
+//   else if (item.form_type === 2) previewPath = "./postpond";
+//   else if (item.form_type === 3) previewPath = "./postplantation";
+//   else return alert("Unknown form type.");
+//   try {
+//     const response = await axios.get(`${url}/api/dashboard/getpreviewspecificformData`, {
+//       params: { form_id: item.id, form_type: item.form_type }
+//     });
+
+//     const fetchedData = response.data;
+//     console.log(JSON.stringify(fetchedData) + " " + item.form_type);
+
+//     // Set all keys of fetchedData into the form store using setData
+//       setData("basicDetails", fetchedData.basicDetails);
+//     setData("landOwnership", fetchedData.landOwnership);
+//     setData("landDevelopment", fetchedData.landDevelopment);
+//     setData("bankDetails", fetchedData.bankDetails);
+
+//     router.push({
+//       pathname: previewPath,
+//       params: {
+//         id: item.id,
+//         fromsubmit: "true",
+//         returnsubmit: "/postfd/approved"
+//       }
+//     });
+
+//   } catch (error) {
+//     console.error("Error fetching form details:", error);
+//     // Alert.alert("Error", "Failed to fetch form details.");
+//   }
+// };
 
 
   // const handleCardPress = (item) => {
