@@ -16,10 +16,11 @@ const { width, height } = Dimensions.get('window');
 const scaleFont = size => size * (width / 375);
 export default function   Preview() {
   const router = useRouter();
-  const { id,fromsubmit,returnsubmit,fromPreview} = useLocalSearchParams<{ id?: string , returnsubmit?: string,fromsubmit?: string, fromPreview?:string;}>();
+  const { id,fromsubmit,returnsubmit,fromPreview,fromdraft} = useLocalSearchParams<{ id?: string , returnsubmit?: string,fromsubmit?: string, fromPreview?:string;}>();
   const { data, submittedForms, resetData,setData, submitForm,setNestedData,set2NestedData } = useFormStore();//draftForms,
   const {drafts,saveDraft} = useDraftStore();
   const {user} = useUserStore();
+
 const isSubmittedPreview = !!id;
 
 const selectedForm = React.useMemo(() => {
@@ -80,12 +81,13 @@ const isFormComplete = React.useMemo(() => {
     lo?.revenueVillage &&
     lo?.cropSeasonCombined &&
     lo?.livestock &&
+
     ld?.sfNumber &&
     ld?.latitude &&
     ld?.longitude &&
     ld?.length&&
-     ld?.depth&&
-      ld?.volume&&
+    ld?.depth&&
+    ld?.volume&&
     ld?.soilTypeCombined &&
     ld?.proposalArea&&
     ld?.date &&
@@ -760,6 +762,29 @@ imageContainer: {
     paddingVertical: height * 0.015,
     paddingHorizontal: width * 0.08,
     borderRadius: 30,
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width,
+    height,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 999,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  uploadingText: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  redHighlight: {
+    backgroundColor: '#ffe6e6',
+    borderColor: 'red',
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 5,
   },
  
 draftText: {

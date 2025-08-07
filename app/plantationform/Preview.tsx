@@ -96,7 +96,7 @@ const isFormComplete = React.useMemo(() => {
     ld?.soilTypeCombined &&
     ld?.landBenefit !== undefined &&
     ld?.date &&
-    ld?.workType2 &&
+    ld?.workType &&
     ld?.proposalArea !== undefined &&
     ld?.otherWorks !== undefined &&
     ld?.pradanContribution !== undefined &&
@@ -319,11 +319,6 @@ if (fromdraft === "true") {
       ) : (
         <Text style={styles.value}>{field.value}</Text>
       )}
-
-      {/* Divider logic:
-          - If field has label AND subLabel, no divider here (between them)
-          - If subLabel and next field is subLabel too, no divider yet
-          - Otherwise show divider */}
       {!(field.label && field.subLabel) && !isNextSubLabel && <Divider style={styles.divider} />}
     </View>
   );
@@ -535,17 +530,21 @@ if (fromdraft === "true") {
     </TouchableOpacity>
 )}
     {/* Submit Button */}
-    {isFormComplete && (
+   
   <TouchableOpacity
-    style={styles.submitButton}
-    onPress={() => {
+  style={styles.submitButton}
+  onPress={() => {
+    if (!isFormComplete) {
+      Alert.alert("Incomplete Form", "Enter all data");
+    } else {
       handleSubmit();
-    }}
-  >
+    }
+  }}
+>
     <Ionicons name="checkmark-circle-outline" size={width * 0.06} color="#fff" />
     <Text style={styles.submitText}>Submit</Text>
   </TouchableOpacity>
-)}
+
 
   </View>
 

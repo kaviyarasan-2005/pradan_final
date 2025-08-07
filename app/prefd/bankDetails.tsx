@@ -233,7 +233,7 @@ export default function BankDetails() {
         <RadioButton.Item label="No" value="No" />
       </RadioButton.Group>
 
-    {!fromPreview && (
+   
   <>
     <Text style={styles.label}>50. Upload Documents:</Text>
        <View style={styles.uploadGroup}>
@@ -269,7 +269,7 @@ export default function BankDetails() {
     ))}
     </View>
   </>
-)}
+
        <TouchableOpacity style={styles.nextBtn} onPress={() =>handlePreview() }>
                   <Text style={styles.nextBtnText}>{fromPreview ? "Preview" : "Next"}</Text>
                 </TouchableOpacity>
