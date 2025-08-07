@@ -199,7 +199,7 @@ const handleFilePick = async (key: string) => {
           <TextInput
             style={styles.input}
             value={formData[field]}
-            editable={true}
+             editable={false}
             onChangeText={(text) => handleChange(field, text)}
           />
         </View>

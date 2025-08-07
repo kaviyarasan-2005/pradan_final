@@ -249,7 +249,7 @@ const handleSubmit = async () => {
           <TextInput
             style={styles.input}
             value={formData[item.field]}
-            editable={isEditable}
+             editable={false}
             onChangeText={(text) => handleChange(item.field, text)}
           />
         </View>
