@@ -10,15 +10,11 @@ import * as FileSystem from "expo-file-system";
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   BackHandler,
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+  Dimensions, ScrollView, StyleSheet,
+  Text, TextInput, TouchableOpacity, View
 } from "react-native";
 
 const url = Constants.expoConfig.extra.API_URL;
@@ -70,7 +66,7 @@ const PostlLndForm = () => {
   
     }, [])
   );
-
+const [submitting, setSubmitting] = React.useState(false);
   useEffect(() => {
     console.log(selectedForm);
     const totalAmount = (
@@ -83,6 +79,9 @@ const PostlLndForm = () => {
   const [files, setFiles] = React.useState({});
 
   const handleSubmit = async () => {
+    if(submitting){
+      return;
+    }
       const { totalArea, pradanContribution, farmerContribution } = formData;
   const passbookFile = files['pf_passbook'];
 
@@ -92,6 +91,7 @@ const PostlLndForm = () => {
     return;
   }
     try {
+        setSubmitting(true);
       const updatedForm = {
          form_id: formData.form_id,
         ...selectedForm,
@@ -153,6 +153,9 @@ const mimeType = mimeMap[ext!] || "application/octet-stream";
     } catch (error) {
       Alert.alert("Error", "Failed to update form: " + error.message);
     }
+      finally{
+        setSubmitting(false);
+      }
   };
 
   const handleChange = (field: string, value: string) => {
@@ -186,7 +189,8 @@ const handleFilePick = async (key: string) => {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+   <View style ={{flex :1}}>
+     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="#0B8B42" />
@@ -242,6 +246,16 @@ const handleFilePick = async (key: string) => {
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
     </ScrollView>
+       {submitting && (
+      <View style={styles.loadingOverlay}>
+        <View style={styles.circleContainer}>
+          <ActivityIndicator size="large" color="#0B8B42" />
+          <Text style={styles.loadingText}>Uploading...</Text>
+        </View>
+      </View>
+    )}
+
+   </View>
   );
 };
 
@@ -333,6 +347,37 @@ const styles = StyleSheet.create({
     color: '#333',
     textAlign: 'center',
   },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255,255,255,0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+    elevation: 9999, // for Android
+  },
+  circleContainer: {
+    width: 100,
+    height: 100,
+    backgroundColor: 'white',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 10,
+  },
+  loadingText: {
+    marginTop: 10,
+    color: '#0B8B42',
+    fontWeight: 'bold',
+  },
+
   uploadStatus: {
     fontSize: width * 0.03,
     color: '#777',

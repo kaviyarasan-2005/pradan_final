@@ -10,6 +10,7 @@ import * as FileSystem from 'expo-file-system';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   BackHandler,
   Dimensions, ScrollView, StyleSheet,
@@ -34,7 +35,7 @@ const PostFundBasicDetailsForm = () => {
   const landDevelopment = selectedForm?.landDevelopment || {};
   const landOwnership=selectedForm?.landOwnership||{};
   const bankDetails=selectedForm?.bankDetails||{};
-
+const [submitting, setSubmitting] = React.useState(false);
   const [formData, setFormData] = useState({
     form_id: basicDetails.form_id || '',
     name: basicDetails.name || '',
@@ -105,6 +106,10 @@ const handleFilePick = async (key: string) => {
 };
 
   const handleSubmit = async () => {
+
+    if(submitting){
+      return;
+    }
     const { depth,breadth,length, pradanContribution, farmerContribution } = formData;
   const passbookFile = files['pf_passbook'];
 
@@ -114,6 +119,7 @@ const handleFilePick = async (key: string) => {
     return;
   }
     try {
+      setSubmitting(true);
       const updatedForm = {
         form_id: formData.form_id,
         ...selectedForm,
@@ -182,6 +188,9 @@ const handleFilePick = async (key: string) => {
     } catch (err) {
       Alert.alert('Error', err.message);
     }
+    finally{
+      setSubmitting(false);
+    }
   };
 
   if (!selectedForm || !selectedForm.basicDetails) {
@@ -193,7 +202,8 @@ const handleFilePick = async (key: string) => {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={{flex:1}}>
+      <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="#0B8B42" />
@@ -248,6 +258,15 @@ const handleFilePick = async (key: string) => {
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
     </ScrollView>
+       {submitting && (
+  <View style={styles.loadingOverlay}>
+    <View style={styles.circleContainer}>
+      <ActivityIndicator size="large" color="#0B8B42" />
+      <Text style={styles.loadingText}>Uploading...</Text>
+    </View>
+  </View>
+)}
+    </View>
   );
 };
 
@@ -329,6 +348,37 @@ const styles = StyleSheet.create({
     marginTop: height * 0.005,
     textAlign: 'center',
   },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255,255,255,0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+    elevation: 9999, // for Android
+  },
+  circleContainer: {
+    width: 100,
+    height: 100,
+    backgroundColor: 'white',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 10,
+  },
+  loadingText: {
+    marginTop: 10,
+    color: '#0B8B42',
+    fontWeight: 'bold',
+  },
+
 });
 
 export default PostFundBasicDetailsForm;

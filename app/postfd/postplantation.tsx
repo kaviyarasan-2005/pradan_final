@@ -10,6 +10,7 @@ import * as FileSystem from 'expo-file-system';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   BackHandler,
   Dimensions,
@@ -78,6 +79,7 @@ const url = Constants.expoConfig.extra.API_URL; // Place after `const { width, h
   
     }, [])
   );
+  const [submitting, setSubmitting] = React.useState(false);
   useEffect(() => {
     const totalAmount = (
       parseFloat(formData.pradanContribution || 0) +
@@ -106,7 +108,9 @@ const handleFilePick = async (key: string) => {
 };
 
 const handleSubmit = async () => {
-
+if(submitting){
+return;
+}
     const {  totalArea,pradanContribution, farmerContribution } = formData;
 
       const passbookFile = files['pf_passbook'];
@@ -119,6 +123,7 @@ const handleSubmit = async () => {
       }
 
   try {
+    setSubmitting(true);
  const totalNos = plantations.reduce(
       (sum, item) => sum + (Number(item.number) || 0),
       0
@@ -128,7 +133,6 @@ const handleSubmit = async () => {
     const plantationTypes = plantations.map((item) => item.type.trim()).filter(Boolean).join(',');
     const plantationNumbers = plantations.map((item) => item.number).join(',');
     const plantationPrices = plantations.map((item) => item.price).join(',');
-
     const updatedForm = {
       form_id: basicDetails.form_id || id,
       ...selectedForm,
@@ -207,6 +211,9 @@ const handleSubmit = async () => {
     console.error('Upload or submit error:', error);
     Alert.alert('Error', 'Failed to update form: ' + error.message);
   }
+  finally{
+    setSubmitting(false);
+  }
 };
 
 
@@ -238,7 +245,8 @@ const handleSubmit = async () => {
   const totalExpenses = calculateTotalExpenses();
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={{flex :1}}>
+      <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#0B8B42" />
@@ -375,6 +383,16 @@ const handleSubmit = async () => {
 </TouchableOpacity>
 
     </ScrollView>
+       {submitting && (
+  <View style={styles.loadingOverlay}>
+    <View style={styles.circleContainer}>
+      <ActivityIndicator size="large" color="#0B8B42" />
+      <Text style={styles.loadingText}>Uploading...</Text>
+    </View>
+  </View>
+)}
+
+    </View>
   );
 };
 
@@ -534,6 +552,37 @@ uploadStatus: {
     fontSize: width * 0.035,
     color: '#333',
   },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255,255,255,0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+    elevation: 9999, // for Android
+  },
+  circleContainer: {
+    width: 100,
+    height: 100,
+    backgroundColor: 'white',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 10,
+  },
+  loadingText: {
+    marginTop: 10,
+    color: '#0B8B42',
+    fontWeight: 'bold',
+  },
+
   
 });
 
