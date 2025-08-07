@@ -7,7 +7,7 @@ import Constants from "expo-constants";
 import * as FileSystem from "expo-file-system";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { Alert, BackHandler, Dimensions, Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, BackHandler, Dimensions, Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Card, Divider, Text } from "react-native-paper";
 import { useDraftStore } from "../../storage/DraftStore";
 import { useFormStore } from "../../storage/useFormStore";
@@ -284,15 +284,6 @@ if (fromdraft === "true") {
             return (
               <View key={idx} style={styles.fileRow}>
                 <Text style={styles.value}>{item.label}</Text>
-                 {/* <Button
-                        mode="text"
-                        onPress={() =>
-                          router.push({pathname: "/pdfViewer",params: { uri: item.uri },})
-                        }
-                        compact
-                      >
-                        View
-                      </Button> */}
               </View>
             );
           } else if (typeof item === "object") {
@@ -347,24 +338,6 @@ if (fromdraft === "true") {
                   <Ionicons name="create-outline" size={ width * 0.06} color="#0B8B42" />
                   <Text style={styles.editText}>Edit</Text>
                 </TouchableOpacity>
-      {/* <Button
-        mode="outlined"
-        onPress={() =>
-          router.push({
-            pathname: editRoute,
-            params: {
-              id: id,
-              fromPreview: "true",
-              returnTo: "/plantationform/Preview",
-              fromsubmit: fromsubmit,
-              returnsubmit: returnsubmit,
-              fromedit:"true",
-            },
-          })
-        }
-      >
-        Edit
-      </Button> */}
     </Card.Actions>
     </View>
 )}
@@ -372,19 +345,9 @@ if (fromdraft === "true") {
   );
 
   return (
+    <View style={{ flex: 1 }}>
     <ScrollView contentContainerStyle={styles.container}>
-      {/* <IconButton
-     icon="arrow-left"
-     size={24}
-     style={styles.backButton}
-     onPress={() => {
-    if (fromsubmit) {
-      router.push(returnsubmit); // Go back to total submitted page
-    } else {
-      router.back(); // Go back normally
-    }
-  }}
-/> */}
+ 
       <View style={styles.headerContainer}>
   <TouchableOpacity  onPress={() => {
     if (fromsubmit) {
@@ -544,19 +507,17 @@ if (fromdraft === "true") {
     <Ionicons name="checkmark-circle-outline" size={width * 0.06} color="#fff" />
     <Text style={styles.submitText}>Submit</Text>
   </TouchableOpacity>
-
-
   </View>
-
-  {/* <Button
-      mode="contained"
-      onPress={handleSubmit}
-      style={[styles.submitButton, { marginTop: 10 }]}
->
-      Submit
-    </Button> */}
-
     </ScrollView>
+        {submitting && (
+      <View style={styles.loadingOverlay}>
+        <View style={styles.circleContainer}>
+          <ActivityIndicator size="large" color="#0B8B42" />
+          <Text style={styles.loadingText}>Uploading...</Text>
+        </View>
+      </View>
+    )}
+    </View>
   );
 }
 const styles = StyleSheet.create({
@@ -609,6 +570,37 @@ noPhotoText: {
   marginRight: width * 0.025,        // ~2.5% of screen width
 
   },
+   loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255,255,255,0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+    elevation: 9999, // for Android
+  },
+  circleContainer: {
+    width: 100,
+    height: 100,
+    backgroundColor: 'white',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 10,
+  },
+  loadingText: {
+    marginTop: 10,
+    color: '#0B8B42',
+    fontWeight: 'bold',
+  },
+
 
 imageContainer: {
   position: 'absolute',

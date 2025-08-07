@@ -7,7 +7,7 @@ import Constants from "expo-constants";
 import * as FileSystem from "expo-file-system"; // Import FileSystem
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { Alert, BackHandler, Dimensions, Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, BackHandler, Dimensions, Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Card, Divider, Text } from "react-native-paper";
 import { useDraftStore } from "../../storage/DraftStore";
 import { useFormStore } from "../../storage/useFormStore";
@@ -320,11 +320,6 @@ for (const key of Object.keys(files)) {
       ) : (
         <Text style={styles.value}>{field.value}</Text>
       )}
-
-      {/* Divider logic:
-          - If field has label AND subLabel, no divider here (between them)
-          - If subLabel and next field is subLabel too, no divider yet
-          - Otherwise show divider */}
       {!(field.label && field.subLabel) && !isNextSubLabel && <Divider style={styles.divider} />}
     </View>
   );
@@ -381,19 +376,9 @@ for (const key of Object.keys(files)) {
   );
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* <IconButton
-     icon="arrow-left"
-     size={24}
-     style={styles.backButton}
-     onPress={() => {
-    if (fromsubmit) {
-      router.push(returnsubmit); // Go back to total submitted page
-    } else {
-      router.back(); // Go back normally
-    }
-  }}
-/> */}
+ <View style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={styles.container}>
+
       <View style={styles.headerContainer}>
   <TouchableOpacity  onPress={() => {
 
@@ -558,16 +543,16 @@ for (const key of Object.keys(files)) {
 )}
 
   </View>
-
-  {/* <Button
-      mode="contained"
-      onPress={handleSubmit}
-      style={[styles.submitButton, { marginTop: 10 }]}
->
-      Submit
-    </Button> */}
-
     </ScrollView>
+    {submitting && (
+  <View style={styles.loadingOverlay}>
+    <View style={styles.circleContainer}>
+      <ActivityIndicator size="large" color="#0B8B42" />
+      <Text style={styles.loadingText}>Uploading...</Text>
+    </View>
+  </View>
+)}
+  </View>
   );
 }
 const styles = StyleSheet.create({
@@ -635,6 +620,37 @@ imageContainer: {
   backgroundColor: '#fff',   // Optional: to show a white frame
   zIndex: 10,
 },
+
+ loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255,255,255,0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+    elevation: 9999, // for Android
+  },
+  circleContainer: {
+    width: 100,
+    height: 100,
+    backgroundColor: 'white',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 10,
+  },
+  loadingText: {
+    marginTop: 10,
+    color: '#0B8B42',
+    fontWeight: 'bold',
+  },
 
  photo: {
     width: width * 0.3,     // 30% of screen width
