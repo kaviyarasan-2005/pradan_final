@@ -45,7 +45,7 @@ const PostlLndForm = () => {
     form_id: basicDetails.form_id || '',
     name: basicDetails.name || '',
     fatherSpouse: basicDetails.fatherSpouse || '',
-    code: basicDetails.idCardNumber || '12345678',
+    code: basicDetails.idCardNumber || '',
     hamlet: basicDetails.hamlet || '',
     panchayat: basicDetails.panchayat || '',
     revenueVillage: landOwnership.revenueVillage || '',
@@ -83,6 +83,14 @@ const PostlLndForm = () => {
   const [files, setFiles] = React.useState({});
 
   const handleSubmit = async () => {
+      const { totalArea, pradanContribution, farmerContribution } = formData;
+  const passbookFile = files['pf_passbook'];
+
+  // Check if any required field is empty
+  if (!totalArea || !pradanContribution || !farmerContribution || !passbookFile) {
+    Alert.alert("Missing Data", "Enter all data");
+    return;
+  }
     try {
       const updatedForm = {
          form_id: formData.form_id,

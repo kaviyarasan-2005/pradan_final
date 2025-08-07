@@ -106,6 +106,18 @@ const handleFilePick = async (key: string) => {
 };
 
 const handleSubmit = async () => {
+
+    const {  totalArea,pradanContribution, farmerContribution } = formData;
+
+      const passbookFile = files['pf_passbook'];
+    
+    //  plantation type,number,price acces by index
+      if (   !plantations[0].number|| !plantations[0].price|| !plantations[0].type ||!otherExpenses||!totalArea||!pradanContribution || !farmerContribution || !passbookFile) {
+        Alert.alert("Missing Data", "Enter all data");
+        return;
+
+      }
+
   try {
  const totalNos = plantations.reduce(
       (sum, item) => sum + (Number(item.number) || 0),

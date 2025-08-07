@@ -105,6 +105,14 @@ const handleFilePick = async (key: string) => {
 };
 
   const handleSubmit = async () => {
+    const { depth,breadth,length, pradanContribution, farmerContribution } = formData;
+  const passbookFile = files['pf_passbook'];
+
+  // Check if any required field is empty
+  if (  !depth|| !breadth|| !length||!pradanContribution || !farmerContribution || !passbookFile) {
+    Alert.alert("Missing Data", "Enter all data");
+    return;
+  }
     try {
       const updatedForm = {
         form_id: formData.form_id,
