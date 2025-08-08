@@ -175,7 +175,9 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
 </View>
       <Text style={styles.question}>24. Land Ownership:</Text>
 <RadioButton.Group
-  onValueChange={(value) => updateField("landOwnershipType", value)}
+  onValueChange={(value) => {updateField("landOwnershipType", value)
+  
+  }}
   value={form.landOwnershipType}
 >
   <RadioButton.Item label="Owner Cultivator" value="Owner Cultivator" />
@@ -185,7 +187,9 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
 
 <Text style={styles.question}>25. Well for Irrigation:</Text>
 <RadioButton.Group
-  onValueChange={(value) => updateField("hasWell", value)}
+  onValueChange={(value) => {updateField("hasWell", value)
+    updateField("areaIrrigated", "0")
+  }}
   value={form.hasWell}
 >
   <RadioButton.Item label="Yes" value="Yes" />

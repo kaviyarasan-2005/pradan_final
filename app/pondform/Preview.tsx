@@ -422,7 +422,9 @@ for (const key of Object.keys(files)) {
       {renderSection("Land Ownership & Livestock", [
         { label: "23. Land Ownership", value: selectedForm.landOwnership?.landOwnershipType },
         { label: "24. Well for Irrigation", value: selectedForm.landOwnership?.hasWell },
-        { subLabel: "No of Wells", value: selectedForm.landOwnership?.areaIrrigated },
+        ...(selectedForm.landOwnership?.hasWell > 0
+  ? [ { subLabel: "No of Wells", value: selectedForm.landOwnership?.areaIrrigated }]
+  : []),
         { label: "25. Irrigated Lands (ha)",value: selectedForm.landOwnership?.irrigatedLand},
         //  { subLabel: "Rainfed", value: selectedForm.landOwnership?.rainfed},
         //   { subLabel: "Tankfed", value: selectedForm.landOwnership?.tankfed },
