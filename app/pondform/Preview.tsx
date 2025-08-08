@@ -110,7 +110,7 @@ const isFormComplete = React.useMemo(() => {
 
 const canEdit = () => {
   if (!isSubmittedPreview) return true; // it's a draft
-  const status = selectedForm?.bankDetails?.formStatus;
+  const status = selectedForm?.basicDetails?.status;
   return  status ===1||status === 2|| status === 3;
 };
   // console.log("Selected Form:", selectedForm);

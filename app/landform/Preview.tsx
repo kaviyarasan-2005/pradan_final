@@ -37,8 +37,8 @@ const selectedForm = React.useMemo(() => {
 }, [id, fromsubmit, submittedForms, data]);
 
 const canEdit = () => {
-  if (!isSubmittedPreview) return true; // it's a draft
-  const status = selectedForm?.bankDetails?.formStatus;
+  if (!isSubmittedPreview) return true;
+  const status = selectedForm?.basicDetails?.status;
   return  status ===1||status === 2|| status === 3;
 };
 
@@ -79,7 +79,6 @@ const canEdit = () => {
       }, [])
     );
 useEffect(() => {  
-   
 setData("user_id",user.id);
   if(fromsubmit == "true" && fromPreview != "true"){
 const occupationarray = data.basicDetails.occupationCombined.split(',');
