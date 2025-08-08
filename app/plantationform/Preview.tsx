@@ -395,7 +395,9 @@ if (fromdraft === "true") {
           //  { subLabel: "Business", value: selectedForm.basicDetails?.occupation.business },
           //  { subLabel: "Others", value: selectedForm.basicDetails?.occupation.other },
         { label: "13. Special Category", value: selectedForm.basicDetails?.specialCategory ? "Yes" : "No" },
-        { subLabel: "Special Category Number", value: selectedForm.basicDetails?.specialCategoryNumber },
+       ...(selectedForm.basicDetails?.specialCategoryNumber > 0
+  ? [{ subLabel: "Special Category Number", value: selectedForm.basicDetails?.specialCategoryNumber }]
+  : []),
         { label: "14. Caste", value: selectedForm.basicDetails?.caste },
         { label: "15. House Ownership", value: selectedForm.basicDetails?.houseOwnership },
         { label: "16. Type of House", value: selectedForm.basicDetails?.houseType },

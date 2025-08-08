@@ -300,24 +300,6 @@ placeholder="Enter Age" placeholderTextColor="#888"
         }}
         style={styles.input}
       />
-{/* <Text style={styles.question}>8. Identity Card:</Text>
-<RadioButton.Group
-  onValueChange={(value) => updateField("idCardType", value)}
-  value={form.idCardType}
->
-  <RadioButton.Item label="Aadhar" value="Aadhar" />
-  <RadioButton.Item label="EPIC" value="EPIC" />
-  <RadioButton.Item label="Driving License" value="Driving License" />
-  <RadioButton.Item label="Other" value="Other" />
-</RadioButton.Group>
-{form.idCardType === "Other" && (
-  <TextInput
-    value={form.othercard}
-    onChangeText={(text) => updateField("othercard", text)}
-    style={styles.input}
-    placeholder="Specify Identity Card"
-  />
-)} */}
 
 <Text style={styles.question}>8. Aadhar Card Number:</Text>
 <TextInput
@@ -325,25 +307,13 @@ placeholder="Enter Age" placeholderTextColor="#888"
   placeholder="Aadhar No." placeholderTextColor="#888"
   onChangeText={(text) => {
     let filteredText = text;
-
-    // if (form.idCardType === "Aadhar") {
-      
       filteredText = text.replace(/[^0-9]/g, '').slice(0, 12);
-    // } else if (form.idCardType === "EPIC" || form.idCardType === "Driving License") {
-    //   filteredText = text.replace(/[^a-zA-Z0-9]/g, '');
-    // } 
     hand();
     updateField("idCardNumber", filteredText);
   }}
   keyboardType="numeric" 
   style={styles.input}
-  // placeholder={
-  //   form.idCardType === "Aadhar"
-  //     ? "Enter 12-digit Aadhar number"
-  //     : form.idCardType === "EPIC" || form.idCardType === "Driving License"
-  //     ? "Enter ID card number"
-  //     : "Enter ID card number"
-  // }
+
 />
 
 
@@ -420,53 +390,6 @@ placeholder="Enter Age" placeholderTextColor="#888"
     keyboardType="numeric" placeholder="0" placeholderTextColor="#888" />
   </View>
 </View>
-{/* 
-<Text style={styles.label}>13. Household Members:</Text>
-<View style={styles.row}></View>
-<Text style={styles.subLabel}>Adults</Text>
-<TextInput
- style={styles.inputHalf} 
-  value={String(form.adults)}
-  
-  onChangeText={(text) => {
-    // Allow only numbers, less than 50
-    let filteredText = text.replace(/[^0-9]/g, '');
-    if (parseInt(filteredText) > 50) filteredText = '50';
-    
-    // Update both fields and store them in a single variable
-    const updatedAdults = filteredText;
-    const updatedChildren = form.children; // or get children value here
-    
-    // Combine both values and update a single field
-    const hhcombined = `${updatedAdults},${updatedChildren}`;
-    updateField("hhcombined", hhcombined); // Save combined value in a single field
-    updateField("adults", updatedAdults); // Optionally, keep adults separate
-  }}
-  
-  placeholder="Adults"
-  keyboardType="numeric"
-/>
-<Text style={styles.subLabel}>Children</Text>
-<TextInput
-  value={String(form.children)}
-  onChangeText={(text) => {
-    let filteredText = text.replace(/[^0-9]/g, '');
-    if (parseInt(filteredText) > 50) filteredText = '50';
-    
-    // Update both fields and store them in a single variable
-    const updatedChildren = filteredText;
-    const updatedAdults = form.adults; // or get adults value here
-    
-    // Combine both values and update a single field
-    const hhcombined = `${updatedAdults},${updatedChildren}`;
-    // Save combined value in a single field
-    updateField("children", updatedChildren); // Optionally, keep children separate
-     updateField("hhcombined", hhcombined);
-  }}
-  style={styles.input}
-  placeholder="Children"
-  keyboardType="numeric"
-/> */}
 
 
 <Text style={styles.question}>13. Occupation of Household Members (No. of persons):</Text>
@@ -551,7 +474,7 @@ placeholder="Enter Age" placeholderTextColor="#888"
   label="Disabled"
   status={form.specialCategory ? "checked" : "unchecked"}
   onPress={() => {updateField("specialCategory", !form.specialCategory)
-    updateField("specialCategoryNumber", "0");
+    updateField("specialCategoryNumber", "");
   }}
 />
 {form.specialCategory && (
@@ -656,9 +579,6 @@ placeholder="Enter Age" placeholderTextColor="#888"
               <Text style={styles.nextBtnText}> {fromPreview ? "Preview" : "Next"}</Text>
               
             </TouchableOpacity>
-{/* <Button mode="contained" onPress={handleNext} style={styles.nextBtn}>
-  {fromPreview ? "Preview" : "Next"}
-</Button> */}
 </Animatable.View>
     </ScrollView>
     </KeyboardAwareScrollView>
