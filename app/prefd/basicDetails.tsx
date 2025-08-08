@@ -550,7 +550,9 @@ placeholder="Enter Age" placeholderTextColor="#888"
 <Checkbox.Item
   label="Disabled"
   status={form.specialCategory ? "checked" : "unchecked"}
-  onPress={() => updateField("specialCategory", !form.specialCategory)}
+  onPress={() => {updateField("specialCategory", !form.specialCategory)
+    updateField("specialCategoryNumber", "0");
+  }}
 />
 {form.specialCategory && (
   <>

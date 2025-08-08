@@ -70,8 +70,8 @@ const forms = IdFormStore((state) => state.Idforms);
   ]);
 
   useEffect(() => {
-    resetData();
    
+    resetData();
     loaddashbdForms();
   }, []);
 
@@ -244,14 +244,6 @@ setData("bankDetails", {
   measuredBy: item.verified_by,
 });
    }
-
-    
-
-  // console.log(fetchedData);
-    // Set all keys of fetchedData into the form store using setData
-   
- 
-
   router.push({ pathname: previewPath, params: { id: item.id, fromsubmit: "true", returnsubmit: "/postfd/totalsubmit" } });
 
   } catch (error) {

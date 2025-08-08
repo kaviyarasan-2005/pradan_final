@@ -13,6 +13,7 @@ export interface DashbdData {
   gender: string;
   hamlet:string;
   panchayat:string;
+  remarks:string;
 }
 
 interface DashbdStore {
@@ -36,12 +37,14 @@ export const DashbdStore = create<DashbdStore>((set) => ({
   loaddashbdForms: async () => {
     set({ loading: true });
     try {
+    
       const user = useUserStore.getState().user;
       const response = await axios.get(
         `${url}/api/dashboard/getpreviewformsData`,
         { params: { user_id: user?.id } }
       );
       const response_total = response.data;
+        // console.log(response.data);
       if (response_total) {
        set({ dashbdforms: response_total });
       }
