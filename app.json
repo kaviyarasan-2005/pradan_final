@@ -42,7 +42,7 @@
       "typedRoutes": true
     },
     "extra": {
-      "API_URL": "http://65.1.148.21:5000",
+      "API_URL": "http://65.1.148.21:",
       "router": {
         "origin": false
       },
