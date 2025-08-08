@@ -106,6 +106,11 @@ const handleFilePick = async (key: string) => {
     console.error('File pick error:', error);
   }
 };
+const canapprove = () => {
+  // const status = selectedForm?.bankDetails?.status;
+  const status =9;
+  return  status === 9;
+};
 
 const handleSubmit = async () => {
 if(submitting){
@@ -228,6 +233,9 @@ return;
   };
 
   const handleDeletePlantationRow = (index) => {
+     if (plantations.length === 1) {
+    return;
+  }
     const updated = plantations.filter((_, idx) => idx !== index);
     setPlantations(updated);
   };
@@ -375,12 +383,15 @@ return;
 
 
 
+   {canapprove() &&
      <TouchableOpacity
   style={styles.submitButton}
   onPress={handleSubmit}
 >
   <Text style={styles.submitButtonText}>Submit</Text>
 </TouchableOpacity>
+
+   }
 
     </ScrollView>
        {submitting && (

@@ -20,7 +20,7 @@ import {
 const url = Constants.expoConfig.extra.API_URL;
 const { width, height } = Dimensions.get('window');
 
-const PostlLndForm = () => {
+const PostlLandForm = () => {
   const route = useRoute();
   const { id } = useLocalSearchParams() || {};
   const { data, submittedForms } = useFormStore();
@@ -52,6 +52,11 @@ const PostlLndForm = () => {
     farmerContribution: landDevelopment.farmerContribution || '',
     pf_passbook: bankDetails?.pf_passbook,
   });
+const canapprove = () => {
+  // const status = selectedForm?.bankDetails?.status;
+  const status =9;
+  return  status === 9;
+};
 
   useFocusEffect(
     React.useCallback(() => {
@@ -241,10 +246,11 @@ const handleFilePick = async (key: string) => {
           </Text>
         </TouchableOpacity>
       </View>
-
+{canapprove() &&
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
+}
     </ScrollView>
        {submitting && (
       <View style={styles.loadingOverlay}>
@@ -386,4 +392,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PostlLndForm;
+export default PostlLandForm;

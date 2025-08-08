@@ -55,6 +55,13 @@ const [submitting, setSubmitting] = React.useState(false);
     totalAmount: landDevelopment.totalEstimate || '',
   });
 
+const canapprove = () => {
+  // const status = selectedForm?.bankDetails?.status;
+  const status =9;
+  return  status === 9;
+};
+
+
   const [files, setFiles] = useState({});
   useFocusEffect(
     React.useCallback(() => {
@@ -254,9 +261,11 @@ const handleFilePick = async (key: string) => {
         </TouchableOpacity>
       </View>
 
+      {canapprove() &&
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
+      }
     </ScrollView>
        {submitting && (
   <View style={styles.loadingOverlay}>
