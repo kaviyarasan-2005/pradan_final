@@ -547,7 +547,14 @@ placeholder="Enter Age" placeholderTextColor="#888"
 
       <Text style={styles.question}>21. Toilet Availability:</Text>
 <RadioButton.Group
-  onValueChange={(value) => updateField("toiletAvailability", value)}
+  onValueChange={(value) => {updateField("toiletAvailability", value)
+    if(value != "Yes"){
+      updateField("toiletCondition", "No")
+    }
+    else{
+       updateField("toiletCondition", "")
+    }
+  }}
   value={form.toiletAvailability}
 >
   <RadioButton.Item label="Yes" value="Yes" />
@@ -559,8 +566,8 @@ placeholder="Enter Age" placeholderTextColor="#888"
   onValueChange={(value) => updateField("toiletCondition", value)}
   value={form.toiletCondition}
 >
-  <RadioButton.Item label="Working" value="yes" />
-  <RadioButton.Item label="Not Working" value="no" />
+  <RadioButton.Item label="Working" value="Yes" />
+  <RadioButton.Item label="Not Working" value="No" />
 </RadioButton.Group>
       <Text style={styles.question}>23. Education of Householder:</Text>
 <RadioButton.Group
