@@ -14,6 +14,7 @@ import {
   Modal,
   Pressable,
   SafeAreaView,
+  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -388,6 +389,11 @@ const renderCard2 = ({ item }: any) => {
   };
   return (
       <SafeAreaView style={styles.container}>
+       
+                 <StatusBar
+              backgroundColor="black" // For Android
+              barStyle="light-content" // For text/icons color
+            />
         <Image
           source={require("../assets/images/pradan_trans.png")}
           style={styles.logo}
