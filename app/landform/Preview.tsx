@@ -248,7 +248,6 @@ for (const key of Object.keys(files)) {
       {
         text: "OK",
         onPress: () => {
-          // Clear all form store data
           resetData();
           router.push("/dashboard");
         },

@@ -43,9 +43,9 @@ const handleLogin = async () => {
       const role = await fetchUserData(username);
       await AsyncStorage.setItem("password", password);
 
-      if (role === "developer") {
+      if (role === "vol" || role === "developer" || role === "tl"||role === "coor" || role === "fin")  {
         router.replace("/dashboard");
-      } else {
+      } else if(role == "verifier"){
         router.replace("/Verifier/verifierdashboard");
       }
     } catch (error) {
