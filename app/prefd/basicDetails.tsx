@@ -207,23 +207,25 @@ const {user} = useUserStore();
                         </TouchableOpacity>
                         <Text style={styles.heading}>Basic Details</Text>
                       </View>
-        <View style={{ marginVertical: 10 }}>
-           <Text style={styles.label}>1. Name of Farmer</Text>
-      <TextInput
-        placeholderTextColor="#888"
-        value={form.name}
-        onChangeText={(text) => {
-          const isValid = /^[A-Za-z\s]*$/.test(text); // checks if only letters/spaces
-          setError(!isValid);
-          updateField("name", text); // keep raw text so user sees what they typed
-        }}
-        style={[
-          styles.input,
-          error && { borderColor: 'red', borderWidth: 1 }
-        ]}
-      />
-      {error && <Text style={styles.errorText}>Invalid: enter letters only</Text>}
-    </View>
+     <View style={{ marginVertical: 10 }}>
+  <Text style={styles.label}>1. Name of Farmer</Text>
+  <TextInput
+    placeholder="Enter Name"
+    placeholderTextColor="#888"
+    value={form.name}
+    onChangeText={(text) => {
+      const isValid = /^[A-Za-z ]*$/.test(text); // allows letters & spaces
+      setError(!isValid && text !== ""); // mark error only if not empty and invalid
+      updateField("name", text);
+    }}
+    style={[
+      styles.input,
+      error && { borderColor: 'red', borderWidth: 1 }
+    ]}
+  />
+  {error && <Text style={styles.errorText}>Invalid: letters only</Text>}
+</View>
+
  <Text style={styles.label}>2. Age</Text>
 <TextInput
   value={form.age}
@@ -807,13 +809,7 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       gap: width * 0.025,
     },
-  //     input: {
-  //   padding: 10,
-  //   borderWidth: 1,
-  //   borderColor: '#ccc',
-  //   borderRadius: 5,
-  //   fontSize: 16
-  // },
+ 
   errorText: {
     color: 'red',
     marginTop: 4,

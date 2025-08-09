@@ -209,66 +209,80 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
         </>
       )}
 
-       <Text style={styles.label}>26. Patta Number</Text>
-      <TextInput
-        placeholder="Enter patta number"
-        placeholderTextColor="#888"
-        value={form.pattaNumber}
-        onChangeText={(text) => updateField("pattaNumber", text)}
-        style={styles.input}
-      />
+     <Text style={styles.label}>26. Patta Number</Text>
+<TextInput
+  // placeholder="Enter patta number"
+  placeholderTextColor="#888"
+  value={form.pattaNumber}
+  onChangeText={(text) => {
+    const filteredText = text.replace(/[^0-9]/g, ''); // keep only numbers
+    updateField("pattaNumber", filteredText);
+  }}
+  style={styles.input}
+  keyboardType="numeric"
+/>
 
 <Text style={styles.label}>27. Irrigated Lands (ha)</Text>
 <View style={styles.row}>
   <View style={styles.inputHalfWrapper}>
-<Text style={styles.subLabel}>Rainfed:</Text>
-<TextInput
-placeholder="0"
-placeholderTextColor="#888"
-  value={String(form.irrigatedLand.rainfed)}
-  onChangeText={(text) => {
-    updateNestedField("irrigatedLand", "rainfed", text);
-     calculateTotalArea(text, form.irrigatedLand.tankfed, form.irrigatedLand.wellIrrigated);
-    const Irrigatedcombined = `${form.irrigatedLand.rainfed},${form.irrigatedLand.tankfed},${form.irrigatedLand.wellIrrigated}`
-    updateField("irrigatedLandCombined",Irrigatedcombined);
-   
-  }}
-  style={styles.input}
-  keyboardType="numeric"
-/>
-</View>
-<View style={styles.inputHalfWrapper}>
-<Text style={styles.subLabel}>Tankfed:</Text>
-<TextInput
-placeholderTextColor="#888"
-placeholder="0"
-  value={String(form.irrigatedLand.tankfed)}
-  onChangeText={(text) => {
-    updateNestedField("irrigatedLand", "tankfed", text);
-     calculateTotalArea( form.irrigatedLand.rainfed, text,form.irrigatedLand.wellIrrigated);
-         const Irrigatedcombined = `${form.irrigatedLand.rainfed},${form.irrigatedLand.tankfed},${form.irrigatedLand.wellIrrigated}`
-         updateField("irrigatedLandCombined",Irrigatedcombined);
-  }}
-  style={styles.input}
-  keyboardType="numeric"
-/>
-</View>
-<View style={styles.inputHalfWrapper}>
-<Text style={styles.subLabel}>Well Irrigated:</Text>
-<TextInput
-placeholder="0"
-placeholderTextColor="#888"
-  onChangeText={(text) => {
-    updateNestedField("irrigatedLand", "wellIrrigated", text);
-    calculateTotalArea( form.irrigatedLand.rainfed, form.irrigatedLand.tankfed,text,);
-        const Irrigatedcombined = `${form.irrigatedLand.rainfed},${form.irrigatedLand.tankfed},${form.irrigatedLand.wellIrrigated}`
-    updateField("irrigatedLandCombined",Irrigatedcombined);
-  }}
-   value={String(form.irrigatedLand.wellIrrigated)}
-  style={styles.input}
-  keyboardType="numeric"
-/>
-</View>
+    <Text style={styles.subLabel}>Rainfed:</Text>
+    <TextInput
+      placeholder="0"
+      placeholderTextColor="#888"
+      value={String(form.irrigatedLand.rainfed)}
+      onChangeText={(text) => {
+        let filteredText = text.replace(/,/g, ''); // remove commas
+        filteredText = filteredText.replace(/[^0-9.]/g, ''); // allow only numbers and .
+        filteredText = filteredText.replace(/(\..*)\./g, '$1'); // prevent multiple dots
+        updateNestedField("irrigatedLand", "rainfed", filteredText);
+        calculateTotalArea(filteredText, form.irrigatedLand.tankfed, form.irrigatedLand.wellIrrigated);
+        const Irrigatedcombined = `${filteredText},${form.irrigatedLand.tankfed},${form.irrigatedLand.wellIrrigated}`;
+        updateField("irrigatedLandCombined", Irrigatedcombined);
+      }}
+      style={styles.input}
+      keyboardType="numeric"
+    />
+  </View>
+
+  <View style={styles.inputHalfWrapper}>
+    <Text style={styles.subLabel}>Tankfed:</Text>
+    <TextInput
+      placeholderTextColor="#888"
+      placeholder="0"
+      value={String(form.irrigatedLand.tankfed)}
+      onChangeText={(text) => {
+        let filteredText = text.replace(/,/g, '');
+        filteredText = filteredText.replace(/[^0-9.]/g, '');
+        filteredText = filteredText.replace(/(\..*)\./g, '$1');
+        updateNestedField("irrigatedLand", "tankfed", filteredText);
+        calculateTotalArea(form.irrigatedLand.rainfed, filteredText, form.irrigatedLand.wellIrrigated);
+        const Irrigatedcombined = `${form.irrigatedLand.rainfed},${filteredText},${form.irrigatedLand.wellIrrigated}`;
+        updateField("irrigatedLandCombined", Irrigatedcombined);
+      }}
+      style={styles.input}
+      keyboardType="numeric"
+    />
+  </View>
+
+  <View style={styles.inputHalfWrapper}>
+    <Text style={styles.subLabel}>Well Irrigated:</Text>
+    <TextInput
+      placeholder="0"
+      placeholderTextColor="#888"
+      value={String(form.irrigatedLand.wellIrrigated)}
+      onChangeText={(text) => {
+        let filteredText = text.replace(/,/g, '');
+        filteredText = filteredText.replace(/[^0-9.]/g, '');
+        filteredText = filteredText.replace(/(\..*)\./g, '$1');
+        updateNestedField("irrigatedLand", "wellIrrigated", filteredText);
+        calculateTotalArea(form.irrigatedLand.rainfed, form.irrigatedLand.tankfed, filteredText);
+        const Irrigatedcombined = `${form.irrigatedLand.rainfed},${form.irrigatedLand.tankfed},${filteredText}`;
+        updateField("irrigatedLandCombined", Irrigatedcombined);
+      }}
+      style={styles.input}
+      keyboardType="numeric"
+    />
+  </View>
 </View>
 
     
@@ -281,36 +295,55 @@ placeholderTextColor="#888"
   style={styles.input}
   keyboardType="numeric"
 />
-     <Text style={styles.label}>29. Taluk</Text>
-      <View style={{ zIndex: 1000, marginBottom: 10 }}>
-      <TextInput
-        value={form.taluk}
-          placeholder="Enter Taluk"
-              placeholderTextColor="#888"
-        onChangeText={(text) => updateField("taluk", text)}
-        style={styles.input}
-      />
-      </View>
-      <Text style={styles.label}>30. Firka</Text>
-                <View style={{ zIndex: 1000, marginBottom: 10 }}>
-      <TextInput
-        value={form.firka}
-        placeholder="Enter Firka"
-              placeholderTextColor="#888"
-        onChangeText={(text) => updateField("firka", text)}
-        style={styles.input}
-      />
+ 
+<Text style={styles.label}>29. Taluk</Text>
+<View style={{ zIndex: 1000, marginBottom: 10 }}>
+  <TextInput
+    value={form.taluk}
+    placeholder="Enter Taluk"
+    placeholderTextColor="#888"
+    onChangeText={(text) => updateField("taluk", text)} // no replacement
+    style={[
+      styles.input,
+      form.taluk.length > 0 && !/^[A-Za-z\s]+$/.test(form.taluk) && {
+        borderColor: 'red',
+        borderWidth: 1,
+      },
+    ]}
+    autoCapitalize="words"
+  />
+
+  {form.taluk.length > 0 && !/^[A-Za-z\s]+$/.test(form.taluk) && (
+    <Text style={styles.errorText}>
+      Invalid: only letters allowed
+    </Text>
+  )}
 </View>
-    <Text style={styles.label}>31. Revenue Village</Text>
-              <View style={{ zIndex: 1000, marginBottom: 10 }}>
-      <TextInput
-        value={form.revenueVillage}
-         placeholder="Enter revenue village"
-              placeholderTextColor="#888"
-        onChangeText={(text) => updateField("revenueVillage", text)}
-        style={styles.input}
-      />
-      </View>
+
+   <Text style={styles.label}>31. Revenue Village</Text>
+<View style={{ zIndex: 1000, marginBottom: 10 }}>
+  <TextInput
+    value={form.revenueVillage}
+    placeholder="Enter revenue village"
+    placeholderTextColor="#888"
+    onChangeText={(text) => updateField("revenueVillage", text)} // no replace
+    style={[
+      styles.input,
+      form.revenueVillage.length > 0 && !/^[A-Za-z\s]+$/.test(form.revenueVillage) && {
+        borderColor: 'red',
+        borderWidth: 1,
+      },
+    ]}
+    autoCapitalize="words"
+  />
+
+  {form.revenueVillage.length > 0 && !/^[A-Za-z\s]+$/.test(form.revenueVillage) && (
+    <Text style={styles.errorText}>
+      Invalid: only letters allowed
+    </Text>
+  )}
+</View>
+
 
 <Text style={styles.question}>32. Crop Season (Choose all that apply):</Text>
 {["Kharif", "Rabi", "Other"].map((season) => (
@@ -488,6 +521,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#0B8B42',
     marginLeft: width * 0.025,
+  },
+   errorText: {
+    color: 'red',
+    marginTop: 4,
+    fontSize: 14
   },
   label: {
     fontSize: width * 0.035,
