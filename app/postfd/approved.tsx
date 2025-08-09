@@ -28,6 +28,7 @@ const { height, width } = Dimensions.get('window');
 const url = Constants.expoConfig.extra.API_URL;
 const statusStyles = {
  9: { backgroundColor: '#C8E6C9', textColor: '#2E7D32' },
+ 10: { backgroundColor: '#EDE7F6', textColor: '#6A1B9A' },
 };
 
 const Approved = () => {
@@ -92,7 +93,7 @@ return () => backHandler.remove();
     const matchesType = formType === "ALL" || String(item.form_type) === formType;
 
     const matchesName = item.farmer_name?.toLowerCase().includes(searchText.toLowerCase());
-    const matchesStatus = item.status ===9;
+    const matchesStatus = item.status ===9 || item.status ===10;
     const matchesPanchayat = item.panchayat?.toLowerCase().includes(panchayat.toLowerCase());
     const matchesBlock = item.block?.toLowerCase().includes(block.toLowerCase());
     const matchesHamlet = item.hamlet?.toLowerCase().includes(hamlet.toLowerCase());
@@ -452,7 +453,7 @@ setData("bankDetails", {
                 <Text style={styles.name}>{item.farmer_name|| "N/A"}</Text>
                 <View style={[styles.statusBadge, { backgroundColor: statusStyle.backgroundColor }]}>
               <Text style={[styles.statusText, { color: statusStyle.textColor }]}>
-                    {item.status === 9? 'Approved':'Unknown'}
+                    {item.status === 9? 'Approved':item.status === 10 ? 'Waiting for verification':'Unknown'}
                   </Text>
 
                 </View>
@@ -461,10 +462,20 @@ setData("bankDetails", {
               
              <Text style={styles.label}>Form: <Text style={styles.value}>{formTypeMap[item.form_type] }</Text></Text>
               <Text style={styles.label}>Date: <Text style={styles.value}>{item.created_at}</Text></Text>
-              <View style={styles.bioContainer}>
-                      <Text style={styles.bioTitle}>Remarks</Text>
-                      <Text style={styles.bioContent}>Remarks</Text>
-                    </View>
+               {item.remarks && item.status !== 9 &&(
+                             <View style={styles.bioContainer}>
+                                    <Text style={styles.bioTitle}>Remarks</Text>
+                                    <Text style={styles.bioContent}>{item.remarks}</Text>
+                                  </View>
+                         )
+                         }
+                           {!item.remarks && item.status !== 9&& (
+                             <View style={styles.bioContainer}>
+                                    <Text style={styles.bioTitle}>Remarks</Text>
+                                    <Text style={styles.bioContent}>No Remarks</Text>
+                                  </View>
+                         )
+                         }
             </TouchableOpacity>
           );
         })

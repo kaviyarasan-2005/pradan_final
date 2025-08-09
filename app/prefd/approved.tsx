@@ -309,10 +309,7 @@ const handleCardPress = async (item) => {
               
              <Text style={styles.label}>Form: <Text style={styles.value}>{formTypeMap[item.form_type] }</Text></Text>
               <Text style={styles.label}>Date: <Text style={styles.value}>{item.created_at}</Text></Text>
-              <View style={styles.bioContainer}>
-                      <Text style={styles.bioTitle}>Remarks</Text>
-                      <Text style={styles.bioContent}>Remarks</Text>
-                    </View>
+          
             </TouchableOpacity>
           );
         })

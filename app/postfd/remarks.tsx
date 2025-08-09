@@ -23,7 +23,7 @@ import { useUserStore } from "../../storage/userDatastore";
 const { height, width } = Dimensions.get('window');
 const url = Constants.expoConfig.extra.API_URL;
 const statusStyles = {
- 8: { backgroundColor: '#BBDEFB', textColor: '#1976D2' },
+ 8: {backgroundColor: '#FFCDD2', textColor: '#C62828' },
 };
 
 const Remarks = () => {
@@ -442,10 +442,20 @@ setData("bankDetails", {
               
              <Text style={styles.label}>Form: <Text style={styles.value}>{formTypeMap[item.form_type] }</Text></Text>
               <Text style={styles.label}>Date: <Text style={styles.value}>{item.created_at}</Text></Text>
-              <View style={styles.bioContainer}>
-                      <Text style={styles.bioTitle}>Remarks</Text>
-                      <Text style={styles.bioContent}>Remarks</Text>
-                    </View>
+             {item.remarks && item.status !== 9 &&(
+                           <View style={styles.bioContainer}>
+                                  <Text style={styles.bioTitle}>Remarks</Text>
+                                  <Text style={styles.bioContent}>{item.remarks}</Text>
+                                </View>
+                       )
+                       }
+                         {!item.remarks && item.status !== 9 && (
+                           <View style={styles.bioContainer}>
+                                  <Text style={styles.bioTitle}>Remarks</Text>
+                                  <Text style={styles.bioContent}>No Remarks</Text>
+                                </View>
+                       )
+                       }
             </TouchableOpacity>
           );
         })

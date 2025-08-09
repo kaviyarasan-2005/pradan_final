@@ -85,7 +85,7 @@ return () => backHandler.remove();
 
   }, [])
 );
-
+console.log(JSON.stringify(dashbdforms)+" dfghj");
   const filteredForms = dashbdforms.filter((item) => {
     const matchesType = formType === "ALL" || String(item.form_type) === formType;
 
@@ -114,7 +114,6 @@ return () => backHandler.remove();
 
 const handleCardPress = async (item) => {
   let previewPath = "";
-  console.log(item.id);
   if (item.form_type === 1) previewPath = "/landform/Preview";
   else if (item.form_type === 2) previewPath = "/pondform/Preview";
   else if (item.form_type === 3) previewPath = "/plantationform/Preview";
@@ -322,10 +321,20 @@ const handleCardPress = async (item) => {
               
              <Text style={styles.label}>Form: <Text style={styles.value}>{formTypeMap[item.form_type] }</Text></Text>
               <Text style={styles.label}>Date: <Text style={styles.value}>{item.created_at}</Text></Text>
-              <View style={styles.bioContainer}>
+           {item.remarks && item.status !== 4 &&(
+               <View style={styles.bioContainer}>
                       <Text style={styles.bioTitle}>Remarks</Text>
-                      <Text style={styles.bioContent}>Remarks</Text>
+                      <Text style={styles.bioContent}>{item.remarks}</Text>
                     </View>
+           )
+           }
+             {!item.remarks && item.status !== 4&& (
+               <View style={styles.bioContainer}>
+                      <Text style={styles.bioTitle}>Remarks</Text>
+                      <Text style={styles.bioContent}>No Remarks</Text>
+                    </View>
+           )
+           }
             </TouchableOpacity>
           );
         })

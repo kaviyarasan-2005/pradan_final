@@ -24,7 +24,7 @@ const { height, width } = Dimensions.get('window');
 const url = Constants.expoConfig.extra.API_URL;
 const statusStyles = {
   7: { backgroundColor: '#FFF9C4', textColor: '#F9A825' },
-  11: { backgroundColor: '#EDE7F6', textColor: '#6A1B9A' },
+  
 };
 
 const Pending = () => {
@@ -87,7 +87,7 @@ return () => backHandler.remove(); 
 
   const filteredForms = dashbdforms.filter((item) => {
     const matchesType = formType === "ALL" || String(item.form_type) === formType;
-     const matchesStatus = item.status ===7 || item.status ===11;
+     const matchesStatus = item.status ===7 ;
     const matchesName = item.farmer_name?.toLowerCase().includes(searchText.toLowerCase());
     const matchesPanchayat = item.panchayat?.toLowerCase().includes(panchayat.toLowerCase());
     const matchesBlock = item.block?.toLowerCase().includes(block.toLowerCase());
@@ -455,10 +455,20 @@ return () => backHandler.remove(); 
               
              <Text style={styles.label}>Form: <Text style={styles.value}>{formTypeMap[item.form_type] }</Text></Text>
               <Text style={styles.label}>Date: <Text style={styles.value}>{item.created_at}</Text></Text>
-              <View style={styles.bioContainer}>
-                      <Text style={styles.bioTitle}>Remarks</Text>
-                      <Text style={styles.bioContent}>Remarks</Text>
-                    </View>
+             {item.remarks && item.status !== 9 &&(
+                           <View style={styles.bioContainer}>
+                                  <Text style={styles.bioTitle}>Remarks</Text>
+                                  <Text style={styles.bioContent}>{item.remarks}</Text>
+                                </View>
+                       )
+                       }
+                         {!item.remarks && item.status !== 9&& (
+                           <View style={styles.bioContainer}>
+                                  <Text style={styles.bioTitle}>Remarks</Text>
+                                  <Text style={styles.bioContent}>No Remarks</Text>
+                                </View>
+                       )
+                       }
             </TouchableOpacity>
           );
         })
