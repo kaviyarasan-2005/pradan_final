@@ -240,6 +240,7 @@ const {user} = useUserStore();
  <Text style={styles.label}>2. Age</Text>
 <TextInput
   value={form.age}
+  placeholder='Enter Age'
   onChangeText={(text) => {
     // Allow only numbers
     const filteredText = text.replace(/[^0-9]/g, '');
@@ -263,7 +264,7 @@ const {user} = useUserStore();
         <Text style={styles.label}>3. Mobile Number</Text>
 <TextInput
   value={form.mobile}
-  
+  placeholder='Enter Mobile Number'
   placeholderTextColor="#888"
   onChangeText={(text) => {
     updateField("mobile", text); // don't modify the text
