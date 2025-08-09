@@ -159,23 +159,50 @@ const totalestimation =(feild : any,value : any) =>{
         style={styles.input}
       />
 
-     <Text style={styles.label}>35.a) Latitude and Longitude</Text>
-             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        <TextInput
-          style={[styles.input, { flex: 1, marginRight: 5 }]}
-          placeholder="Latitude"
-          value={form.latitude}
-          onChangeText={(text) => updateField("latitude", text)}
-          keyboardType="numeric"
-        />
-        <TextInput
-          style={[styles.input, { flex: 1, marginLeft: 5 }]}
-          placeholder="Longitude"
-          value={form.longitude}
-          onChangeText={(text) => updateField("longitude", text)}
-          keyboardType="numeric"
-        />
-      </View>
+<Text style={styles.label}>35.a) Latitude and Longitude</Text>
+<View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+
+  {/* Latitude */}
+  <View style={{ flex: 1, marginRight: 5 }}>
+    <TextInput
+      style={styles.input}
+      placeholder="Latitude (e.g., 12.123456)"
+      value={form.latitude}
+      onChangeText={(text) => {
+        updateField("latitude", text);
+      }}
+      keyboardType="numeric"
+    />
+    {form.latitude !== "" &&
+      !/^\d+\.\d{1,6}$/.test(form.latitude) && (
+        <Text style={styles.errorText}>
+          Invalid: must have 1–6 digits after decimal
+        </Text>
+      )}
+  </View>
+
+  {/* Longitude */}
+  <View style={{ flex: 1, marginLeft: 5 }}>
+    <TextInput
+      style={styles.input}
+      placeholder="Longitude (e.g., 77.654321)"
+      value={form.longitude}
+      onChangeText={(text) => {
+        updateField("longitude", text);
+      }}
+      keyboardType="numeric"
+    />
+    {form.longitude !== "" &&
+      !/^\d+\.\d{1,6}$/.test(form.longitude) && (
+        <Text style={styles.errorText}>
+          Invalid: must have 1–6 digits after decimal
+        </Text>
+      )}
+  </View>
+
+</View>
+
+
 
       <Text style={styles.label}>36. Soil Type:</Text>
       {renderCheckboxGroup("soilTypeCombined", ["Red Soil", "Black Cotton", "Sandy Loam", "Laterite"])}
@@ -233,37 +260,69 @@ const totalestimation =(feild : any,value : any) =>{
 
 
 
-   <Text style={styles.label}>39. Area benefited by proposed works (ha)</Text>
-      <TextInput
-        placeholder="Enter area"
-        placeholderTextColor="#888"
-        value={form.proposalArea}
-        onChangeText={(text) => updateField("proposalArea", text)}
-        style={styles.input}
-        keyboardType="numeric"
-      />
+<View style={{ marginVertical: 10 }}>
+  <Text style={styles.label}>39. Area benefited by proposed works (ha)</Text>
+  <TextInput
+    placeholder="Enter area"
+    placeholderTextColor="#888"
+    value={form.proposalArea}
+    onChangeText={(text) => {
+      updateField("proposalArea", text); // Keep user input as-is
+    }}
+    style={styles.input}
+    keyboardType="numeric"
+  />
 
-        <Text style={styles.label}>40. Any other works proposed</Text>
-      <TextInput
-      placeholder="Enter details"
-          placeholderTextColor="#888"
-        value={form.otherWorks}
-        onChangeText={(text) => updateField("otherWorks", text)}
-        style={styles.input}
-        // placeholder="Mention if any"
-      />
+  {form.proposalArea !== "" && !/^\d*\.?\d{0,2}$/.test(form.proposalArea) && (
+    <Text style={styles.errorText}>
+      Invalid: only numbers allowed with up to 2 decimal places
+    </Text>
+  )}
+</View>
 
-     <Text style={styles.label}>41. PRADAN Contribution</Text>
-      <TextInput
-       placeholder="Enter amount"
-          placeholderTextColor="#888"
-        value={form.pradanContribution}
-        onChangeText={(text) => {updateField("pradanContribution", text)
-           totalestimation( text, form.farmerContribution )
-        }}
-        style={styles.input}
-        keyboardType="numeric"
-      />
+<View style={{ marginVertical: 10 }}>
+  <Text style={styles.label}>40. Any other works proposed</Text>
+  <TextInput
+    placeholder="Enter details"
+    placeholderTextColor="#888"
+    value={form.otherWorks}
+    onChangeText={(text) => {
+      updateField("otherWorks", text); // Keep user input exactly as typed
+    }}
+    style={styles.input}
+  />
+
+  {form.otherWorks !== "" && !/^[A-Za-z\s,\.]+$/.test(form.otherWorks) && (
+    <Text style={styles.errorText}>
+      Invalid: only letters, spaces, commas, and periods allowed
+    </Text>
+  )}
+</View>
+
+
+    <View style={{ marginVertical: 10 }}>
+  <Text style={styles.label}>41. PRADAN Contribution</Text>
+  <TextInput
+    placeholder="Enter amount"
+    placeholderTextColor="#888"
+    value={form.pradanContribution}
+    onChangeText={(text) => {
+      updateField("pradanContribution", text);
+      totalestimation(text, form.farmerContribution);
+    }}
+    style={styles.input}
+    keyboardType="numeric"
+  />
+
+  {form.pradanContribution !== "" &&
+    (!/^\d+$/.test(form.pradanContribution) ||
+      Number(form.pradanContribution) > 10500) && (
+      <Text style={styles.errorText}>
+        Invalid: must be a number less than 10,500
+      </Text>
+    )}
+</View>
+
 
       <Text style={styles.label}>42. Farmer Contribution</Text>
       <TextInput
@@ -342,6 +401,11 @@ const styles = StyleSheet.create({
     marginVertical: height * 0.01,
     color: '#333',
     fontWeight: "bold",
+  },
+   errorText: {
+    color: 'red',
+    marginTop: 4,
+    fontSize: 14
   },
 input: {
   height: height * 0.06, // Around 6% of screen height, better for touch usability

@@ -167,27 +167,48 @@ export default function PondDevelopment() {
           placeholderTextColor="#888"
       />
 
-      <Text style={styles.label}>35. Latitude and Longitude</Text>
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <TextInput
-           
-          style={[styles.input, { flex: 1, marginRight: 5 }]}
-          placeholder="Latitude"
-          placeholderTextColor="#888"
-          value={form.latitude}
-          onChangeText={(text) => updateField("latitude", text)}
-          keyboardType="numeric"
-        />
-        <TextInput
-           
-          style={[styles.input, { flex: 1, marginLeft: 5 }]}
-          placeholder="Longitude"
-          placeholderTextColor="#888"
-          value={form.longitude}
-          onChangeText={(text) => updateField("longitude", text)}
-          keyboardType="numeric"
-        />
-      </View>
+<Text style={styles.label}>35.a) Latitude and Longitude</Text>
+<View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+
+  {/* Latitude */}
+  <View style={{ flex: 1, marginRight: 5 }}>
+    <TextInput
+      style={styles.input}
+      placeholder="Latitude (e.g., 12.123456)"
+      value={form.latitude}
+      onChangeText={(text) => {
+        updateField("latitude", text);
+      }}
+      keyboardType="numeric"
+    />
+    {form.latitude !== "" &&
+      !/^\d+\.\d{1,6}$/.test(form.latitude) && (
+        <Text style={styles.errorText}>
+          Invalid: must have 1–6 digits after decimal
+        </Text>
+      )}
+  </View>
+
+  {/* Longitude */}
+  <View style={{ flex: 1, marginLeft: 5 }}>
+    <TextInput
+      style={styles.input}
+      placeholder="Longitude (e.g., 77.654321)"
+      value={form.longitude}
+      onChangeText={(text) => {
+        updateField("longitude", text);
+      }}
+      keyboardType="numeric"
+    />
+    {form.longitude !== "" &&
+      !/^\d+\.\d{1,6}$/.test(form.longitude) && (
+        <Text style={styles.errorText}>
+          Invalid: must have 1–6 digits after decimal
+        </Text>
+      )}
+  </View>
+
+</View>
 
          <Text style={styles.label}>36. Soil Type</Text>
         {renderCheckboxGroup("soilTypeCombined", ["Red Soil", "Black Cotton", "Sandy Loam", "Laterite"])}
@@ -263,18 +284,29 @@ export default function PondDevelopment() {
         editable={false}
       />
 
-      <Text style={styles.label}>41. PRADAN contribution (in Rs)</Text>
-      <TextInput
-        value={form.pradanContribution}
-         onChangeText={(text) => {updateField("pradanContribution", text)
-           totalestimation( text, form.farmerContribution )
-        }}
-        style={styles.input}
-         placeholder="Enter amount"
+          <View style={{ marginVertical: 10 }}>
+        <Text style={styles.label}>41. PRADAN Contribution</Text>
+        <TextInput
+          placeholder="Enter amount"
           placeholderTextColor="#888"
-        keyboardType="numeric"
-         
-      />
+          value={form.pradanContribution}
+          onChangeText={(text) => {
+            updateField("pradanContribution", text);
+            totalestimation(text, form.farmerContribution);
+          }}
+          style={styles.input}
+          keyboardType="numeric"
+        />
+      
+        {form.pradanContribution !== "" &&
+          (!/^\d+$/.test(form.pradanContribution) ||
+            Number(form.pradanContribution) > 30000) && (
+            <Text style={styles.errorText}>
+              Invalid: must be a number less than 30,000
+            </Text>
+          )}
+      </View>
+      
 
      
           <Text style={styles.label}>42. Farmer contribution (in Rs)</Text>
@@ -360,6 +392,11 @@ const styles = StyleSheet.create({
     color: '#0B8B42',
     marginBottom: height * 0.012,
     textAlign: 'center',
+  },
+   errorText: {
+    color: 'red',
+    marginTop: 4,
+    fontSize: 14
   },
   headerContainer: {
     flexDirection: 'row',
