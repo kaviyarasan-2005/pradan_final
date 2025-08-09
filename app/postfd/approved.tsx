@@ -11,7 +11,6 @@ import {
   BackHandler, Dimensions,
   SafeAreaView,
   ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
   TextInput,
@@ -332,10 +331,6 @@ setData("bankDetails", {
 
   return (
       <SafeAreaView style={{ flex: 1}}>
-         <StatusBar
-      backgroundColor="black" // For Android
-      barStyle="light-content" // For text/icons color
-    />
      <View style={styles.container}>
       <View >
        <View style={styles.header}>

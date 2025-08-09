@@ -4,7 +4,7 @@ import axios from "axios";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Image, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useUserStore } from "../storage/userDatastore";
 
 const url = Constants.expoConfig.extra.API_URL;
@@ -60,6 +60,10 @@ const handleLogin = async () => {
   return (
    
     <View style={styles.container}>
+      <StatusBar
+                    backgroundColor="rgba(55, 51, 51, 1)"
+                    barStyle="light-content" 
+                  />
          <Text style={styles.versionText}>Test version 1 </Text>
       <Image
   source={require("../assets/images/pradan_logo.png")} 

@@ -391,8 +391,8 @@ const renderCard2 = ({ item }: any) => {
       <SafeAreaView style={styles.container}>
        
                  <StatusBar
-              backgroundColor="black" // For Android
-              barStyle="light-content" // For text/icons color
+              backgroundColor="rgba(55, 51, 51, 1)"
+              barStyle="light-content" 
             />
         <Image
           source={require("../assets/images/pradan_trans.png")}
