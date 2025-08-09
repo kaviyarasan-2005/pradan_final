@@ -211,7 +211,7 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
 
      <Text style={styles.label}>26. Patta Number</Text>
 <TextInput
-  // placeholder="Enter patta number"
+  placeholder="Enter patta number"
   placeholderTextColor="#888"
   value={form.pattaNumber}
   onChangeText={(text) => {

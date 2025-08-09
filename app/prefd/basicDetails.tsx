@@ -286,7 +286,7 @@ const {user} = useUserStore();
      <Text style={styles.label}>4. District</Text>
 <TextInput
   value={form.district}
-  // placeholder="Enter District"
+  placeholder="Enter District"
   placeholderTextColor="#888"
   onChangeText={(text) => {
     updateField("district", text); // don't replace, keep what they type
@@ -309,7 +309,7 @@ const {user} = useUserStore();
        <Text style={styles.label}>5. Block</Text>
 <TextInput
   value={form.block}
-  // placeholder="Enter Block"
+  placeholder="Enter Block"
   placeholderTextColor="#888"
   onChangeText={(text) => {
     updateField("block", text); // don't filter text
@@ -332,7 +332,7 @@ const {user} = useUserStore();
       <Text style={styles.label}>6. Panchayat</Text>
 <TextInput
   value={form.panchayat}
-  // placeholder="Enter Panchayat"
+  placeholder="Enter Panchayat"
   placeholderTextColor="#888"
   onChangeText={(text) => {
     updateField("panchayat", text); // keep original text, don't replace
@@ -356,7 +356,7 @@ const {user} = useUserStore();
      <Text style={styles.label}>7. Hamlet</Text>
 <TextInput
   value={form.hamlet}
-  // placeholder="Enter Hamlet"
+  placeholder="Enter Hamlet"
   placeholderTextColor="#888"
   onChangeText={(text) => {
     updateField("hamlet", text); // don't filter, keep what user typed
@@ -417,7 +417,7 @@ const {user} = useUserStore();
 <Text style={styles.question}>10. Father / Spouse Name:</Text>
 <TextInput
   value={form.fatherSpouse}
-  // placeholder="Enter Name"
+  placeholder=" Father / Spouse Name"
   placeholderTextColor="#888"
   onChangeText={(text) => {
     updateField("fatherSpouse", text); // keep original text
