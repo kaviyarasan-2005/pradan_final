@@ -207,24 +207,35 @@ const {user} = useUserStore();
                         </TouchableOpacity>
                         <Text style={styles.heading}>Basic Details</Text>
                       </View>
-     <View style={{ marginVertical: 10 }}>
+<View style={{ marginVertical: 10 }}>
   <Text style={styles.label}>1. Name of Farmer</Text>
   <TextInput
     placeholder="Enter Name"
     placeholderTextColor="#888"
     value={form.name}
     onChangeText={(text) => {
-      const isValid = /^[A-Za-z ]*$/.test(text); // allows letters & spaces
-      setError(!isValid && text !== ""); // mark error only if not empty and invalid
       updateField("name", text);
     }}
-    style={[
-      styles.input,
-      error && { borderColor: 'red', borderWidth: 1 }
-    ]}
+    style={styles.input}
   />
-  {error && <Text style={styles.errorText}>Invalid: letters only</Text>}
+
+  {/* Error messages */}
+  {(() => {
+    const value = form.name;
+    const spaceCount = (value.match(/ /g) || []).length;
+
+    if (value !== "" && !/^[A-Za-z\s]*$/.test(value)) {
+      return <Text style={styles.errorText}>Invalid: only letters and spaces allowed</Text>;
+    }
+
+    if (spaceCount > 3) {
+      return <Text style={styles.errorText}>Invalid: more than 3 spaces not allowed</Text>;
+    }
+
+    return null;
+  })()}
 </View>
+
 
  <Text style={styles.label}>2. Age</Text>
 <TextInput

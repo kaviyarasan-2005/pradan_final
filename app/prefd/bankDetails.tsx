@@ -172,57 +172,114 @@ export default function BankDetails() {
       />
       <Text style={styles.heading}>Bank Details</Text>
 </View>
-      <Text style={styles.label}>44. Name of Account Holder</Text>
-      <TextInput
-      placeholder="Enter name"
-      placeholderTextColor="#888"
-        value={form.accountHolderName}
-        onChangeText={(text) => updateField("accountHolderName", text)}
-        style={styles.input}
-      />
+  <View style={{ marginVertical: 10 }}>
+  <Text style={styles.label}>44. Name of Account Holder</Text>
+  <TextInput
+    placeholder="Enter name"
+    placeholderTextColor="#888"
+    value={form.accountHolderName}
+    onChangeText={(text) => {
+      updateField("accountHolderName", text);
+    }}
+    style={styles.input}
+  />
 
-      <Text style={styles.label}>45. Account Number</Text>
-      <TextInput
-       value={String(form.accountNumber)}
-        placeholder="Enter account number"
-            placeholderTextColor="#888"
-        // value={form.accountNumber}
-        onChangeText={(text) => {updateField("accountNumber", text)
-          
-        }}
-        style={styles.input}
-        keyboardType="numeric"
-      />
+  {/* Error messages */}
+  {(() => {
+    const value = form.accountHolderName;
+    const spaceCount = (value.match(/ /g) || []).length;
 
-      <Text style={styles.label}>46. Name of the Bank</Text>
-      <TextInput
-        value={form.bankName}
-        placeholder="Enter bank name"
-        placeholderTextColor="#888"
-        onChangeText={(text) => updateField("bankName", text)}
-        style={styles.input}
-      />
+    if (value !== "" && !/^[A-Za-z\s]*$/.test(value)) {
+      return <Text style={styles.errorText}>Invalid: only letters and spaces allowed</Text>;
+    }
 
-       <Text style={styles.label}>47. Branch</Text>
-      <TextInput
-        value={form.branch}
-          placeholder="Enter branch name"
-            placeholderTextColor="#888"
-        onChangeText={(text) => updateField("branch", text)}
-        style={styles.input}
-      />
+    if (spaceCount > 3) {
+      return <Text style={styles.errorText}>Invalid: more than 3 spaces not allowed</Text>;
+    }
 
-      <Text style={styles.label}>48. IFSC</Text>
-      <TextInput
-        value={form.ifscCode}
-        placeholder="Enter IFSC code"
-            placeholderTextColor="#888"
-        onChangeText={(text) => {
-        const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').slice(0, 11);
-          updateField("ifscCode", filteredText)}}
-        style={styles.input}
-        autoCapitalize="characters"
-      />
+    return null;
+  })()}
+</View>
+
+
+  <View style={{ marginVertical: 10 }}>
+  <Text style={styles.label}>45. Account Number</Text>
+  <TextInput
+    value={String(form.accountNumber)}
+    placeholder="Enter account number"
+    placeholderTextColor="#888"
+    keyboardType="numeric"
+    onChangeText={(text) => {
+      updateField("accountNumber", text);
+    }}
+    style={styles.input}
+  />
+
+  {/* Error message */}
+  {form.accountNumber !== "" && !/^[0-9]*$/.test(form.accountNumber) && (
+    <Text style={styles.errorText}>Invalid: only numbers allowed</Text>
+  )}
+</View>
+
+
+      <View style={{ marginVertical: 10 }}>
+  <Text style={styles.label}>46. Name of the Bank</Text>
+  <TextInput
+    value={form.bankName}
+    placeholder="Enter bank name"
+    placeholderTextColor="#888"
+    onChangeText={(text) => {
+      updateField("bankName", text);
+    }}
+    // autoCorrect={false}       // disable autocorrect
+    // spellCheck={false}        // disable spellcheck
+    style={styles.input}
+  />
+
+  {form.bankName !== "" && !/^[A-Za-z\s]*$/.test(form.bankName) && (
+    <Text style={styles.errorText}>Invalid: only letters and spaces allowed</Text>
+  )}
+</View>
+
+
+      <Text style={styles.label}>47. Branch</Text>
+<TextInput
+  value={form.branch}
+  placeholder="Enter branch name"
+  placeholderTextColor="#888"
+  onChangeText={(text) => {
+    updateField("branch", text);
+  }}
+  // autoCorrect={false}   // prevent OS red underline
+  // spellCheck={false}    // disable spellcheck
+  style={styles.input}
+/>
+
+{form.branch !== "" && !/^[A-Za-z\s]*$/.test(form.branch) && (
+  <Text style={styles.errorText}>Invalid: only letters and spaces allowed</Text>
+)}
+
+<Text style={styles.label}>48. IFSC</Text>
+<TextInput
+  value={form.ifscCode}
+  placeholder="Enter IFSC code"
+  placeholderTextColor="#888"
+  // maxLength={11} // stops typing beyond 11
+  onChangeText={(text) => {
+    updateField("ifscCode", text.toUpperCase()); // keep original, just uppercase
+  }}
+  style={styles.input}
+  autoCapitalize="characters"
+/>
+
+{form.ifscCode !== "" &&
+  (!/^[A-Z0-9]{4}0[A-Z0-9]{6}$/.test(form.ifscCode) ||
+    form.ifscCode.length !== 11) && (
+    <Text style={styles.errorText}>
+      Invalid: IFSC must be exactly 11 characters (e.g., ABCD0XXXXXX)
+    </Text>
+)}
+
 
 <Text style={styles.label}>49. Farmer has agreed for the work, and his contribution</Text>
       <RadioButton.Group
@@ -289,14 +346,7 @@ export default function BankDetails() {
 }
 
 const styles = StyleSheet.create({
-  // container: {
-  //   padding: 20,
-  //   paddingBottom: 40,
-  // },
-  // backButton: {
-  //   alignSelf: "flex-start",
-  //   marginBottom: 10,
-  // },
+
   title: {
     fontSize: 24,
     fontWeight: "bold",
@@ -313,13 +363,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 5,
   },
-  // input: {
-  //   borderWidth: 1,
-  //   borderColor: "#ccc",
-  //   padding: 10,
-  //   marginBottom: 10,
-  //   borderRadius: 5,
-  // },
   uploadButton: {
     marginTop: 8,
     marginBottom: 4,
@@ -374,6 +417,11 @@ const styles = StyleSheet.create({
     color: '#0B8B42',
     marginBottom: height * 0.025,
     textAlign: 'center',
+  },
+    errorText: {
+    color: 'red',
+    marginTop: 4,
+    fontSize: 14
   },
   input: {
     borderWidth: 1,
