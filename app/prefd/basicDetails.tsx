@@ -22,6 +22,7 @@ export default function BasicDetails() {
     fromplantation?: string;
   }>();
   const { data, submittedForms, setData,resetData } = useFormStore();
+    const [error, setError] = useState(false);
 const {user} = useUserStore();
   const [form, setForm] = useState(
     data.basicDetails || {
@@ -206,115 +207,186 @@ const {user} = useUserStore();
                         </TouchableOpacity>
                         <Text style={styles.heading}>Basic Details</Text>
                       </View>
-      
-
-
-      {/* Inputs */}
-      <Text style={styles.label}>1. Name of Farmer</Text>
+        <View style={{ marginVertical: 10 }}>
+           <Text style={styles.label}>1. Name of Farmer</Text>
       <TextInput
-      placeholder="Enter name" placeholderTextColor="#888"
+        placeholderTextColor="#888"
         value={form.name}
         onChangeText={(text) => {
-          const filteredText = text.replace(/[^A-Za-z\s]/g, '');
-          updateField("name", filteredText);
+          const isValid = /^[A-Za-z\s]*$/.test(text); // checks if only letters/spaces
+          setError(!isValid);
+          updateField("name", text); // keep raw text so user sees what they typed
         }}
-        style={styles.input}
+        style={[
+          styles.input,
+          error && { borderColor: 'red', borderWidth: 1 }
+        ]}
       />
-    <Text style={styles.label}>2. Age</Text>
+      {error && <Text style={styles.errorText}>Invalid: enter letters only</Text>}
+    </View>
+ <Text style={styles.label}>2. Age</Text>
 <TextInput
-placeholder="Enter Age" placeholderTextColor="#888"
   value={form.age}
   onChangeText={(text) => {
+    // Allow only numbers
     const filteredText = text.replace(/[^0-9]/g, '');
     updateField("age", filteredText);
   }}
   style={[
     styles.input,
-    form.age !== '' && parseInt(form.age) > 150 && {
+    form.age !== '' && parseInt(form.age) > 130 && {
       borderColor: 'red',
       borderWidth: 1,
     },
   ]}
   keyboardType="numeric"
 />
-{form.age !== '' && parseInt(form.age) > 150 && (
-  <Text style={{ color: 'red', fontSize: 12 }}>Age cannot exceed 150</Text>
+{form.age !== '' && parseInt(form.age) > 130 && (
+  <Text style={{ color: 'red', fontSize: 12 }}>
+    Invalid: age cannot exceed 130
+  </Text>
 )}
 
-            <Text style={styles.label}>3. Mobile Number</Text>
-     <TextInput
-      value={form.mobile}
-      placeholder="Enter mobile" placeholderTextColor="#888"
-      onChangeText={(text) => {
-      const filteredText = text.replace(/[^0-9]/g, '').slice(0, 10);
-      updateField("mobile", filteredText);
-      }}
-      style={[
-      styles.input,
-      form.mobile.length > 0 && form.mobile.length !== 10 && { borderColor: 'red', borderWidth: 1 }
-      ]}
-      keyboardType="numeric"
+        <Text style={styles.label}>3. Mobile Number</Text>
+<TextInput
+  value={form.mobile}
+  
+  placeholderTextColor="#888"
+  onChangeText={(text) => {
+    updateField("mobile", text); // don't modify the text
+  }}
+  style={[
+    styles.input,
+    form.mobile.length > 0 &&
+      (!/^\d{10}$/.test(form.mobile)) && { borderColor: 'red', borderWidth: 1 }
+  ]}
+  keyboardType="numeric"
 />
 
-{form.mobile.length > 0 && form.mobile.length !== 10 && (
-  <Text style={{ color: 'red', fontSize: 12 }}>Mobile number must be exactly 10 digits</Text>
+{form.mobile.length > 0 && !/^\d{10}$/.test(form.mobile) && (
+  <Text style={{ color: 'red', fontSize: 12 }}>
+    Mobile number must be exactly 10 digits
+  </Text>
 )}
 
-      <Text style={styles.label}>4. District</Text>
-      <TextInput
-      placeholder="Enter District" placeholderTextColor="#888"
-        value={form.district}
-        onChangeText={(text) => {
-          const filteredText = text.replace(/[^A-Za-z\s]/g, '');
-          updateField("district", filteredText);
-        }}
-        style={styles.input}
-      />
+
+     <Text style={styles.label}>4. District</Text>
+<TextInput
+  value={form.district}
+  // placeholder="Enter District"
+  placeholderTextColor="#888"
+  onChangeText={(text) => {
+    updateField("district", text); // don't replace, keep what they type
+  }}
+  style={[
+    styles.input,
+    form.district.length > 0 && !/^[A-Za-z\s]+$/.test(form.district) && {
+      borderColor: 'red',
+      borderWidth: 1
+    }
+  ]}
+/>
+
+{form.district.length > 0 && !/^[A-Za-z\s]+$/.test(form.district) && (
+  <Text style={{ color: 'red', fontSize: 12 }}>
+    Invalid: only letters allowed
+  </Text>
+)}
+
        <Text style={styles.label}>5. Block</Text>
-      <TextInput
-       placeholder="Enter Block" placeholderTextColor="#888"
-        value={form.block}
-        onChangeText={(text) => {
-          const filteredText = text.replace(/[^A-Za-z\s]/g, '');
-          updateField("block", filteredText);
-        }}
-        style={styles.input}
-      />
-     <Text style={styles.label}>6. Panchayat</Text>
-      <TextInput
-        value={form.panchayat}
-         placeholder="Enter Panchayat" placeholderTextColor="#888"
-        onChangeText={(text) => {
-          const filteredText = text.replace(/[^A-Za-z\s]/g, '');
-          updateField("panchayat", filteredText);
-        }}
-        style={styles.input}
-      />
-      <Text style={styles.label}>7.Hamlet </Text>
-      <TextInput
-      placeholder="Enter Hamlet" placeholderTextColor="#888"
-        value={form.hamlet}
-        onChangeText={(text) => {
-          const filteredText = text.replace(/[^A-Za-z\s]/g, '');
-          updateField("hamlet", filteredText);
-        }}
-        style={styles.input}
-      />
+<TextInput
+  value={form.block}
+  // placeholder="Enter Block"
+  placeholderTextColor="#888"
+  onChangeText={(text) => {
+    updateField("block", text); // don't filter text
+  }}
+  style={[
+    styles.input,
+    form.block.length > 0 && !/^[A-Za-z\s]+$/.test(form.block) && {
+      borderColor: 'red',
+      borderWidth: 1
+    }
+  ]}
+/>
+
+{form.block.length > 0 && !/^[A-Za-z\s]+$/.test(form.block) && (
+  <Text style={{ color: 'red', fontSize: 12 }}>
+    Invalid: only letters allowed
+  </Text>
+)}
+
+      <Text style={styles.label}>6. Panchayat</Text>
+<TextInput
+  value={form.panchayat}
+  // placeholder="Enter Panchayat"
+  placeholderTextColor="#888"
+  onChangeText={(text) => {
+    updateField("panchayat", text); // keep original text, don't replace
+  }}
+  style={[
+    styles.input,
+    form.panchayat.length > 0 && !/^[A-Za-z\s]+$/.test(form.panchayat) && {
+      borderColor: 'red',
+      borderWidth: 1
+    }
+  ]}
+/>
+
+{form.panchayat.length > 0 && !/^[A-Za-z\s]+$/.test(form.panchayat) && (
+  <Text style={{ color: 'red', fontSize: 12 }}>
+    Invalid: only letters allowed
+  </Text>
+)}
+
+
+     <Text style={styles.label}>7. Hamlet</Text>
+<TextInput
+  value={form.hamlet}
+  // placeholder="Enter Hamlet"
+  placeholderTextColor="#888"
+  onChangeText={(text) => {
+    updateField("hamlet", text); // don't filter, keep what user typed
+  }}
+  style={[
+    styles.input,
+    form.hamlet.length > 0 && !/^[A-Za-z\s]+$/.test(form.hamlet) && {
+      borderColor: 'red',
+      borderWidth: 1
+    }
+  ]}
+/>
+
+{form.hamlet.length > 0 && !/^[A-Za-z\s]+$/.test(form.hamlet) && (
+  <Text style={{ color: 'red', fontSize: 12 }}>
+    Invalid: only letters allowed
+  </Text>
+)}
+
 
 <Text style={styles.question}>8. Aadhar Card Number:</Text>
 <TextInput
   value={form.idCardNumber}
-  placeholder="Aadhar No." placeholderTextColor="#888"
+  placeholder="011234567890"
+  placeholderTextColor="#888"
   onChangeText={(text) => {
-    let filteredText = text;
-      filteredText = text.replace(/[^0-9]/g, '').slice(0, 12);
-    hand();
-    updateField("idCardNumber", filteredText);
+    updateField("idCardNumber", text); // keep user input
   }}
-  keyboardType="numeric" 
-  style={styles.input}
-
+  keyboardType="numeric"
+  style={[
+    styles.input,
+    form.idCardNumber.length > 0 && !/^\d{12}$/.test(form.idCardNumber) && {
+      borderColor: 'red',
+      borderWidth: 1
+    }
+  ]}
 />
+
+{form.idCardNumber.length > 0 && !/^\d{12}$/.test(form.idCardNumber) && (
+  <Text style={{ color: 'red', fontSize: 12 }}>
+    Invalid: must be exactly 12 digits
+  </Text>
+)}
 
 
 <Text style={styles.question}>9. Gender:</Text>
@@ -329,14 +401,31 @@ placeholder="Enter Age" placeholderTextColor="#888"
 </RadioButton.Group>
 {/* </View> */}
 
+<Text style={styles.question}>10. Father / Spouse Name:</Text>
+<TextInput
+  value={form.fatherSpouse}
+  // placeholder="Enter Name"
+  placeholderTextColor="#888"
+  onChangeText={(text) => {
+    updateField("fatherSpouse", text); // keep original text
+  }}
+  style={[
+    styles.input,
+    form.fatherSpouse.length > 0 &&
+      !/^[A-Za-z\s]+$/.test(form.fatherSpouse) && {
+        borderColor: 'red',
+        borderWidth: 1
+      }
+  ]}
+/>
 
-      <Text style={styles.question}>10. Father / Spouse Name:</Text>
-      <TextInput
-        value={form.fatherSpouse}
-        onChangeText={(text) => updateField("fatherSpouse", text)}
-         placeholder="Enter Name"
-        style={styles.input}
-      />
+{form.fatherSpouse.length > 0 &&
+  !/^[A-Za-z\s]+$/.test(form.fatherSpouse) && (
+    <Text style={{ color: 'red', fontSize: 12 }}>
+      Invalid: only letters allowed
+    </Text>
+)}
+
 
 <Text style={styles.question}>11. Type of Household:</Text>
 <RadioButton.Group
@@ -347,139 +436,186 @@ placeholder="Enter Age" placeholderTextColor="#888"
   <RadioButton.Item label="Joint" value="Joint" />
 </RadioButton.Group>
 
-            <Text style={styles.label}>12. Household Members</Text>
+   <Text style={styles.label}>12. Household Members</Text>
 <View style={styles.row}>
+  {/* Adults */}
   <View style={styles.inputHalfWrapper}>
     <Text style={styles.subLabel}>Adults</Text>
-    <TextInput style={styles.inputHalf} 
-     value={String(form.adults)}
-    onChangeText={(text) => {
-    // Allow only numbers, less than 50
-    let filteredText = text.replace(/[^0-9]/g, '');
-    if (parseInt(filteredText) > 50) filteredText = '50';
-    
-    // Update both fields and store them in a single variable
-    const updatedAdults = filteredText;
-    const updatedChildren = form.children; // or get children value here
-    
-    // Combine both values and update a single field
-    const hhcombined = `${updatedAdults},${updatedChildren}`;
-    updateField("hhcombined", hhcombined); // Save combined value in a single field
-    updateField("adults", updatedAdults); // Optionally, keep adults separate
-  }}
-    keyboardType="numeric" placeholder="0" placeholderTextColor="#888" />
+    <TextInput
+      style={[
+        styles.inputHalf,
+        form.adults !== '' && parseInt(form.adults) > 50 && {
+          borderColor: 'red',
+          borderWidth: 1
+        }
+      ]}
+      value={String(form.adults)}
+      onChangeText={(text) => {
+        // Remove anything except digits
+        let filteredText = text.replace(/[.,]/g, '').replace(/[^0-9]/g, '');
+        updateField("adults", filteredText);
+
+        // Update combined value
+        const hhcombined = `${filteredText},${form.children}`;
+        updateField("hhcombined", hhcombined);
+      }}
+      keyboardType="numeric"
+      placeholder="0"
+      placeholderTextColor="#888"
+    />
+    {form.adults !== '' && parseInt(form.adults) > 50 && (
+      <Text style={{ color: 'red', fontSize: 12 }}>
+        Invalid: must be 50 or less
+      </Text>
+    )}
   </View>
+
+  {/* Children */}
   <View style={styles.inputHalfWrapper}>
     <Text style={styles.subLabel}>Children</Text>
-    <TextInput style={styles.inputHalf} 
-    value={String(form.children)}
-     onChangeText={(text) => {
-    let filteredText = text.replace(/[^0-9]/g, '');
-    if (parseInt(filteredText) > 50) filteredText = '50';
-    
-    // Update both fields and store them in a single variable
-    const updatedChildren = filteredText;
-    const updatedAdults = form.adults; // or get adults value here
-    
-    // Combine both values and update a single field
-    const hhcombined = `${updatedAdults},${updatedChildren}`;
-    // Save combined value in a single field
-    updateField("children", updatedChildren); // Optionally, keep children separate
-     updateField("hhcombined", hhcombined);
-  }}
-    keyboardType="numeric" placeholder="0" placeholderTextColor="#888" />
+    <TextInput
+      style={[
+        styles.inputHalf,
+        form.children !== '' && parseInt(form.children) > 50 && {
+          borderColor: 'red',
+          borderWidth: 1
+        }
+      ]}
+      value={String(form.children)}
+      onChangeText={(text) => {
+        // Remove anything except digits
+        let filteredText = text.replace(/[.,]/g, '').replace(/[^0-9]/g, '');
+        updateField("children", filteredText);
+
+        // Update combined value
+        const hhcombined = `${form.adults},${filteredText}`;
+        updateField("hhcombined", hhcombined);
+      }}
+      keyboardType="numeric"
+      placeholder="0"
+      placeholderTextColor="#888"
+    />
+    {form.children !== '' && parseInt(form.children) > 50 && (
+      <Text style={{ color: 'red', fontSize: 12 }}>
+        Invalid: must be 50 or less
+      </Text>
+    )}
   </View>
 </View>
 
-
-<Text style={styles.question}>13. Occupation of Household Members (No. of persons):</Text>
+<Text style={styles.question}>
+  13. Occupation of Household Members (No. of persons):
+</Text>
 <View style={styles.irrigationRow}>
+  {/* Agriculture */}
   <View style={styles.inputIrrigationWrapper}>
     <Text style={styles.subLabel}>Agriculture</Text>
-<TextInput
-  value={String(form.occupation.agriculture)}
-  onChangeText={(text) => {
-    updateNestedField("occupation","agriculture",text);
-    const updatedAgriculture = text;
-    const updatedBusiness = form.occupation.business;
-    const updatedOther = form.occupation.other;
-    const occupationCombined = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
-    updateField("occupationCombined" , occupationCombined);
-  }}
-  style={[
-    styles.input,
-    form.occupation.agriculture !== '' && parseInt(form.occupation.agriculture) > 50 && {
-      borderColor: 'red',
-      borderWidth: 1,
-    },
-  ]}
-  placeholderTextColor="#888"
-  placeholder="0"
-  keyboardType="numeric"
-/>
-</View>
- <View style={styles.inputIrrigationWrapper}>
+    <TextInput
+      value={String(form.occupation.agriculture)}
+      onChangeText={(text) => {
+        let filteredText = text.replace(/[.,]/g, '').replace(/[^0-9]/g, '');
+        updateNestedField("occupation", "agriculture", filteredText);
+
+        const occupationCombined = `${filteredText},${form.occupation.business},${form.occupation.other}`;
+        updateField("occupationCombined", occupationCombined);
+      }}
+      style={[
+        styles.input,
+        form.occupation.agriculture !== '' &&
+          parseInt(form.occupation.agriculture) > 50 && {
+            borderColor: 'red',
+            borderWidth: 1
+          }
+      ]}
+      placeholderTextColor="#888"
+      placeholder="0"
+      keyboardType="numeric"
+    />
+  </View>
+
+  {/* Business */}
+  <View style={styles.inputIrrigationWrapper}>
     <Text style={styles.subLabel}>Business</Text>
-<TextInput
-  value={String(form.occupation.business)}
-  onChangeText={(text) => {
-    updateNestedField("occupation","business",text);
-    const updatedBusiness = text;
-    const updatedAgriculture = form.occupation.agriculture;
-    const updatedOther = form.occupation.other;
+    <TextInput
+      value={String(form.occupation.business)}
+      onChangeText={(text) => {
+        let filteredText = text.replace(/[.,]/g, '').replace(/[^0-9]/g, '');
+        updateNestedField("occupation", "business", filteredText);
 
-    const occupationCombined = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
-    updateField("occupationCombined" , occupationCombined);
-  }}
-  style={[
-    styles.input,
-    form.occupation.business !== '' && parseInt(form.occupation.business) > 50 && {
-      borderColor: 'red',
-      borderWidth: 1,
-    },
-  ]}
-  placeholderTextColor="#888"
-  placeholder="0"
-  keyboardType="numeric"
-/>
-</View>
- <View style={styles.inputIrrigationWrapper}>
+        const occupationCombined = `${form.occupation.agriculture},${filteredText},${form.occupation.other}`;
+        updateField("occupationCombined", occupationCombined);
+      }}
+      style={[
+        styles.input,
+        form.occupation.business !== '' &&
+          parseInt(form.occupation.business) > 50 && {
+            borderColor: 'red',
+            borderWidth: 1
+          }
+      ]}
+      placeholderTextColor="#888"
+      placeholder="0"
+      keyboardType="numeric"
+    />
+  </View>
+
+  {/* Other */}
+  <View style={styles.inputIrrigationWrapper}>
     <Text style={styles.subLabel}>Others</Text>
-<TextInput
-  value={String(form.occupation.other)}
-  onChangeText={(text) => {
-    updateNestedField("occupation","other",text);
-    const updatedOther = text;
-    const updatedAgriculture = form.occupation.agriculture;
-    const updatedBusiness = form.occupation.business;
+    <TextInput
+      value={String(form.occupation.other)}
+      onChangeText={(text) => {
+        let filteredText = text.replace(/[.,]/g, '').replace(/[^0-9]/g, '');
+        updateNestedField("occupation", "other", filteredText);
 
-    const occupationCombined = `${updatedAgriculture},${updatedBusiness},${updatedOther}`;
-    updateField("occupationCombined" , occupationCombined);
-  }}
-  placeholderTextColor="#888"
-  style={[
-    styles.input,
-    form.occupation.other !== '' && parseInt(form.occupation.other) > 50 && {
-      borderColor: 'red',
-      borderWidth: 1,
-    },
-  ]}
-  placeholder="0"
-  keyboardType="numeric"
-/>
+        const occupationCombined = `${form.occupation.agriculture},${form.occupation.business},${filteredText}`;
+        updateField("occupationCombined", occupationCombined);
+      }}
+      placeholderTextColor="#888"
+      style={[
+        styles.input,
+        form.occupation.other !== '' &&
+          parseInt(form.occupation.other) > 50 && {
+            borderColor: 'red',
+            borderWidth: 1
+          }
+      ]}
+      placeholder="0"
+      keyboardType="numeric"
+    />
+  </View>
 </View>
-</View>
+
+{/* Validation messages */}
+{(parseInt(form.occupation.agriculture || 0) > 50 ||
+  parseInt(form.occupation.business || 0) > 50 ||
+  parseInt(form.occupation.other || 0) > 50) && (
+  <Text style={{ color: 'red', fontSize: 12 }}>
+    Each occupation count must be 50 or less
+  </Text>
+)}
+
+{(parseInt(form.occupation.agriculture || 0) +
+  parseInt(form.occupation.business || 0) +
+  parseInt(form.occupation.other || 0)) > parseInt(form.adults || 0) && (
+  <Text style={{ color: 'red', fontSize: 12 }}>
+    Total occupation members cannot exceed total adults
+  </Text>
+)}
+
 <Text style={styles.question}>14. Special Category:</Text>
 <Checkbox.Item
   label="Disabled"
   status={form.specialCategory ? "checked" : "unchecked"}
-  onPress={() => {updateField("specialCategory", !form.specialCategory)
+  onPress={() => {
+    updateField("specialCategory", !form.specialCategory);
     updateField("specialCategoryNumber", "");
   }}
 />
+
 {form.specialCategory && (
   <>
-  <Text style={styles.question}>No of Persons Disabled</Text>
+    <Text style={styles.question}>No of Persons Disabled</Text>
     <TextInput
       value={form.specialCategoryNumber}
       onChangeText={(text) => {
@@ -488,7 +624,10 @@ placeholder="Enter Age" placeholderTextColor="#888"
       }}
       style={[
         styles.input,
-        form.specialCategoryNumber !== '' && parseInt(form.specialCategoryNumber) > 50 && {
+        form.specialCategoryNumber !== '' &&
+          (parseInt(form.specialCategoryNumber) > 50 ||
+            parseInt(form.specialCategoryNumber) >
+              (parseInt(form.adults || 0) + parseInt(form.children || 0))) && {
           borderColor: 'red',
           borderWidth: 1,
         },
@@ -496,12 +635,23 @@ placeholder="Enter Age" placeholderTextColor="#888"
       placeholder="Number of Disabled Persons"
       keyboardType="numeric"
     />
-    
-    {form.specialCategoryNumber !== '' && parseInt(form.specialCategoryNumber) > 50 && (
-      <Text style={{ color: 'red', fontSize: 12 }}>
-        Number of disabled persons cannot exceed 50
-      </Text>
-    )}
+
+    {/* Over 50 check */}
+    {form.specialCategoryNumber !== '' &&
+      parseInt(form.specialCategoryNumber) > 50 && (
+        <Text style={{ color: 'red', fontSize: 12 }}>
+          Number of disabled persons cannot exceed 50
+        </Text>
+      )}
+
+    {/* Disabled > adults + children check */}
+    {form.specialCategoryNumber !== '' &&
+      parseInt(form.specialCategoryNumber) >
+        (parseInt(form.adults || 0) + parseInt(form.children || 0)) && (
+        <Text style={{ color: 'red', fontSize: 12 }}>
+          Disabled persons cannot exceed total household members
+        </Text>
+      )}
   </>
 )}
 
@@ -598,7 +748,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#F1F7ED',
     },
     inner: {
-      padding: width * 0.05, // 5% of screen width
+      padding: width * 0.05, 
       paddingBottom: height * 0.03,
     },
     heading_land: {
@@ -657,6 +807,18 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       gap: width * 0.025,
     },
+  //     input: {
+  //   padding: 10,
+  //   borderWidth: 1,
+  //   borderColor: '#ccc',
+  //   borderRadius: 5,
+  //   fontSize: 16
+  // },
+  errorText: {
+    color: 'red',
+    marginTop: 4,
+    fontSize: 14
+  },
   input: {
       borderWidth: 1,
       borderColor: '#A5D6A7',
@@ -670,48 +832,7 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 30,
   },
-    //  container: {
-    //   flex: 1,
-    //   backgroundColor: '#F1F7ED',
-    // },
-    // inner: {
-    //   padding: width * 0.05, // 5% of screen width
-    //   paddingBottom: height * 0.03,
-    // },
-    // heading_land: {
-    //   fontSize: width * 0.06,
-    //   fontWeight: 'bold',
-    //   color: '#0B8B42',
-    //   marginBottom: height * 0.02,
-    //   textAlign: 'center',
-    // },
-    // headingContainer: {
-    //   flexDirection: 'row',
-    //   alignItems: 'center',
-    //   marginBottom: height * 0.02,
-    // },
-    // heading: {
-    //   fontSize: width * 0.05,
-    //   fontWeight: 'bold',
-    //   color: '#0B8B42',
-    //   marginBottom: height * 0.005,
-    // },
-    // label: {
-    //   fontSize: width * 0.035,
-    //   marginVertical: height * 0.01,
-    //   color: '#333',
-    //   fontWeight: '600',
-    // },
-    // input: {
-    //   borderWidth: 1,
-    //   borderColor: '#A5D6A7',
-    //   borderRadius: width * 0.025,
-    //   paddingHorizontal: width * 0.035,
-    //   paddingVertical: height * 0.015,
-    //   backgroundColor: '#E8F5E9',
-    //   color: '#333',
-    //   fontSize: width * 0.035,
-    // },
+   
     inputHalf: {
       flex: 1,
       borderWidth: 1,
@@ -724,11 +845,7 @@ const styles = StyleSheet.create({
       fontSize: width * 0.035,
       marginRight: width * 0.025,
     },
-    // row: {
-    //   flexDirection: 'row',
-    //   alignItems: 'center',
-    //   gap: width * 0.025,
-    // },
+  
     radioGroup: {
       flexDirection: 'row',
       flexWrap: 'wrap',
@@ -745,16 +862,7 @@ const styles = StyleSheet.create({
       fontSize: width * 0.035,
       color: '#333',
     },
-    // checkboxGroup: {
-    //   flexDirection: 'row',
-    //   flexWrap: 'wrap',
-    // },
-    // checkboxOption: {
-    //   flexDirection: 'row',
-    //   alignItems: 'center',
-    //   marginRight: width * 0.04,
-    //   marginBottom: height * 0.01,
-    // },
+   
     nextBtn: {
       backgroundColor: '#134e13',
       paddingVertical: height * 0.018,
