@@ -153,7 +153,7 @@ const canEdit = () => {
       );
 
 useEffect(() => {  
-  console.log(selectedForm);
+  console.log(selectedForm.bankDetails.submittedFiles);
   setData("user_id",user.id);
   if(fromsubmit == "true" && fromPreview != "true"){
 const occupationarray = data.basicDetails.occupationCombined.split(',');
@@ -476,7 +476,7 @@ for (const key of Object.keys(files)) {
               ? Object.entries(selectedForm.bankDetails.submittedFiles)
                   .filter(([_, val]) => !!val)
                   .map(([key, val]) => ({
-                    label: `${key}: ${val.name2}`,
+                    label: `${key}: ${val.name}`,
                     uri: val.uri,
                   }))
               : ["No files uploaded"],

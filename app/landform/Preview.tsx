@@ -30,7 +30,6 @@ const selectedForm = React.useMemo(() => {
 
   // if (isSubmittedPreview && id || draftForms && id) {
     if (isSubmittedPreview && id ) {
-        console.log(submittedForms+" sdfghjkkjhgfds");
     return submittedForms.find((form) => String(form.id) === id);
   }
   return data;
@@ -78,7 +77,8 @@ const canEdit = () => {
     
       }, [])
     );
-useEffect(() => {  
+useEffect(() => { 
+  
 setData("user_id",user.id);
   if(fromsubmit == "true" && fromPreview != "true"){
 const occupationarray = data.basicDetails.occupationCombined.split(',');
@@ -110,6 +110,7 @@ const Householdarray = data.basicDetails.hhcombined.split(',');
   const draftId = generateDraftId();
   setData("draft_id", draftId);
   setData("formType", 1);
+  console.log(selectedForm);
 }, []);
 
 const isFormComplete = React.useMemo(() => {
@@ -473,7 +474,7 @@ for (const key of Object.keys(files)) {
         { label: "32. Soil Type", value: selectedForm.landDevelopment?.soilTypeCombined },
         { label: "33. Land to benefit (ha)", value: selectedForm.landDevelopment?.landBenefit },
         { label: "36. Date of Inspection", value: selectedForm.landDevelopment?.date},
-        { label: "38. Type of work proposed", value: selectedForm.landDevelopment?.workType },
+        { label: "38. Type of work proposed", value: selectedForm.landDevelopment?.workTypeCombined },
         // { label: "    Details about work types", value: selectedForm.landDevelopment?.workTypeText },
         { label: "39. Area benefited (ha)", value: selectedForm.landDevelopment?.proposalArea },
         { label: "40. Any other works proposed", value: selectedForm.landDevelopment?.otherWorks },

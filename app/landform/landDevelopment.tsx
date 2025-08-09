@@ -24,6 +24,7 @@ export default function LandDevelopment() {
       landBenefit: "400",//cd
       workType: [],//cd
       workTypeText: "",//no
+      workTypeCombined:"",
       proposalArea: "",//cd
       otherWorks: "",//cd
       latitude: "",//cd
@@ -194,22 +195,42 @@ const totalestimation =(feild : any,value : any) =>{
        editable={false}
      />
 <Text style={styles.question}>38. Type of work proposed:</Text>
-{renderCheckboxGroup("workType", [
-  "Prosopis removal",
-  "Redevelopment of eroded lands",
-  "Silt application",
-  "Other",
-])}
+{["Prosopis removal", "Redevelopment of eroded lands", "Silt application", "Other"].map((item) => (
+  <Checkbox.Item
+    key={item}
+    label={item}
+    status={form.workType?.includes(item) ? "checked" : "unchecked"}
+    onPress={() => {
+      const newSelection = form.workType?.includes(item)
+        ? form.workType.filter((s: string) => s !== item)
+        : [...(form.workType || []), item];
+      updateField("workType", newSelection);
+
+      // If "Other" is not selected anymore, clear the custom text
+      const finalList = newSelection.includes("Other")
+        ? newSelection
+        : newSelection.filter((s: string) => s !== form.workTypeText);
+
+      updateField("workTypeCombined", finalList.join(", "));
+    }}
+  />
+))}
 
 {/* Show text input only if 'Other' is selected */}
-{form.workType.includes("Other") && (
+{form.workType?.includes("Other") && (
   <TextInput
     value={form.workTypeText}
-    onChangeText={(text) => updateField("workTypeText", text)}
+    onChangeText={(text) => {
+      updateField("workTypeText", text);
+
+      const updated = [...form.workType.filter((s: string) => s !== "Other"), text];
+      updateField("workTypeCombined", updated.join(", "));
+    }}
     style={styles.input}
     placeholder="Specify other work types"
   />
 )}
+
 
 
    <Text style={styles.label}>39. Area benefited by proposed works (ha)</Text>

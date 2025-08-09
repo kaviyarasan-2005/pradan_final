@@ -291,7 +291,7 @@ placeholderTextColor="#888"
         style={styles.input}
       />
       </View>
-      <Text style={styles.label}>30s. Firka</Text>
+      <Text style={styles.label}>30. Firka</Text>
                 <View style={{ zIndex: 1000, marginBottom: 10 }}>
       <TextInput
         value={form.firka}
