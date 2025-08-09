@@ -476,7 +476,7 @@ for (const key of Object.keys(files)) {
               ? Object.entries(selectedForm.bankDetails.submittedFiles)
                   .filter(([_, val]) => !!val)
                   .map(([key, val]) => ({
-                    label: `${key}: ${val.name}`,
+                    label: `${key}: ${val.name2}`,
                     uri: val.uri,
                   }))
               : ["No files uploaded"],
