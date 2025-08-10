@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "pradan",
+    "name": "Pradan",
     "slug": "pradan",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,7 +13,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon.png", 
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -42,13 +42,14 @@
       "typedRoutes": true
     },
     "extra": {
-         "API_URL": "http://65.1.148.21:5000",
+      "API_URL": "http://65.1.148.21:5000",
       "router": {
         "origin": false
       },
       "eas": {
-        "projectId": "f1455621-80d9-4227-8c99-44a9f66e9000"
+        "projectId": "69d35095-3a3f-427b-9bdc-7fe2e178b239"
       }
-    }
+    },
+    "owner": "kavi-2005"
   }
 }
