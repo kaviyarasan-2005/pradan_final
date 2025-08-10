@@ -319,6 +319,22 @@ const calculateTotalArea = (rainfed, tankfed, well) => {
     </Text>
   )}
 </View>
+<View style={{ marginVertical: 10 }}>
+  <Text style={styles.label}>30. Firka</Text>
+  <TextInput
+    value={form.firka}
+    placeholder="Enter Firka"
+    placeholderTextColor="#888"
+    onChangeText={(text) => {
+      updateField("firka", text);
+    }}
+    style={styles.input}
+  />
+  
+  {form.firka !== "" && !/^[A-Za-z\s]+$/.test(form.firka) && (
+    <Text style={styles.errorText}>Invalid: only letters and spaces allowed</Text>
+  )}
+</View>
 
    <Text style={styles.label}>31. Revenue Village</Text>
 <View style={{ zIndex: 1000, marginBottom: 10 }}>

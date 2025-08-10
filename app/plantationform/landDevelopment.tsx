@@ -271,7 +271,7 @@ export default function LandDevelopment() {
     
       {form.pradanContribution !== "" &&
         (!/^\d+$/.test(form.pradanContribution) ||
-          Number(form.pradanContribution) > 10500) && (
+          Number(form.pradanContribution) > 12000) && (
           <Text style={styles.errorText}>
             Invalid: must be a number less than 12,000
           </Text>
